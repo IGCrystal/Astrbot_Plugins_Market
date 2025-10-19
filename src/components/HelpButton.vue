@@ -102,13 +102,11 @@ import { HelpCircle, OpenOutline } from '@vicons/ionicons5'
 import { helpContent } from '../config/helpContent'
 import { marked } from 'marked'
 
-// 检测是否为移动设备
 const isMobile = ref(window.innerWidth <= 768)
 window.addEventListener('resize', () => {
   isMobile.value = window.innerWidth <= 768
 })
 
-// 计算模态框样式
 const modalStyle = computed(() => {
   if (isMobile.value) {
     return {
@@ -122,7 +120,6 @@ const modalStyle = computed(() => {
   }
 })
 
-// 配置 marked
 marked.setOptions({
   gfm: true,
   breaks: true
@@ -136,14 +133,12 @@ const toggleHelp = () => {
   showHelp.value = !showHelp.value
 }
 
-// 自动展示/隐藏提示文本
 setInterval(() => {
   showHelpText.value = !showHelpText.value
 }, 3000)
 
 const openPanelUrl = () => {
   if (panelUrl.value) {
-    // 确保URL格式正确
     let url = panelUrl.value
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       url = 'https://' + url
@@ -217,7 +212,6 @@ const openPanelUrl = () => {
   animation: ripple 0.6s ease-out;
 }
 
-/* 动画定义 */
 @keyframes ripple {
   0% {
     width: 0;
@@ -231,7 +225,6 @@ const openPanelUrl = () => {
   }
 }
 
-/* 过渡动画 */
 .float-button-fade-enter-active {
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -250,7 +243,6 @@ const openPanelUrl = () => {
   transform: translateY(10px) scale(0.9);
 }
 
-/* 帮助按钮容器和提示文本 */
 .help-button-container {
   display: flex;
   align-items: center;
@@ -326,7 +318,6 @@ const openPanelUrl = () => {
   }
 }
 
-/* 帮助模态框样式 */
 .help-modal {
   --modal-padding: 24px;
 }
@@ -491,15 +482,15 @@ const openPanelUrl = () => {
   margin: 0 calc(-1 * var(--modal-padding));
   margin-top: calc(-1 * var(--modal-padding));
   display: flex;
-  justify-content: center;  /* 改为居中对齐 */
+  justify-content: center; 
 }
 
 .help-modal__footer-content {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 100%;  /* 让内容占满宽度 */
-  max-width: 600px;  /* 限制最大宽度 */
+  width: 100%;  
+  max-width: 600px;  
 }
 
 .panel-link {
@@ -517,8 +508,8 @@ const openPanelUrl = () => {
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-width: 0; /* 允许在较窄屏幕上缩小 */
-  flex-wrap: wrap; /* 允许按钮换行 */
+  min-width: 0; 
+  flex-wrap: wrap; 
 }
 
 .panel-input {
@@ -529,7 +520,7 @@ const openPanelUrl = () => {
 @media (max-width: 480px) {
   .panel-input-group {
     flex-direction: column;
-    align-items: flex-end;  /* 改为右对齐 */
+    align-items: flex-end;  
   }
   
   .panel-input {
@@ -537,8 +528,8 @@ const openPanelUrl = () => {
   }
 
   .panel-input-group .n-button {
-    width: auto;  /* 让按钮宽度自适应内容 */
-    min-width: 120px;  /* 设置最小宽度 */
+    width: auto;
+    min-width: 120px;  
   }
 }
 
@@ -548,7 +539,7 @@ const openPanelUrl = () => {
   align-self: flex-end;
 }
 
-/* 响应式设计 */
+/* 响应式 */
 @media (max-width: 768px) {
   .float-button {
     width: 48px;
@@ -567,7 +558,6 @@ const openPanelUrl = () => {
   }
 }
 
-/* 减少动画的可访问性支持 */
 @media (prefers-reduced-motion: reduce) {
   .float-button__inner,
   .float-button__icon,

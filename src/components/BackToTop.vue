@@ -38,14 +38,12 @@ const checkScroll = () => {
 
 const scrollToTop = () => {
   const currentPosition = window.pageYOffset
-  const duration = 500 // 滚动持续时间（毫秒）
+  const duration = 500 
   const startTime = performance.now()
 
   function animation(currentTime) {
     const timeElapsed = currentTime - startTime
     const progress = Math.min(timeElapsed / duration, 1)
-    
-    // easeInOutQuad 缓动函数
     const easing = progress => progress < 0.5
       ? 2 * progress * progress
       : 1 - Math.pow(-2 * progress + 2, 2) / 2
@@ -62,7 +60,7 @@ const scrollToTop = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', checkScroll, { passive: true })
-  checkScroll() // 初始检查
+  checkScroll() 
 })
 
 onUnmounted(() => {
@@ -141,9 +139,6 @@ onUnmounted(() => {
   animation: ripple 0.6s ease-out;
 }
 
-/* 移除进度条相关样式 */
-
-/* 动画定义 */
 @keyframes ripple {
   0% {
     width: 0;
@@ -166,7 +161,6 @@ onUnmounted(() => {
   }
 }
 
-/* 过渡动画 */
 .back-to-top-fade-enter-active {
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -185,7 +179,6 @@ onUnmounted(() => {
   transform: translateY(10px) scale(0.9);
 }
 
-/* 帮助模态框样式 */
 .help-modal {
   max-width: 90vw;
 }
@@ -209,7 +202,7 @@ onUnmounted(() => {
   line-height: 1.6;
 }
 
-/* 响应式设计 */
+/* 响应式 */
 @media (max-width: 768px) {
   .float-buttons {
     right: 20px;
@@ -240,7 +233,6 @@ onUnmounted(() => {
   }
 }
 
-/* 减少动画的可访问性支持 */
 @media (prefers-reduced-motion: reduce) {
   .back-to-top__inner,
   .back-to-top__icon,

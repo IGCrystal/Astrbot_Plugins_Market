@@ -49,7 +49,6 @@ const props = defineProps({
 const paginationRef = ref(null)
 const quickJumperId = ref('pagination-quick-jumper-' + Math.random().toString(36).substr(2, 9))
 
-// 在组件挂载后设置输入框的无障碍属性
 onMounted(() => {
   nextTick(() => {
     const input = paginationRef.value?.$el?.querySelector('.n-pagination-quick-jumper input')
@@ -65,31 +64,26 @@ onMounted(() => {
 })
 
 const emit = defineEmits(['update:modelValue'])
-
-// 响应式状态
 const screenWidth = ref(window.innerWidth)
 
-// 计算属性
 const showQuickJumper = computed(() => {
   return screenWidth.value > 768 && props.totalPages > 10
 })
 
 const pageSlot = computed(() => {
   if (screenWidth.value <= 480) {
-    return 3 // 超小屏幕只显示3个页码
+    return 3 
   } else if (screenWidth.value <= 768) {
-    return 5 // 小屏幕显示5个页码
+    return 5 
   } else {
-    return 7 // 桌面端显示7个页码
+    return 7 
   }
 })
 
-// 处理分页变化
 const handlePageChange = (page) => {
   emit('update:modelValue', page)
 }
 
-// 监听屏幕尺寸变化
 const handleResize = () => {
   screenWidth.value = window.innerWidth
 }
@@ -144,7 +138,6 @@ onUnmounted(() => {
   }
 }
 
-/* 基础分页样式 */
 :deep(.n-pagination) {
   gap: 4px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -206,7 +199,6 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
-/* 快速跳转输入框样式 */
 :deep(.n-pagination .n-pagination-quick-jumper) {
   margin-left: 16px;
   display: flex;
@@ -223,7 +215,6 @@ onUnmounted(() => {
   font-size: 13px !important;
 }
 
-/* 屏幕阅读器专用样式 */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -236,7 +227,7 @@ onUnmounted(() => {
   border: 0;
 }
 
-/* ===== 响应式优化 ===== */
+/* ===== 响应式 ===== */
 
 /* 平板设备 (768px - 1024px) */
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -262,7 +253,6 @@ onUnmounted(() => {
   .pagination-wrapper {
     margin: 1.25rem 0;
     padding: 0.5rem 12px;
-    /* 添加轻微的背景以提高可见性 */
     background: var(--bg-secondary, rgba(0, 0, 0, 0.02));
     border-radius: 12px;
   }
@@ -279,35 +269,30 @@ onUnmounted(() => {
   :deep(.n-pagination .n-pagination-item) {
     min-width: 36px;
     height: 36px;
-    /* 增加触摸目标大小 */
     min-height: 36px;
     border-radius: 8px;
   }
   
-  /* 前进后退按钮优化 */
   :deep(.n-pagination .n-pagination-item--button) {
     padding: 0 8px !important;
     font-weight: 600;
   }
-  
-  /* 省略号样式 */
+
   :deep(.n-pagination .n-pagination-item--disabled) {
     background-color: transparent !important;
     border-color: transparent !important;
     color: var(--text-tertiary) !important;
   }
-  
-  /* 隐藏快速跳转 */
+
   :deep(.n-pagination .n-pagination-quick-jumper) {
     display: none;
   }
-  
-  /* 信息文字调整 */
+
   :deep(.n-pagination .n-pagination-prefix),
   :deep(.n-pagination .n-pagination-suffix) {
     font-size: 12px;
     margin: 0 4px;
-    order: 10; /* 移到最后 */
+    order: 10; 
     width: 100%;
     text-align: center;
     margin-top: 8px;
@@ -333,14 +318,12 @@ onUnmounted(() => {
     height: 34px;
     min-height: 34px;
   }
-  
-  /* 进一步简化显示 */
+
   :deep(.n-pagination .n-pagination-prefix),
   :deep(.n-pagination .n-pagination-suffix) {
-    display: none; /* 隐藏页码信息 */
+    display: none; 
   }
-  
-  /* 当页数过多时的特殊处理 */
+
   :deep(.n-pagination .n-pagination-item--button:first-child) {
     margin-right: 8px;
   }
@@ -370,20 +353,17 @@ onUnmounted(() => {
     min-height: 28px;
     padding: 0 4px !important;
   }
-  
-  /* 超小屏幕下的紧凑布局 */
+
   :deep(.n-pagination .n-pagination-item--button) {
     padding: 0 4px !important;
   }
-  
-  /* 压缩省略号的间距 */
+
   :deep(.n-pagination .n-pagination-item--disabled) {
     min-width: 20px;
     padding: 0 2px !important;
   }
 }
 
-/* 横屏模式优化 */
 @media (max-height: 500px) and (orientation: landscape) {
   .pagination-wrapper {
     margin: 0.5rem 0;
@@ -401,28 +381,24 @@ onUnmounted(() => {
   }
 }
 
-/* 触摸设备专门优化 */
 @media (hover: none) and (pointer: coarse) {
   :deep(.n-pagination .n-pagination-item) {
-    /* 确保触摸目标足够大 */
     min-width: 40px;
     min-height: 40px;
   }
   
   :deep(.n-pagination .n-pagination-item--clickable:hover) {
-    /* 移除hover效果避免触摸设备的问题 */
     transform: none;
     box-shadow: none;
   }
   
-  /* 添加点击反馈 */
   :deep(.n-pagination .n-pagination-item--clickable:active) {
     transform: scale(0.95);
     background-color: var(--primary-light) !important;
   }
 }
 
-/* 高分辨率屏幕优化 */
+/* 高分辨率屏幕 */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   :deep(.n-pagination .n-pagination-item) {
     border-width: 0.5px;
@@ -433,7 +409,7 @@ onUnmounted(() => {
   }
 }
 
-/* 无障碍优化 */
+/* 无障碍 */
 @media (prefers-reduced-motion: reduce) {
   :deep(.n-pagination .n-pagination-item) {
     transition: none !important;
@@ -444,7 +420,6 @@ onUnmounted(() => {
   }
 }
 
-/* 深色模式特殊处理（如果需要） */
 @media (prefers-color-scheme: dark) {
   .pagination-wrapper {
     background: var(--bg-secondary, rgba(255, 255, 255, 0.05));

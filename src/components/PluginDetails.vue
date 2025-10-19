@@ -159,7 +159,7 @@ async function fetchReadme() {
       for (const branch of branches) {
         for (const filename of candidates) {
           try {
-            const resp = await fetch(`https://github.wenturc.com/${owner}/${repo}/${branch}/${filename}`, {
+            const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`, {
               method: 'GET',
               headers: {
                 'Accept': 'text/plain'

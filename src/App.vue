@@ -32,8 +32,6 @@ import { Analytics } from '@vercel/analytics/vue'
 import { SpeedInsights } from "@vercel/speed-insights/vue"
 
 const store = usePluginStore()
-
-// 从store中获取状态
 const { 
   isDarkMode,
   searchQuery,
@@ -43,19 +41,12 @@ const {
 } = storeToRefs(store)
 
 const route = useRoute()
-
-// 计算属性
 const theme = computed(() => (isDarkMode.value ? darkTheme : null))
-
-// 判断是否在提交插件页面
 const isSubmitPage = computed(() => route.path === '/submit')
-
-// 创建筛选键，当筛选条件改变时这个值也会改变，强制Vue重新创建组件
 const filterKey = computed(() => {
   return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
 })
 
-// 生命周期钩子
 onMounted(() => {
   store.loadPlugins()
 })

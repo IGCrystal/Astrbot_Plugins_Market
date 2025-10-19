@@ -202,8 +202,7 @@ const checkTextOverflow = () => {
       const wasOverflow = isTextOverflow.value
       
       isTextOverflow.value = textWidth > containerWidth
-      
-      // 如果溢出状态改变，更新CSS变量
+
       if (isTextOverflow.value && (wasOverflow !== isTextOverflow.value)) {
         updateMarqueeAnimation(containerWidth, textWidth)
       }
@@ -219,33 +218,25 @@ const updateMarqueeAnimation = (containerWidth, textWidth) => {
 }
 
 function replayCardAppearAnimation() {
-  // 获取 NCard 的根 DOM 元素
   const el = cardRef.value && (cardRef.value.$el || cardRef.value)
   if (!el) return
-  // 先移除动画
   el.style.animation = 'none'
-  // 强制重排
   void el.offsetWidth
-  // 恢复动画（使用 CSS 中定义的 cardAppear）
   el.style.animation = ''
 }
 
 onMounted(() => {
   checkTextOverflow()
-  
-  // 使用ResizeObserver监听容器大小变化，比window resize更精确
   if (nameContainer.value && window.ResizeObserver) {
     resizeObserver.value = new ResizeObserver(() => {
       checkTextOverflow()
     })
     resizeObserver.value.observe(nameContainer.value)
   } else {
-    // 降级方案：使用window resize
     window.addEventListener('resize', checkTextOverflow)
   }
 })
 
-// 当索引或种子变化时，重播卡片出现动画
 watch([
   () => props.index,
   () => props.seed
@@ -265,14 +256,14 @@ const message = useMessage()
 const isCopied = ref(false)
 
 const copyRepoUrl = async (e) => {
-  e.stopPropagation() // 阻止事件冒泡
+  e.stopPropagation()
   if (props.plugin.repo) {
     try {
       await navigator.clipboard.writeText(props.plugin.repo)
       isCopied.value = true
       setTimeout(() => {
         isCopied.value = false
-      }, 2000) // 2秒后恢复原始图标
+      }, 2000) 
     } catch (err) {
       message.error('复制失败，请手动复制')
     }
@@ -280,7 +271,7 @@ const copyRepoUrl = async (e) => {
 }
 
 const openUrl = (url, e) => {
-  e?.stopPropagation() // 阻止事件冒泡
+  e?.stopPropagation() 
   if (url) {
     window.open(url, '_blank')
   }
@@ -337,7 +328,6 @@ const showDetails = () => {
   min-height: 44px;
 }
 
-/* 缩小 n-card 头部与内容之间的间距 */
 :deep(.n-card__header) {
   margin-bottom: 0 !important;
   padding-bottom: 6px !important;
@@ -347,15 +337,12 @@ const showDetails = () => {
   padding-bottom: 6px !important;
 }
 
-/* 字体在全局 theme.css 中声明，避免重复定义 */
-
 .plugin-name-container {
   max-width: 75%;
   overflow: hidden;
   position: relative;
 }
 
-/* 只有在需要走马灯时才添加边缘过渡效果 */
 .plugin-name-container:has(.plugin-name.marquee) {
   mask: linear-gradient(to right, 
     transparent 0%, 

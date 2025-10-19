@@ -94,8 +94,6 @@ import AppFooter from '../components/AppFooter.vue'
 import { usePluginStore } from '../stores/plugins'
 
 const store = usePluginStore()
-
-// 从store中获取状态
 const { 
   isDarkMode,
   searchQuery,
@@ -110,15 +108,11 @@ const {
   randomSeed
 } = storeToRefs(store)
 
-// 计算属性
 const filterKey = computed(() => {
   return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
 })
 
-// 动作
 const { refreshRandomOrder } = store
-
-// 生命周期钩子
 onMounted(() => {
   store.loadPlugins()
 })
@@ -133,13 +127,12 @@ onMounted(() => {
 
 .top-pagination-wrapper,
 .bottom-pagination-wrapper {
-  min-height: 48px; /* 占位，避免分页出现/消失造成位移 */
+  min-height: 48px; 
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 工具栏与卡片对齐 */
 .grid-toolbar {
   max-width: 1400px;
   margin: 0 auto;
@@ -167,8 +160,8 @@ onMounted(() => {
     animation: gridAppear 0.3s ease-out;
     animation-delay: 0.7s;
     animation-fill-mode: backwards;
-    align-content: start;  /* 防止行被拉伸填满容器高度 */
-    align-items: start;    /* 防止卡片在行内被拉伸增高 */
+    align-content: start;  
+    align-items: start;   
   }
 
 @keyframes gridAppear {
@@ -207,7 +200,6 @@ onMounted(() => {
   }
 }
 
-/* 限制单个卡片的最大宽度，防止占据整行 */
 .plugins-grid > * {
   max-width: 500px;
   justify-self: center;
@@ -218,7 +210,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh; /* 占位，避免加载完成时大幅推移页脚 */
+  min-height: 60vh;
   padding-top: 0;
 }
 
@@ -283,17 +275,16 @@ onMounted(() => {
   }
 }
 
-/* 确保加载动画流畅恒定 */
 .loading-container :deep(.n-spin) {
   will-change: transform;
-  transform: translateZ(0); /* 启用硬件加速 */
+  transform: translateZ(0); 
 }
 
 .loading-container :deep(.n-spin-icon) {
-  animation-timing-function: linear !important; /* 强制线性动画 */
-  animation-duration: 1s !important; /* 固定动画时长 */
+  animation-timing-function: linear !important;
+  animation-duration: 1s !important; 
   will-change: transform;
-  transform: translateZ(0); /* 启用硬件加速 */
+  transform: translateZ(0); 
 }
 
 .loading-container :deep(.n-spin-body) {

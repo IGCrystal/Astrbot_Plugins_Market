@@ -253,15 +253,11 @@ const steps = [
   }
 ]
 
-// 从 store 中获取暗色模式状态
 const { isDarkMode } = storeToRefs(store)
-
-// 切换主题
 const toggleTheme = () => {
   store.toggleTheme()
 }
 
-// 步骤检查状态
 const stepChecks = reactive({
   copied: false,
   issueOpened: false
@@ -365,7 +361,7 @@ const submitPlugin = () => {
   display: flex;
   flex-direction: column;
   --action-bar-height: 72px;
-  overflow: hidden; /* 防止整个页面滚动 */
+  overflow: hidden; 
 }
 
 .page-header {
@@ -415,7 +411,6 @@ const submitPlugin = () => {
   gap: 12px;
 }
 
-/* 头部按钮动画 */
 .header-left .n-button,
 .header-right .n-button {
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -454,7 +449,7 @@ const submitPlugin = () => {
   align-items: center;
   position: relative;
   gap: 8px;
-  width: 120px; /* 固定宽度确保均匀间距 */
+  width: 120px; 
   
   @media (min-width: 426px) {
     &:first-child {
@@ -568,7 +563,7 @@ const submitPlugin = () => {
       margin: 0 auto;
       
       .step-indicator {
-        flex: 0 0 32px; /* 防止圆圈被压缩 */
+        flex: 0 0 32px; 
       }
       
       .step-content {
@@ -595,8 +590,7 @@ const submitPlugin = () => {
   padding: 24px;
   padding-bottom: calc(var(--action-bar-height, 72px) + 24px);
   box-sizing: border-box;
-  /* 确保滚动区域正确计算，避免被操作栏遮挡 */
-  height: calc(100vh - 140px); /* 减去header+steps的估计高度 */
+  height: calc(100vh - 140px);
 
   :deep(.n-card) {
     background: var(--bg-card);
@@ -624,14 +618,12 @@ const submitPlugin = () => {
   box-sizing: border-box;
 }
 
-/* 给所有卡片添加主题色边框 */
 .form-card,
 .json-card,
 .guide-card {
   border: 2px solid var(--primary-color);
 }
 
-/* 确保各步骤容器有一致的尺寸 */
 .form-section,
 .json-preview-section,
 .submit-guide-section {
@@ -709,7 +701,6 @@ const submitPlugin = () => {
   margin-bottom: 24px;
 }
 
-/* 隐藏多余的表单反馈包装器 */
 :deep(.n-form-item-feedback-wrapper) {
   display: none;
 }
@@ -718,7 +709,6 @@ const submitPlugin = () => {
   width: 100%;
 }
 
-/* 描述字段固定高度 */
 .desc-textarea :deep(.n-input__textarea-el) {
   height: 120px !important;
   min-height: 120px !important;
@@ -746,7 +736,6 @@ const submitPlugin = () => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 操作按钮动画 */
 .action-button-enter-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -765,7 +754,6 @@ const submitPlugin = () => {
   transform: translateY(-10px);
 }
 
-/* 关键帧动画 */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -788,14 +776,12 @@ const submitPlugin = () => {
   }
 }
 
-/* 卡片进入动画 */
 .form-card,
 .json-card,
 .guide-card {
   animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 按钮悬停效果增强 */
 .n-button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   
@@ -810,7 +796,6 @@ const submitPlugin = () => {
   }
 }
 
-/* 表单项动画增强 */
 :deep(.n-form-item) {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   

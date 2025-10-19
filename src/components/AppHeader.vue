@@ -36,9 +36,9 @@
       :current-page="currentPage"
       :sort-by="sortBy"
       :on-header="true"
-      @update:search-query="handleSearchQueryChange"
-      @update:current-page="handleCurrentPageChange"
-      @update:sort-by="handleSortByChange"
+  @update:searchQuery="handleSearchQueryChange"
+  @update:currentPage="handleCurrentPageChange"
+  @update:sortBy="handleSortByChange"
     />
   </header>
 
@@ -60,9 +60,9 @@
           :current-page="currentPage"
           :sort-by="sortBy"
           :compact="true"
-          @update:search-query="handleSearchQueryChange"
-          @update:current-page="handleCurrentPageChange"
-          @update:sort-by="handleSortByChange"
+          @update:searchQuery="handleSearchQueryChange"
+          @update:currentPage="handleCurrentPageChange"
+          @update:sortBy="handleSortByChange"
         />
         <div class="mobile-inline-search" :class="{ 'is-open': isMobileSearchOpen }" aria-hidden="false">
           <n-input
@@ -139,7 +139,9 @@ const props = defineProps({
   searchQuery: String,
   currentPage: Number,
   totalPages: Number,
-  sortBy: String
+  sortBy: String,
+  selectedTag: String,
+  tagOptions: Array
 })
 
 const emit = defineEmits([
@@ -147,7 +149,7 @@ const emit = defineEmits([
   'update:searchQuery',
   'update:currentPage',
   'update:sortBy',
-  'update:sort-by'
+  'update:selectedTag'
 ])
 
 const handleThemeChange = (value) => {
@@ -164,7 +166,6 @@ const handleCurrentPageChange = (value) => {
 
 const handleSortByChange = (value) => {
   emit('update:sortBy', value)
-  emit('update:sort-by', value)
 }
 
 // 响应式数据
@@ -180,7 +181,7 @@ const sortOptions = [
   { label: '按 Star 数量', value: 'stars' }
 ]
 
-// 移动端下拉（扁平层级，不嵌套再选择器），动态标注当前选中项
+// 移动端下拉
 const mobileSortOptions = computed(() => {
   const make = (text, key) => ({
     key,
@@ -244,14 +245,11 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
-  // 添加滚动监听
   window.addEventListener('scroll', handleScroll, { passive: true })
-  // 初始检查
   handleScroll()
 })
 
 onUnmounted(() => {
-  // 清理滚动监听
   window.removeEventListener('scroll', handleScroll)
 })
 </script>
@@ -359,8 +357,8 @@ onUnmounted(() => {
 .circle-2 {
   width: 150px;
   height: 150px;
-  bottom: -40px;  /* 调整位置，确保不会超出圆角 */
-  left: 20px;     /* 向右移动，避免超出左侧 */
+  bottom: -40px;  
+  left: 20px;    
   animation: 
     float 8s ease-in-out infinite reverse,
     circle-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.6s;
@@ -401,7 +399,7 @@ onUnmounted(() => {
 .title-wrapper {
   display: flex;
   align-items: center;
-  height: 48px;  /* 与 logo 高度一致 */
+  height: 48px;  
 }
 
 @font-face {
@@ -426,7 +424,7 @@ onUnmounted(() => {
   font-size: 2.75em;
   font-weight: 600;
   letter-spacing: -0.5px;
-  transition: color 0.3s ease; /* 避免影响布局的属性动画 */
+  transition: color 0.3s ease; 
   font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -531,7 +529,7 @@ onUnmounted(() => {
   }
 }
 
-/* 仅手机设备 (最大 480px) */
+/* 仅手机设备 */
 @media (max-width: 480px) {
   .app-header {
     margin-bottom: 24px;
@@ -539,7 +537,6 @@ onUnmounted(() => {
     border-radius: 0 0 24px 24px;
   }
   
-  /* 标题区域优化 */
   .header-title {
     flex-direction: column;
     gap: 12px;
@@ -549,7 +546,7 @@ onUnmounted(() => {
   .header-logo {
     width: 55px;
     height: 55px;
-    order: -1; /* logo 在上方 */
+    order: -1;
   }
 
   .title-wrapper {
@@ -563,7 +560,6 @@ onUnmounted(() => {
     letter-spacing: -0.3px;
   }
   
-  /* 分页优化 */
   .top-pagination-wrapper {
     padding: 0 12px;
     margin-bottom: 16px;
@@ -580,17 +576,14 @@ onUnmounted(() => {
     height: 32px !important;
     font-size: 13px !important;
     border-radius: 6px !important;
-    /* 增强在深色背景下的可见性 */
     background-color: rgba(255, 255, 255, 0.12) !important;
     backdrop-filter: blur(12px) !important;
   }
   
-  /* 隐藏部分页码，只显示当前页附近的页码 */
   :deep(.n-pagination .n-pagination-item:not(.n-pagination-item--active):not(.n-pagination-item--button):not(.n-pagination-item.n-pagination-item--disabled)) {
     display: none;
   }
-  
-  /* 确保显示第一页和最后一页 */
+
   :deep(.n-pagination .n-pagination-item:first-of-type),
   :deep(.n-pagination .n-pagination-item:last-of-type) {
     display: flex !important;
@@ -605,7 +598,6 @@ onUnmounted(() => {
     font-weight: 600 !important;
   }
   
-  /* 页码信息在小屏幕下调整 */
   :deep(.top-pagination-wrapper .n-pagination-prefix),
   :deep(.top-pagination-wrapper .n-pagination-suffix) {
     font-size: 12px !important;
@@ -621,7 +613,6 @@ onUnmounted(() => {
     backdrop-filter: blur(8px);
   }
   
-  /* 主题切换按钮优化 */
   :deep(.n-switch) {
     width: 46px !important;
     height: 22px !important;
@@ -651,7 +642,7 @@ onUnmounted(() => {
   }
 }
 
-/* 小屏手机设备 (最大 480px) */
+/* 小屏手机设备 */
 @media (max-width: 480px) {
   .app-header {
     padding: 16px 12px;
@@ -660,7 +651,7 @@ onUnmounted(() => {
   
   .app-header h1 {
     font-size: 1.6em;
-    word-break: keep-all; /* 防止中文换行 */
+    word-break: keep-all;
   }
   
   .header-logo {
@@ -669,7 +660,7 @@ onUnmounted(() => {
   }
 }
 
-/* 超小屏幕设备 (最大 360px) */
+/* 超小屏幕设备 */
 @media (max-width: 360px) {
   .app-header {
     padding: 14px 10px;
@@ -707,16 +698,15 @@ onUnmounted(() => {
   }
 }
 
-/* 触摸设备优化 */
+/* 触摸设备 */
 @media (hover: none) and (pointer: coarse) {
-  /* 增加触摸目标大小 */
   :deep(.n-switch) {
     min-width: 50px !important;
     min-height: 30px !important;
   }
 }
 
-/* 高分辨率屏幕优化 */
+/* 高分辨率屏幕 */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .header-logo {
     image-rendering: -webkit-optimize-contrast;
@@ -724,7 +714,6 @@ onUnmounted(() => {
   }
 }
 
-/* 暗色主题适配 */
 :global(.dark) .floating-circle {
   background: rgba(90, 155, 212, 0.1);
 }
@@ -762,7 +751,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px; /* 移除上下内边距，靠固定高度居中 */
+  padding: 0 20px;
   max-width: 1200px;
   margin: 0 auto;
   gap: 20px;
@@ -851,19 +840,16 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-/* 深色主题适配由 --sticky-bg 变量控制 */
-
-/* 响应式设计 */
 @media (max-width: 768px) {
   /* 手机端：隐藏完整 header，仅使用简化 header */
   .app-header {
     display: none;
   }
   .sticky-header-spacer {
-    height: 72px; /* 与手机端 sticky header 高度一致，避免遮挡内容 */
+    height: 72px; 
   }
   .sticky-header-content {
-    padding: 0 16px; /* 取消上下内边距，改用固定高度垂直居中 */
+    padding: 0 16px; 
     gap: 12px;
     align-items: center;
     height: 100%;
@@ -871,7 +857,7 @@ onUnmounted(() => {
   
   .sticky-title {
     font-size: 1.35em;
-    line-height: 1.1; /* 降低行高，减小下方视觉留白 */
+    line-height: 1.1;
   }
   
   .sticky-logo {
@@ -883,14 +869,13 @@ onUnmounted(() => {
     max-width: none;
   }
 
-  /* Mobile: keep icons, logo, theme button in one row */
   .sticky-header-content {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
   }
   .sticky-header {
-    height: 72px; /* 固定高度，确保上下留白对称 */
+    height: 72px; 
   }
   .sticky-desktop-toolbar {
     display: none;
@@ -901,7 +886,6 @@ onUnmounted(() => {
     align-items: center;
   }
 
-  /* 改为绝对定位覆盖中列，避免撑高 header */
   .sticky-header-center {
     position: relative;
   }
@@ -953,7 +937,7 @@ onUnmounted(() => {
 
   .mobile-inline-search :deep(input) {
     color: var(--text-primary) !important;
-    line-height: 38px !important; /* 贴合容器高度 */
+    line-height: 38px !important;
   }
 
   .mobile-inline-search :deep(input::placeholder) {
@@ -963,7 +947,7 @@ onUnmounted(() => {
 
 @media (max-width: 480px) {
   .sticky-header-content {
-    padding: 0 14px; /* 与上一区间对齐，去除上下内边距 */
+    padding: 0 14px; 
     gap: 8px;
     height: 100%;
   }
@@ -982,10 +966,9 @@ onUnmounted(() => {
     height: 36px !important;
   }
   .sticky-header {
-    height: 68px; /* 固定高度，完全去除上下不平衡 */
+    height: 68px; 
   }
 
-  /* 仅在超小屏幕且搜索展开时隐藏标题，并释放空间 */
   .hidden-on-search {
     display: none !important;
   }
@@ -996,10 +979,9 @@ onUnmounted(() => {
   min-width: 220px;
 }
 
-/* 桌面端恢复上下内边距与自适应高度 */
 @media (min-width: 769px) {
   .sticky-header-content {
-    padding: 16px 24px; /* 更厚的上下间距与更宽的左右留白 */
+    padding: 16px 24px; 
     height: auto;
   }
 }

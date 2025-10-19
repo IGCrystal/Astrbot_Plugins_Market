@@ -18,7 +18,7 @@
         </n-icon>
       </div>
       <n-select
-        v-model:value="sortBy"
+        :value="props.sortBy"
         :options="compact ? compactSortOptions : sortOptions"
         @update:value="handleSortChange"
         :size="compact ? 'small' : 'medium'"
@@ -30,7 +30,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { NSelect, NIcon } from 'naive-ui'
 import { Search, CloseCircle } from '@vicons/ionicons5'
 
@@ -64,8 +63,6 @@ const compactSortOptions = [
   { label: 'Star', value: 'stars' }
 ]
 
-const sortBy = ref(props.sortBy)
-
 const handleSortChange = (value) => {
   emit('update:sortBy', value)
 }
@@ -73,7 +70,6 @@ const handleSortChange = (value) => {
 const handleSearchInput = (e) => {
   const value = e.target.value
   emit('update:searchQuery', value)
-  // 如果当前页不是第一页，自动重置到第一页
   if (props.currentPage > 1) {
     emit('update:currentPage', 1)
   }
@@ -81,7 +77,6 @@ const handleSearchInput = (e) => {
 
 const handleClearSearch = () => {
   emit('update:searchQuery', '')
-  // 重置到第一页
   if (props.currentPage > 1) {
     emit('update:currentPage', 1)
   }
@@ -178,7 +173,7 @@ const handleClearSearch = () => {
   display: none !important;
 }
 
-/* 下拉菜单样式统一 */
+/* 下拉菜单 */
 :deep(.n-base-select-menu) {
   border-radius: 16px !important;
   padding: 8px !important;
@@ -200,7 +195,7 @@ const handleClearSearch = () => {
   background: var(--input-bg-hover) !important;
 }
 
-/* 自定义搜索框 - 简洁的单层结构 */
+/* 自定义搜索框  */
 .custom-search-box {
   display: flex;
   align-items: center;
@@ -278,7 +273,7 @@ const handleClearSearch = () => {
   font-weight: 400;
 }
 
-/* 响应式设计 */
+/* 响应式 */
 @media (max-width: 768px) {
   .search-container {
     max-width: 90%;
@@ -429,7 +424,6 @@ const handleClearSearch = () => {
   padding: 0 8px !important;
 }
 
-/* Ensure compact input content matches search text color */
 :deep(.sort-select--compact .n-base-selection-input__content) {
   color: var(--text-secondary) !important;
 }
@@ -442,8 +436,6 @@ const handleClearSearch = () => {
   box-shadow: none !important;
 }
 
-/* 深色主题下的 compact 模式样式已通过 CSS 变量自动适配 */
-/* ===== Overrides: keep transparent look in full header, theme-aware text ===== */
 .search-container--header :deep(.sort-select .n-base-selection-overlay) {
   background: var(--input-bg) !important;
 }
@@ -492,12 +484,10 @@ const handleClearSearch = () => {
   background: var(--input-bg-hover) !important;
 }
 
-/* Compact: ensure visible border in sticky header */
 .search-container--compact .custom-search-box {
   border: 2px solid var(--border-base);
 }
 
-/* Strengthen compact hover/focus border color */
 .custom-search-box--compact:hover {
   background: var(--bg-hover);
   border-color: var(--primary-color) !important;
@@ -508,8 +498,6 @@ const handleClearSearch = () => {
   box-shadow: none;
 }
 
-/* Final color overrides to ensure correctness */
-/* Full header: white-like text via input variables */
 .search-container--header :deep(.n-base-selection-input__content),
 .search-container--header :deep(.n-base-selection-label) {
   color: var(--input-text) !important;
@@ -518,7 +506,6 @@ const handleClearSearch = () => {
   color: var(--input-placeholder) !important;
 }
 
-/* Compact: softer gray text to match search */
 .search-container--compact :deep(.n-base-selection-input__content),
 .search-container--compact :deep(.n-base-selection-label) {
   color: var(--text-secondary) !important;
@@ -527,7 +514,6 @@ const handleClearSearch = () => {
   color: var(--text-tertiary) !important;
 }
 
-/* Full header: borderless search box */
 .search-container--header .custom-search-box {
   border: none !important;
 }

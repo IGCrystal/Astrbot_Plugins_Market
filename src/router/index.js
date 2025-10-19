@@ -1,8 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-// 按需加载提交页，降低首屏 JS
-const SubmitPlugin = () => import('../views/SubmitPlugin.vue')
 
+const SubmitPlugin = () => import('../views/SubmitPlugin.vue')
 const routes = [
   {
     path: '/',
