@@ -328,7 +328,7 @@ async function fetchReadme() {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .plugin-details__content {
-    max-height: calc(80vh - 140px);
+    max-height: calc(70vh - 140px);
   }
 }
 
