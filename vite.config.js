@@ -23,26 +23,7 @@ export default defineConfig({
     }
   },
   build: {
-    chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-          const rel = id.split('node_modules/')[1];
-          const parts = rel.split('/');
-          const pkg = parts[0].startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0];
-
-          if (pkg === 'vue' || pkg === 'vue-router') return 'vue';
-          if (pkg === 'pinia') return 'pinia';
-          if (pkg === 'naive-ui') return 'naive';
-          if (pkg.startsWith('@vicons')) return 'icons';
-          if (pkg === 'highlight.js') return 'hljs';
-          if (pkg === 'axios') return 'axios';
-          if (pkg === 'marked') return 'markdown';
-          return 'vendor';
-        }
-      }
-    }
+    chunkSizeWarningLimit: 1000
   },
   server: {
     host: '0.0.0.0',
