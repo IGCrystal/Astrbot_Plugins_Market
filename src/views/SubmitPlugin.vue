@@ -51,16 +51,29 @@
             <n-form ref="formRef" :model="formData" :rules="rules">
               <n-grid :x-gap="12" :cols="1" :item-responsive="true">
                 <n-grid-item>
-                  <n-form-item label="插件名称" path="name">
-                    <n-input v-model:value="formData.name" placeholder="请输入插件名称" />
+                  <n-form-item label="插件名" path="name">
+                    <n-input 
+                      v-model:value="formData.name" 
+                      placeholder="插件名，请以 astrbot_plugin_ 开头"
+                    />
                   </n-form-item>
                 </n-grid-item>
                 <n-grid-item>
-                  <n-form-item label="插件描述" path="desc">
+                  <n-form-item label="展示名称" path="display_name">
+                    <n-input 
+                      v-model:value="formData.display_name" 
+                      placeholder="用于展示的插件名，方便人类阅读"
+                    />
+                  </n-form-item>
+                </n-grid-item>
+                <n-grid-item>
+                  <n-form-item label="插件介绍" path="desc">
                     <n-input 
                       v-model:value="formData.desc" 
                       type="textarea" 
-                      placeholder="请输入插件描述"
+                      placeholder="插件的简短介绍（最多70字）"
+                      :maxlength="70"
+                      :show-count="true"
                       :rows="4"
                       class="desc-textarea"
                       :resizable="false"
@@ -86,7 +99,7 @@
                   <n-form-item label="社交链接（可选）" path="social_link">
                     <n-input 
                       v-model:value="formData.social_link" 
-                      placeholder="请输入社交链接，如个人主页、Twitter等" 
+                      placeholder="请输入完整的社交链接，如个人主页、Twitter等，推荐 GitHub 主页" 
                     />
                   </n-form-item>
                 </n-grid-item>
@@ -238,6 +251,7 @@ const store = usePluginStore()
 const formRef = ref(null)
 const generatedJSON = ref('')
 const currentStep = ref(1)
+const MAX_DESC_LENGTH = 30
 const steps = [
   {
     title: '填写信息',
@@ -265,6 +279,7 @@ const stepChecks = reactive({
 
 const formData = reactive({
   name: '',
+  display_name: '',
   desc: '',
   author: '',
   repo: '',
@@ -273,28 +288,32 @@ const formData = reactive({
 })
 
 const rules = {
-  name: {
+  name: [
+    { required: true, message: '请输入插件名', trigger: 'blur' },
+    { pattern: /^astrbot_plugin_[a-z0-9_-]+$/i, message: '插件名需以 astrbot_plugin_ 开头，仅含字母、数字、下划线、短横线', trigger: 'blur' }
+  ],
+  display_name: {
     required: true,
-    message: '请输入插件名称',
+    message: '请输入用于展示的插件名',
     trigger: 'blur'
   },
-  desc: {
-    required: true,
-    message: '请输入插件描述',
-    trigger: 'blur'
-  },
+  desc: [
+    { required: true, message: '请输入插件的简短介绍', trigger: 'blur' },
+    { 
+      validator: (_, value) => Array.from((value || '').toString()).length <= MAX_DESC_LENGTH,
+      message: '插件介绍最多30字',
+      trigger: ['input', 'blur']
+    }
+  ],
   author: {
     required: true,
     message: '请输入作者名称',
     trigger: 'blur'
   },
-  repo: {
-    required: true,
-    message: '请输入仓库地址',
-    trigger: 'blur',
-    pattern: /^https:\/\/github\.com\/[\w-]+\/[\w-]+$/,
-    message: '请输入有效的GitHub仓库地址'
-  }
+  repo: [
+    { required: true, message: '请输入仓库地址', trigger: 'blur' },
+    { pattern: /^https:\/\/github\.com\/[\w-]+\/[\w.-]+$/, message: '请输入有效的GitHub仓库地址', trigger: 'blur' }
+  ]
 }
 
 const goBack = () => {
@@ -310,6 +329,7 @@ const validateAndGenerateJSON = () => {
     if (!errors) {
       const jsonData = {
         name: formData.name,
+        display_name: formData.display_name,
         desc: formData.desc,
         author: formData.author,
         repo: formData.repo,
