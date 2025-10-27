@@ -60,6 +60,8 @@ export const usePluginStore = defineStore('plugins', () => {
       
       const matchesSearch = !searchValue || 
         (plugin.name && plugin.name.toLowerCase().includes(searchValue)) ||
+        (plugin.display_name && plugin.display_name.toLowerCase().includes(searchValue)) ||
+        (plugin.id && plugin.id.toLowerCase().includes(searchValue)) ||
         (plugin.desc && plugin.desc.toLowerCase().includes(searchValue)) ||
         (plugin.author && plugin.author.toLowerCase().includes(searchValue))
       
@@ -79,15 +81,14 @@ export const usePluginStore = defineStore('plugins', () => {
       })
     } else if (sortBy.value === 'random') {
       filtered.sort((a, b) => {
-        const ha = stableHash(a.name || '', randomSeed.value)
-        const hb = stableHash(b.name || '', randomSeed.value)
+        const ha = stableHash(a.id || a.name || '', randomSeed.value)
+        const hb = stableHash(b.id || b.name || '', randomSeed.value)
         return ha - hb
       })
     } else {
-      // 默认使用原始顺序，不进行排序
       filtered.sort((a, b) => {
-        const indexA = plugins.value.findIndex(p => p.name === a.name)
-        const indexB = plugins.value.findIndex(p => p.name === b.name)
+        const indexA = plugins.value.findIndex(p => (p.id || p.name) === (a.id || a.name))
+        const indexB = plugins.value.findIndex(p => (p.id || p.name) === (b.id || b.name))
         return indexA - indexB
       })
     }
@@ -116,14 +117,18 @@ export const usePluginStore = defineStore('plugins', () => {
     try {
       const response = await fetch('https://api.soulter.top/astrbot/plugins', { cache: 'no-store' })
       const data = await response.json()
-      plugins.value = Object.entries(data).map(([name, details]) => {
+      plugins.value = Object.entries(data).map(([keyName, details]) => {
         const tags = details.tags ? 
           (Array.isArray(details.tags) ? details.tags : [details.tags]) 
           : []
-          
+        const machineName = keyName
+        const displayName = details.display_name || details.name || machineName
+
         return {
-          name,
           ...details,
+          id: machineName,
+          name: displayName,          
+          display_name: displayName,  
           tags
         }
       })

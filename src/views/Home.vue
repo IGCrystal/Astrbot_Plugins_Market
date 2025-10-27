@@ -64,7 +64,7 @@
       <template v-else>
         <plugin-card
           v-for="(plugin, index) in paginatedPlugins"
-          :key="`${plugin.name}-${filterKey}-${randomSeed}`"
+          :key="`${plugin.id || plugin.name}-${filterKey}-${randomSeed}`"
           :plugin="plugin"
           :index="index"
           :seed="randomSeed"
