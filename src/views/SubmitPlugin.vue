@@ -91,8 +91,11 @@
                   </n-form-item>
                 </n-grid-item>
                 <n-grid-item>
-                  <n-form-item label="标签（可选，按回车添加）" path="tags">
-                    <n-dynamic-tags v-model:value="formData.tags" />
+                  <n-form-item label="标签（可选，最多 5 个，按回车添加）" path="tags">
+                    <n-dynamic-tags 
+                      v-model:value="formData.tags" 
+                      :max="5"
+                    />
                   </n-form-item>
                 </n-grid-item>
                 <n-grid-item>
@@ -313,6 +316,13 @@ const rules = {
   repo: [
     { required: true, message: '请输入仓库地址', trigger: 'blur' },
     { pattern: /^https:\/\/github\.com\/[\w-]+\/[\w.-]+$/, message: '请输入有效的GitHub仓库地址', trigger: 'blur' }
+  ],
+  tags: [
+    {
+      validator: (_, value) => !Array.isArray(value) || value.length <= 5,
+      message: '标签最多 5 个',
+      trigger: ['change', 'blur']
+    }
   ]
 }
 
