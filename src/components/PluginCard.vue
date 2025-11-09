@@ -18,6 +18,14 @@
         role="banner" 
         aria-labelledby="plugin-header-content"
       >
+        <img
+          v-if="plugin.logo"
+          :src="plugin.logo"
+          :alt="`${plugin.name} logo`"
+          class="plugin-logo"
+          loading="lazy"
+          @error="onLogoError"
+        />
         <div 
           id="plugin-header-content"
           class="plugin-name-container" 
@@ -194,6 +202,13 @@ const pluginNameEl = ref(null)
 const cardRef = ref(null)
 const resizeObserver = ref(null)
 
+const onLogoError = (e) => {
+  if (e && e.target) {
+    // 隐藏加载失败的 logo，避免占位
+    e.target.style.display = 'none'
+  }
+}
+
 const checkTextOverflow = () => {
   nextTick(() => {
     if (nameContainer.value && nameTextEl.value) {
@@ -283,6 +298,14 @@ const showDetails = () => {
 </script>
 
 <style scoped>
+.plugin-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-right: 8px;
+  flex: 0 0 auto;
+}
 @keyframes cardAppear {
   0% {
     opacity: 0;
@@ -319,7 +342,7 @@ const showDetails = () => {
 
 .card-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 8px 16px;
   border-bottom: 1px solid var(--border-base);
@@ -341,6 +364,8 @@ const showDetails = () => {
   max-width: 75%;
   overflow: hidden;
   position: relative;
+  flex: 1 1 auto;
+  min-width: 0; /* 允许在 flex 布局中收缩，确保文本溢出裁切生效 */
 }
 
 .plugin-name-container:has(.plugin-name.marquee) {
@@ -439,6 +464,7 @@ const showDetails = () => {
   padding: 2px 10px !important;
   font-weight: 600;
   flex-shrink: 0;
+  margin-left: auto; /* 将版本标签推到最右侧，左侧保持 logo+名称的固定间距 */
 }
 
 .card-content {
