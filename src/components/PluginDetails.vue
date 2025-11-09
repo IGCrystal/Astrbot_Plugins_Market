@@ -1,95 +1,86 @@
 <template>
-  <n-modal
-    v-model:show="show"
-    :mask-closable="true"
-    preset="card"
-    class="plugin-details"
-    style="max-width: 900px; width: 90%; height: 90vh;"
-    :bordered="false"
-  >
-    <template #header>
-      <div class="plugin-details__header">
-        <n-h2 class="plugin-details__title">
-          <div class="details-header-row" role="heading" aria-level="2">
-            <div class="details-header-left" aria-label="插件标题与标识">
+  <teleport to="body">
+    <transition name="modal-fade">
+      <div v-if="show" class="modal-mask" :class="{ dark: isDarkMode }" @click.self="show = false">
+        <div class="modal-container" @click.stop>
+          <!-- 头部 -->
+          <div class="modal-header">
+            <div class="header-content">
               <img
                 v-if="plugin?.logo"
                 :src="plugin.logo"
                 :alt="`${plugin?.name} logo`"
-                class="details-logo"
+                class="plugin-logo"
                 loading="lazy"
                 @error="onLogoError"
               />
-              <n-icon v-else size="24" class="details-fallback-icon" aria-hidden="true">
+              <n-icon v-else size="28" class="plugin-icon">
                 <extension-puzzle-outline />
               </n-icon>
-              <span class="details-title" :title="plugin?.name">{{ plugin?.name }}</span>
-              <n-tag type="success" size="small" :bordered="false" class="details-version" :aria-label="`版本：${plugin?.version}`">
+              <h2 class="plugin-title">{{ plugin?.name }}</h2>
+              <n-tag type="success" size="small" :bordered="false" class="plugin-version">
                 {{ plugin?.version?.startsWith('v') ? plugin?.version : 'v' + plugin?.version }}
               </n-tag>
             </div>
+            <button class="close-btn" @click="show = false" aria-label="关闭">
+              <n-icon size="24">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </n-icon>
+            </button>
           </div>
-        </n-h2>
-      </div>
-    </template>
 
-    <div class="plugin-details__content">
-      <div class="readme-scroll">
-        <n-space vertical size="large">
-          <!-- README 内容 -->
-          <div v-if="loading" class="readme-loading">
-            <n-spin size="medium">
-              <template #description>
-                正在加载 README...
-              </template>
-            </n-spin>
+          <!-- 内容区域 -->
+          <div class="modal-body">
+            <div v-if="loading" class="content-state">
+              <n-spin size="medium">
+                <template #description>
+                  正在加载 README...
+                </template>
+              </n-spin>
+            </div>
+            <div v-else-if="error" class="content-state">
+              <n-empty description="加载 README 失败">
+                <template #extra>
+                  <n-button size="small" @click="fetchReadme">
+                    重试
+                  </n-button>
+                </template>
+              </n-empty>
+            </div>
+            <div v-else class="markdown-content" v-html="readmeHtml"></div>
           </div>
-          <div v-else-if="error" class="readme-error">
-            <n-empty description="加载 README 失败">
-              <template #extra>
-                <n-button size="small" @click="fetchReadme">
-                  重试
-                </n-button>
-              </template>
-            </n-empty>
-          </div>
-          <div v-else class="markdown-content" v-html="readmeHtml"></div>
-        </n-space>
-      </div>
-    </div>
 
-    <template #footer>
-      <div class="plugin-details__footer">
-        <n-space justify="end" :size="12">
-          <n-button
-            secondary
-            type="primary"
-            @click="openUrl(plugin?.repo)"
-          >
-            <template #icon>
-              <n-icon><logo-github /></n-icon>
-            </template>
-            查看仓库
-          </n-button>
-          <n-button
-            type="primary"
-            @click="show = false"
-          >
-            关闭
-          </n-button>
-        </n-space>
+          <!-- 底部 -->
+          <div class="modal-footer">
+            <n-button
+              secondary
+              type="primary"
+              @click="openUrl(plugin?.repo)"
+            >
+              <template #icon>
+                <n-icon><logo-github /></n-icon>
+              </template>
+              查看仓库
+            </n-button>
+            <n-button
+              type="primary"
+              @click="show = false"
+            >
+              关闭
+            </n-button>
+          </div>
+        </div>
       </div>
-    </template>
-  </n-modal>
+    </transition>
+  </teleport>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import {
-  NModal,
-  NSpace,
-  NH2,
   NIcon,
   NTag,
   NButton,
@@ -125,6 +116,10 @@ const onLogoError = (e) => {
 const store = usePluginStore()
 const { isDarkMode } = storeToRefs(store)
 
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
+
 watch(() => props.show, (newVal) => {
   show.value = newVal
 })
@@ -133,6 +128,9 @@ watch(show, (newVal) => {
   emit('update:show', newVal)
   if (newVal) {
     fetchReadme()
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
   }
 })
 
@@ -214,92 +212,169 @@ async function fetchReadme() {
 </script>
 
 <style scoped>
-.plugin-details {
-  --modal-padding: 24px !important;
+/* 模态框遮罩 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
 }
 
-:deep(.plugin-details.n-modal) {
-  height: 90dvh !important;
-  height: 90vh !important;
-}
-
-:deep(.plugin-details.n-modal .n-card) {
+/* 模态框容器 */
+.modal-container {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
   display: flex;
   flex-direction: column;
-  height: 100% !important;
+  overflow: hidden;
 }
 
-:deep(.plugin-details.n-modal .n-card__content) {
-  flex: 1 1 auto;
+/* 深色模式下的样式 */
+.modal-mask.dark .modal-container {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.modal-header {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  overflow: hidden; 
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  gap: 16px;
 }
 
-.plugin-details__header {
-  padding: 0 var(--modal-padding);
-  margin: calc(-1 * var(--modal-padding)) calc(-1 * var(--modal-padding)) 0;
-  padding-top: var(--modal-padding);
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--n-border-color);
+.modal-mask.dark .modal-header {
+  border-bottom-color: #334155;
 }
 
-.plugin-details__title {
-  margin: 0;
-}
-
-.details-header-row {
+.header-content {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
-.details-header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1 1 auto;
-  min-width: 0; 
-}
-
-.details-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+.plugin-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   object-fit: cover;
-  flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
-.details-title {
+.plugin-icon {
+  flex-shrink: 0;
+  color: #64748b;
+}
+
+.modal-mask.dark .plugin-icon {
+  color: #cbd5e1;
+}
+
+.plugin-title {
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 600;
+  color: #1e293b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
-.details-version {
+.modal-mask.dark .plugin-title {
+  color: #f1f5f9;
+}
+
+.plugin-version {
   flex-shrink: 0;
-  margin-left: 4px; 
 }
 
-.plugin-details__content {
-  padding: var(--modal-padding) 0;
-  padding-right: 16px;
-  margin-right: 4px;
-  flex: 1 1 auto;
-  min-height: 0; 
+.close-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 6px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
-.readme-scroll {
-  flex: 1 1 auto;
+.close-btn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.modal-mask.dark .close-btn {
+  color: #cbd5e1;
+}
+
+.modal-mask.dark .close-btn:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+/* 内容区域 */
+.modal-body {
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+.content-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* 底部 */
+.modal-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.modal-mask.dark .modal-footer {
+  border-top-color: #334155;
 }
 
 .markdown-content {
-  color: var(--n-text-color-2);
+  color: #64748b;
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.modal-mask.dark .markdown-content {
+  color: #cbd5e1;
 }
 
 .markdown-content :deep(h1),
@@ -309,7 +384,16 @@ async function fetchReadme() {
 .markdown-content :deep(h5),
 .markdown-content :deep(h6) {
   margin: 1.5em 0 0.5em;
-  color: var(--n-text-color);
+  color: #1e293b;
+}
+
+.modal-mask.dark .markdown-content :deep(h1),
+.modal-mask.dark .markdown-content :deep(h2),
+.modal-mask.dark .markdown-content :deep(h3),
+.modal-mask.dark .markdown-content :deep(h4),
+.modal-mask.dark .markdown-content :deep(h5),
+.modal-mask.dark .markdown-content :deep(h6) {
+  color: #f1f5f9;
 }
 
 .markdown-content :deep(h1:first-child),
@@ -324,22 +408,33 @@ async function fetchReadme() {
 
 .markdown-content :deep(img) {
   max-width: 100%;
+  height: auto;
   border-radius: 8px;
+  display: block;
 }
 
 .markdown-content :deep(code) {
-  background: var(--n-code-color);
+  background: #f8fafc;
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-size: 0.9em;
   font-family: monospace;
 }
 
+.modal-mask.dark .markdown-content :deep(code) {
+  background: #334155;
+}
+
 .markdown-content :deep(pre) {
-  background: var(--n-code-color);
+  background: #f8fafc;
   padding: 16px;
   border-radius: 8px;
   overflow-x: auto;
+  max-width: 100%;
+}
+
+.modal-mask.dark .markdown-content :deep(pre) {
+  background: #334155;
 }
 
 .markdown-content :deep(pre code) {
@@ -351,8 +446,13 @@ async function fetchReadme() {
 .markdown-content :deep(blockquote) {
   margin: 1em 0;
   padding-left: 1em;
-  border-left: 4px solid var(--n-border-color);
-  color: var(--n-text-color-3);
+  border-left: 4px solid #e2e8f0;
+  color: #94a3b8;
+}
+
+.modal-mask.dark .markdown-content :deep(blockquote) {
+  border-left-color: #334155;
+  color: #94a3b8;
 }
 
 .markdown-content :deep(ul),
@@ -369,68 +469,112 @@ async function fetchReadme() {
 
 .markdown-content :deep(th),
 .markdown-content :deep(td) {
-  border: 1px solid var(--n-border-color);
+  border: 1px solid #e2e8f0;
   padding: 8px;
   text-align: left;
 }
 
+.modal-mask.dark .markdown-content :deep(th),
+.modal-mask.dark .markdown-content :deep(td) {
+  border-color: #334155;
+}
+
 .markdown-content :deep(th) {
-  background: var(--n-color-hover);
+  background: #f8fafc;
 }
 
-.plugin-details__footer {
-  padding: var(--modal-padding);
-  margin: 0 calc(-1 * var(--modal-padding));
-  margin-top: calc(-1 * var(--modal-padding));
-  border-top: 0px solid var(--n-border-color);
+.modal-mask.dark .markdown-content :deep(th) {
+  background: #334155;
 }
 
-.readme-loading,
-.readme-error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
+/* 过渡动画 */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-active .modal-container {
+  animation: modal-slide-in 0.3s ease;
+}
+
+.modal-fade-leave-active .modal-container {
+  animation: modal-slide-out 0.3s ease;
+}
+
+@keyframes modal-slide-in {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slide-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .modal-mask {
+    padding: 10px;
+  }
+  
+  .modal-container {
+    height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 16px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .modal-footer {
+    padding: 16px;
+  }
+  
+  .plugin-title {
+    font-size: 1.25rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .plugin-details {
-    --modal-padding: 16px;
+  .modal-header {
+    padding: 12px;
   }
   
-  .plugin-details__title {
-    font-size: 1.2em;
+  .modal-body {
+    padding: 12px;
   }
-}
-
-.n-modal.plugin-details {
-  height: 90dvh !important;
-  height: 90vh !important;
-  display: flex !important;
-}
-
-.n-modal.plugin-details .n-modal-body {
-  height: 100% !important;
-}
-
-.n-modal.plugin-details .n-card {
-  height: 100% !important;
-  display: flex;
-  flex-direction: column;
-}
-
-.n-modal.plugin-details .n-card__content {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.n-modal.plugin-details .readme-scroll {
-  overflow-y: auto;
+  
+  .modal-footer {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .plugin-title {
+    font-size: 1.1rem;
+  }
+  
+  .header-content {
+    gap: 8px;
+  }
 }
 </style>
