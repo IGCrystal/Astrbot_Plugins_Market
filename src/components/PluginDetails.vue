@@ -4,48 +4,58 @@
     :mask-closable="true"
     preset="card"
     class="plugin-details"
-    style="max-width: 900px; width: 90%"
+    style="max-width: 900px; width: 90%; height: 90vh;"
     :bordered="false"
   >
     <template #header>
       <div class="plugin-details__header">
         <n-h2 class="plugin-details__title">
-          <n-space align="center" :size="12">
-            <n-icon size="24">
-              <extension-puzzle-outline />
-            </n-icon>
-            {{ plugin?.name }}
-            <n-tag type="success" size="small" :bordered="false">
-              {{ plugin?.version?.startsWith('v') ? plugin?.version : 'v' + plugin?.version }}
-            </n-tag>
-          </n-space>
+          <div class="details-header-row" role="heading" aria-level="2">
+            <div class="details-header-left" aria-label="插件标题与标识">
+              <img
+                v-if="plugin?.logo"
+                :src="plugin.logo"
+                :alt="`${plugin?.name} logo`"
+                class="details-logo"
+                loading="lazy"
+                @error="onLogoError"
+              />
+              <n-icon v-else size="24" class="details-fallback-icon" aria-hidden="true">
+                <extension-puzzle-outline />
+              </n-icon>
+              <span class="details-title" :title="plugin?.name">{{ plugin?.name }}</span>
+              <n-tag type="success" size="small" :bordered="false" class="details-version" :aria-label="`版本：${plugin?.version}`">
+                {{ plugin?.version?.startsWith('v') ? plugin?.version : 'v' + plugin?.version }}
+              </n-tag>
+            </div>
+          </div>
         </n-h2>
       </div>
     </template>
 
     <div class="plugin-details__content">
-      <n-space vertical size="large">
-        <!-- README 内容 -->
-        <div v-if="loading" class="readme-loading">
-          <n-spin size="medium">
-            <template #description>
-              正在加载 README...
-            </template>
-          </n-spin>
-        </div>
-        <div v-else-if="error" class="readme-error">
-          <n-empty description="加载 README 失败">
-            <template #extra>
-              <n-button size="small" @click="fetchReadme">
-                重试
-              </n-button>
-            </template>
-          </n-empty>
-        </div>
-        <div v-else class="markdown-content" v-html="readmeHtml"></div>
-
-        
-      </n-space>
+      <div class="readme-scroll">
+        <n-space vertical size="large">
+          <!-- README 内容 -->
+          <div v-if="loading" class="readme-loading">
+            <n-spin size="medium">
+              <template #description>
+                正在加载 README...
+              </template>
+            </n-spin>
+          </div>
+          <div v-else-if="error" class="readme-error">
+            <n-empty description="加载 README 失败">
+              <template #extra>
+                <n-button size="small" @click="fetchReadme">
+                  重试
+                </n-button>
+              </template>
+            </n-empty>
+          </div>
+          <div v-else class="markdown-content" v-html="readmeHtml"></div>
+        </n-space>
+      </div>
     </div>
 
     <template #footer>
@@ -104,6 +114,12 @@ const show = ref(props.show)
 const loading = ref(false)
 const error = ref(false)
 const readmeHtml = ref('')
+
+const onLogoError = (e) => {
+  if (e && e.target) {
+    e.target.style.display = 'none'
+  }
+}
 
 // 获取全局主题状态
 const store = usePluginStore()
@@ -202,8 +218,22 @@ async function fetchReadme() {
   --modal-padding: 24px !important;
 }
 
-.plugin-details :deep(.n-modal) {
-  max-height: 90vh !important;
+:deep(.plugin-details.n-modal) {
+  height: 90dvh !important;
+  height: 90vh !important;
+}
+
+:deep(.plugin-details.n-modal .n-card) {
+  display: flex;
+  flex-direction: column;
+  height: 100% !important;
+}
+
+:deep(.plugin-details.n-modal .n-card__content) {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
 }
 
 .plugin-details__header {
@@ -216,17 +246,55 @@ async function fetchReadme() {
 
 .plugin-details__title {
   margin: 0;
+}
+
+.details-header-row {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.details-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0; 
+}
+
+.details-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.details-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details-version {
+  flex-shrink: 0;
+  margin-left: 4px; 
 }
 
 .plugin-details__content {
   padding: var(--modal-padding) 0;
   padding-right: 16px;
   margin-right: 4px;
+  flex: 1 1 auto;
+  min-height: 0; 
+  display: flex;
+}
+
+.readme-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
-  max-height: calc(80vh - 180px);
 }
 
 .markdown-content {
@@ -327,9 +395,6 @@ async function fetchReadme() {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .plugin-details__content {
-    max-height: calc(70vh - 140px);
-  }
 }
 
 @media (max-width: 480px) {
@@ -340,5 +405,32 @@ async function fetchReadme() {
   .plugin-details__title {
     font-size: 1.2em;
   }
+}
+
+.n-modal.plugin-details {
+  height: 90dvh !important;
+  height: 90vh !important;
+  display: flex !important;
+}
+
+.n-modal.plugin-details .n-modal-body {
+  height: 100% !important;
+}
+
+.n-modal.plugin-details .n-card {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.n-modal.plugin-details .n-card__content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.n-modal.plugin-details .readme-scroll {
+  overflow-y: auto;
 }
 </style>
