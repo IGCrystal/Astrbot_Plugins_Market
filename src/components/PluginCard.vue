@@ -299,11 +299,11 @@ const showDetails = () => {
 
 <style scoped>
 .plugin-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   object-fit: cover;
-  margin-right: 8px;
+  margin-right: 12px;
   flex: 0 0 auto;
 }
 @keyframes cardAppear {
