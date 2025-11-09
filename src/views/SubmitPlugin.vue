@@ -251,7 +251,29 @@ const formData = reactive({
 const rules = {
   name: [
     { required: true, message: '请输入插件名', trigger: 'blur' },
-    { pattern: /^astrbot_plugin_[a-z0-9_-]+$/i, message: '插件名需以 astrbot_plugin_ 开头，仅含字母、数字、下划线、短横线', trigger: 'blur' }
+    { 
+      validator: (_, value) => {
+        if (!value) return true
+        if (!value.startsWith('astrbot_plugin_')) {
+          return new Error('插件名必须以 astrbot_plugin_ 开头')
+        }
+        const afterPrefix = value.substring(16)
+        if (!afterPrefix) {
+          return new Error('插件名在 astrbot_plugin_ 后必须包含内容')
+        }
+        if (!/^[a-z0-9_-]+$/i.test(afterPrefix)) {
+          const invalidChars = afterPrefix.match(/[^a-z0-9_-]/gi)
+          if (invalidChars) {
+            const uniqueChars = [...new Set(invalidChars)].join('、')
+            return new Error(`插件名包含非法字符：${uniqueChars}（仅允许字母、数字、下划线、短横线）`)
+          }
+          return new Error('插件名仅允许包含字母、数字、下划线、短横线')
+        }
+        
+        return true
+      },
+      trigger: 'blur'
+    }
   ],
   display_name: {
     required: true,
@@ -703,7 +725,13 @@ const submitPlugin = () => {
 }
 
 :deep(.n-form-item-feedback-wrapper) {
-  display: none;
+  min-height: 24px;
+  margin-top: 4px;
+}
+
+:deep(.n-form-item-feedback) {
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 :deep(.n-input-group) {
