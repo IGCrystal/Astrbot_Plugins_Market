@@ -111,17 +111,9 @@
           </n-card>
         </div>
 
-        <!-- 步骤2：JSON预览 -->
+        <!-- 步骤2：预览并提交 -->
         <div v-if="currentStep === 2" class="json-preview-section">
-          <n-card title="JSON预览" class="json-card">
-            <template #header-extra>
-              <n-button @click="copyJSON" type="primary" ghost :disabled="!generatedJSON" class="copy-button">
-                <template #icon>
-                  <n-icon><copy /></n-icon>
-                </template>
-                复制JSON
-              </n-button>
-            </template>
+          <n-card title="预览插件信息" class="json-card">
             <div class="json-content">
               <n-code
                 :code="generatedJSON || '点击生成按钮生成JSON'"
@@ -129,35 +121,11 @@
                 :word-wrap="true"
               />
             </div>
-          </n-card>
-        </div>
-
-        <!-- 步骤3：提交指南 -->
-        <div v-if="currentStep === 3" class="submit-guide-section">
-          <n-card title="提交指南" class="guide-card">
-            <n-timeline>
-              <n-timeline-item 
-                title="复制JSON" 
-                :color="stepChecks.copied ? 'green' : 'grey'"
-                class="timeline-item"
-              >
-                确保已复制生成的JSON内容
-              </n-timeline-item>
-              <n-timeline-item 
-                title="打开Issue页面" 
-                :color="stepChecks.issueOpened ? 'green' : 'grey'"
-                class="timeline-item"
-              >
-                即将在新标签页中打开GitHub Issue模板
-              </n-timeline-item>
-              <n-timeline-item 
-                title="粘贴并提交" 
-                color="grey"
-                class="timeline-item"
-              >
-                将JSON粘贴到指定位置并提交Issue
-              </n-timeline-item>
-            </n-timeline>
+            <div style="margin-top: 16px; padding: 16px; background: var(--bg-base); border-radius: 8px;">
+              <p style="margin: 0 0 12px 0; color: var(--text-secondary); font-size: 14px;">
+                点击下方按钮将自动打开 GitHub Issue 页面，插件信息会自动填充，你只需要勾选确认项并提交即可。
+              </p>
+            </div>
           </n-card>
         </div>
       </div>
@@ -191,17 +159,7 @@
                 key="next1"
                 class="action-button-item"
               >
-                下一步
-              </n-button>
-              <n-button 
-                v-else-if="currentStep === 2"
-                type="primary"
-                @click="nextStep"
-                :disabled="!generatedJSON"
-                key="next2"
-                class="action-button-item"
-              >
-                下一步
+                预览并提交
               </n-button>
               <n-button 
                 v-else
@@ -210,6 +168,9 @@
                 key="submit"
                 class="action-button-item"
               >
+                <template #icon>
+                  <n-icon><logo-github /></n-icon>
+                </template>
                 提交到GitHub
               </n-button>
             </transition>
@@ -244,7 +205,8 @@ import {
   ArrowBack, 
   Copy,
   Moon,
-  Sunny
+  Sunny,
+  LogoGithub
 } from '@vicons/ionicons5'
 import { usePluginStore } from '@/stores/plugins'
 
@@ -254,19 +216,15 @@ const store = usePluginStore()
 const formRef = ref(null)
 const generatedJSON = ref('')
 const currentStep = ref(1)
-const MAX_DESC_LENGTH = 30
+const MAX_DESC_LENGTH = 70
 const steps = [
   {
     title: '填写信息',
     description: '填写插件基本信息'
   },
   {
-    title: '生成JSON',
-    description: '生成并复制JSON'
-  },
-  {
-    title: '提交',
-    description: '提交到GitHub'
+    title: '预览并提交',
+    description: '确认信息并提交'
   }
 ]
 
@@ -303,8 +261,11 @@ const rules = {
   desc: [
     { required: true, message: '请输入插件的简短介绍', trigger: 'blur' },
     { 
-      validator: (_, value) => Array.from((value || '').toString()).length <= MAX_DESC_LENGTH,
-      message: '插件介绍最多30字',
+      validator: (_, value) => {
+        const length = (value || '').toString().length
+        return length > 0 && length <= MAX_DESC_LENGTH
+      },
+      message: '插件介绍最多70字',
       trigger: ['input', 'blur']
     }
   ],
@@ -365,7 +326,7 @@ const copyJSON = async () => {
 }
 
 const nextStep = () => {
-  if (currentStep.value < 3) {
+  if (currentStep.value < 2) {
     currentStep.value++
   }
 }
@@ -377,7 +338,17 @@ const prevStep = () => {
 }
 
 const submitPlugin = () => {
-  const issueUrl = 'https://github.com/AstrBotDevs/AstrBot/issues/new?template=PLUGIN_PUBLISH.yml'
+  const baseUrl = 'https://github.com/AstrBotDevs/AstrBot/issues/new'
+
+  const pluginInfoValue = `\`\`\`json\n${generatedJSON.value}\n\`\`\``
+  
+  const params = new URLSearchParams({
+    template: 'PLUGIN_PUBLISH.yml',
+    title: `[Plugin] ${formData.display_name}`,
+    'plugin-info': pluginInfoValue
+  })
+  
+  const issueUrl = `${baseUrl}?${params.toString()}`
   window.open(issueUrl, '_blank')
   stepChecks.issueOpened = true
 }
