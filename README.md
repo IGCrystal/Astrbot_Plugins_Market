@@ -1,4 +1,4 @@
-# [AstrBot Plugin Marketplace](https://plugins.astrbot.tech/)
+# [Plugins](https://plugins.astrbot.tech/)
 
 A simple AstrBot plugin marketplace page for showcasing plugins for the AstrBot framework.
 
