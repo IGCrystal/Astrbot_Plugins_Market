@@ -28,7 +28,16 @@
       <div class="header-title">
         <img src="/logo.webp" alt="Astrbot Logo" class="header-logo" width="48" height="48" decoding="async" fetchpriority="high">
       <div class="title-wrapper">
-        <h1>AstrBot 插件市场</h1>
+        <h1 class="animated-title" aria-label="AstrBot 插件市场">
+          <span
+            v-for="(char, index) in titleChars"
+            :key="index"
+            class="title-char"
+            :style="{ animationDelay: `${index * 0.06}s` }"
+            aria-hidden="true"
+          >{{ char }}</span>
+        </h1>
+        <span class="third-party-badge">社区</span>
       </div>
     </div>
     <search-toolbar
@@ -51,6 +60,7 @@
       <div class="sticky-header-left">
         <img src="/logo.webp" alt="Astrbot Logo" class="sticky-logo" width="32" height="32">
         <h2 class="sticky-title" :class="{ 'hidden-on-search': isMobileSearchOpen }">AstrBot 插件市场</h2>
+        <span class="third-party-badge third-party-badge--sticky" :class="{ 'hidden-on-search': isMobileSearchOpen }">社区</span>
       </div>
       
       <div class="sticky-header-center">
@@ -151,6 +161,9 @@ const emit = defineEmits([
   'update:sortBy',
   'update:selectedTag'
 ])
+
+const titleText = 'AstrBot 插件市场'
+const titleChars = computed(() => titleText.split('').map((char) => (char === ' ' ? '\u00A0' : char)))
 
 const handleThemeChange = (value) => {
   emit('update:modelValue', value)
@@ -399,7 +412,31 @@ onUnmounted(() => {
 .title-wrapper {
   display: flex;
   align-items: center;
+  gap: 12px;
   height: 48px;  
+}
+
+.third-party-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--primary-color);
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  animation: content-fade-up 0.5s cubic-bezier(0.33, 1, 0.68, 1) forwards 0.5s;
+  opacity: 0;
+  will-change: transform, opacity;
+  white-space: nowrap;
+}
+
+.third-party-badge--sticky {
+  padding: 4px 10px;
+  font-size: 0.95em;
+  border-radius: 6px;
+  animation: none;
+  opacity: 1;
 }
 
 @font-face {
@@ -426,6 +463,31 @@ onUnmounted(() => {
   letter-spacing: -0.5px;
   transition: color 0.3s ease; 
   font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.animated-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.title-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: title-char-reveal 0.45s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes title-char-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 主题切换按钮样式 */
@@ -493,6 +555,12 @@ onUnmounted(() => {
   
   .title-wrapper {
     height: 54px;
+    gap: 10px;
+  }
+  
+  .third-party-badge {
+    padding: 5px 12px;
+    font-size: 0.85em;
   }
 }
 
@@ -552,6 +620,11 @@ onUnmounted(() => {
   .title-wrapper {
     height: auto;
     text-align: center;
+    gap: 8px;
+  }
+  
+  .third-party-badge {
+    display: none;
   }
   
   .app-header h1 {
@@ -959,6 +1032,10 @@ onUnmounted(() => {
   .sticky-logo {
     width: 34px;
     height: 34px;
+  }
+  
+  .third-party-badge--sticky {
+    display: none;
   }
   
   .theme-toggle-btn {
