@@ -33,7 +33,7 @@
             <n-icon><git-branch /></n-icon>
             提交插件
           </a>
-          <a href="https://github.com/AstrBotDevs/Astrbot_Plugins_Market" target="_blank" class="footer-link">
+          <a href="https://github.com/Neo-Life/AAA_Neko" target="_blank" class="footer-link">
             <n-icon><code-slash /></n-icon>
             市场仓库
           </a>
