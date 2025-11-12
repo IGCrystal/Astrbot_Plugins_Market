@@ -50,15 +50,15 @@
             >{{ plugin.name }}</span>
           </h3>
         </div>
-        <n-tag 
-          type="success" 
-          size="small" 
-          :bordered="false" 
+        <n-tag
+          type="success"
+          size="small"
+          :bordered="false"
           class="version-tag"
           role="text"
-          :aria-label="`版本号：${plugin.version.startsWith('v') ? plugin.version : 'v' + plugin.version}`"
+          :aria-label="`版本号：v${plugin.version.replace(/^v/i, '')}`"
         >
-          {{ plugin.version.startsWith('v') ? plugin.version : 'v' + plugin.version }}
+          v{{ plugin.version.replace(/^v/i, '') }}
         </n-tag>
       </div>
     </template>
