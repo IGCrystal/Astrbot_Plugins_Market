@@ -49,7 +49,15 @@
                 </template>
               </n-empty>
             </div>
-            <div v-else class="markdown-content" v-html="readmeHtml"></div>
+            <div v-else class="content-ready">
+              <div class="markdown-content" v-html="readmeHtml"></div>
+              <plugin-comment
+                v-if="plugin?.repo"
+                :repo="plugin.repo"
+                :plugin-name="plugin?.name || '未知插件'"
+                :theme="commentTheme"
+              />
+            </div>
           </div>
 
           <!-- 底部 -->
@@ -78,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted } from 'vue'
+import { computed, ref, watch, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import {
   NIcon,
@@ -93,6 +101,7 @@ import {
   ExtensionPuzzleOutline,
   LogoGithub
 } from '@vicons/ionicons5'
+import PluginComment from './PluginComment.vue'
 
 const props = defineProps({
   show: Boolean,
@@ -115,6 +124,7 @@ const onLogoError = (e) => {
 // 获取全局主题状态
 const store = usePluginStore()
 const { isDarkMode } = storeToRefs(store)
+const commentTheme = computed(() => (isDarkMode.value ? 'dark' : 'light'))
 
 onUnmounted(() => {
   document.body.style.overflow = ''
@@ -342,13 +352,23 @@ async function fetchReadme() {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-state {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 300px;
+  width: 100%;
+}
+
+.content-ready {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* 底部 */
@@ -535,7 +555,7 @@ async function fetchReadme() {
   }
   
   .modal-container {
-    height: 95vh;
+    height: 85vh;
   }
   
   .modal-header {
@@ -562,6 +582,10 @@ async function fetchReadme() {
   
   .modal-body {
     padding: 12px;
+  }
+  
+  .modal-container {
+    height: 80vh;
   }
   
   .modal-footer {

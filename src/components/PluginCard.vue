@@ -19,13 +19,21 @@
         aria-labelledby="plugin-header-content"
       >
         <img
-          v-if="plugin.logo"
+          v-if="plugin.logo && !showFallbackLogo"
           :src="plugin.logo"
           :alt="`${plugin.name} logo`"
           class="plugin-logo"
           loading="lazy"
-          @error="onLogoError"
+          @error="handleLogoError"
         />
+        <n-icon
+          v-else
+          size="32"
+          class="plugin-logo plugin-logo--placeholder"
+          aria-hidden="true"
+        >
+          <extension-puzzle-outline />
+        </n-icon>
         <div 
           id="plugin-header-content"
           class="plugin-name-container" 
@@ -175,7 +183,7 @@ import {
   useMessage,
   NTooltip
 } from 'naive-ui'
-import { StarSharp, LinkOutline, PersonOutline, CheckmarkOutline } from '@vicons/ionicons5'
+import { StarSharp, LinkOutline, PersonOutline, CheckmarkOutline, ExtensionPuzzleOutline } from '@vicons/ionicons5'
 import { defineAsyncComponent } from 'vue'
 const PluginDetails = defineAsyncComponent(() => import('./PluginDetails.vue'))
 
@@ -202,12 +210,18 @@ const pluginNameEl = ref(null)
 const cardRef = ref(null)
 const resizeObserver = ref(null)
 
-const onLogoError = (e) => {
+const showFallbackLogo = ref(false)
+
+const handleLogoError = (e) => {
   if (e && e.target) {
-    // 隐藏加载失败的 logo，避免占位
     e.target.style.display = 'none'
   }
+  showFallbackLogo.value = true
 }
+
+watch(() => props.plugin.logo, () => {
+  showFallbackLogo.value = false
+})
 
 const checkTextOverflow = () => {
   nextTick(() => {
@@ -306,6 +320,20 @@ const showDetails = () => {
   margin-right: 12px;
   flex: 0 0 auto;
 }
+
+.plugin-logo--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-base);
+  color: var(--primary-color);
+}
+
+.plugin-logo--placeholder :deep(svg) {
+  width: 24px;
+  height: 24px;
+}
 @keyframes cardAppear {
   0% {
     opacity: 0;
@@ -365,7 +393,7 @@ const showDetails = () => {
   overflow: hidden;
   position: relative;
   flex: 1 1 auto;
-  min-width: 0; /* 允许在 flex 布局中收缩，确保文本溢出裁切生效 */
+  min-width: 0; 
 }
 
 .plugin-name-container:has(.plugin-name.marquee) {
@@ -464,7 +492,7 @@ const showDetails = () => {
   padding: 2px 10px !important;
   font-weight: 600;
   flex-shrink: 0;
-  margin-left: auto; /* 将版本标签推到最右侧，左侧保持 logo+名称的固定间距 */
+  margin-left: auto; 
 }
 
 .card-content {

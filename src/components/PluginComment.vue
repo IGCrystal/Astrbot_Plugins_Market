@@ -1,5 +1,3 @@
-// 评论部分已弃用
-
 <template>
   <div class="plugin-comment">
     <div class="plugin-comment__header">
@@ -42,10 +40,10 @@ function loadGiscus() {
 
   const script = document.createElement('script')
   script.src = 'https://giscus.app/client.js'
-  script.setAttribute('data-repo', 'IGCrystal-NEO/Astrbot_Plugins_Market')
-  script.setAttribute('data-repo-id', 'R_kgDOPRLyzg')
-  script.setAttribute('data-category', 'Ideas')
-  script.setAttribute('data-category-id', 'DIC_kwDOPRLyzs4CthUw')
+  script.setAttribute('data-repo', 'Neo-Life/AAA_Neko')
+  script.setAttribute('data-repo-id', 'R_kgDOQFHosg')
+  script.setAttribute('data-category', 'General')
+  script.setAttribute('data-category-id', 'DIC_kwDOQFHoss4Cxt7u')
   script.setAttribute('data-mapping', 'specific')
   script.setAttribute('data-term', `plugin:${props.pluginName}`)
   script.setAttribute('data-strict', '1')
