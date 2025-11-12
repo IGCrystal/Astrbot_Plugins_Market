@@ -19,7 +19,7 @@
               </n-icon>
               <h2 class="plugin-title">{{ plugin?.name }}</h2>
               <n-tag type="success" size="small" :bordered="false" class="plugin-version">
-                {{ plugin?.version?.startsWith('v') ? plugin?.version : 'v' + plugin?.version }}
+                v{{ plugin?.version?.replace(/^v/i, '') }}
               </n-tag>
             </div>
             <button class="close-btn" @click="show = false" aria-label="关闭">
