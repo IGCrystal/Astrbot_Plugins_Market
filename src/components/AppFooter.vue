@@ -43,8 +43,8 @@
     </div>
     <div class="footer-bottom">
       <p class="copyright">
-        <!-- Re:Dive 真的加上去啦！好帅气喵！ -->
-        © {{ currentYear }} AstrBot Plugins Market Re:Dive
+        <!-- 麦咪把 Re:Dive 包起来啦！加了 class="redive-text" -->
+        © {{ currentYear }} AstrBot 插件市场 <span class="redive-text" title="Project Re:Dive">Re:Dive</span>
         <span class="made-with">
           Made with <n-icon class="heart-icon"><heart /></n-icon> by Community
         </span>
@@ -153,6 +153,24 @@ const currentYear = computed(() => new Date().getFullYear())
   align-items: center;
   justify-content: center;
   gap: 6px;
+}
+
+/* 👇 这里的魔法！Re:Dive 的样式 */
+.redive-text {
+  font-weight: 600;
+  transition: all 0.4s ease;
+  cursor: default;
+  position: relative;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+/* 鼠标放上去的时候变色 + 发光 */
+.redive-text:hover {
+  color: #38bdf8; /* 漂亮的天蓝色 (Tailwind sky-400) */
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); /* 淡淡的蓝色光晕 */
+  background: rgba(56, 189, 248, 0.1); /* 极淡的背景色 */
+  letter-spacing: 1px; /* 微微展开一点点 */
 }
 
 .made-with {
@@ -293,4 +311,5 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 }
 </style>
+
 
