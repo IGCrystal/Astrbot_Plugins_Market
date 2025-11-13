@@ -11,6 +11,7 @@
   --bg-hover: #f0f4f8;
   --bg-n-tag: #e0f2fe;
   --bg-header: #b3d4fc;
+  --footer-bg: #eef3f9;
 
   /* 文本颜色 - 提升对比度 */
   --text-primary: #0f172a;
@@ -117,6 +118,7 @@
   --bg-card: #1e293b;
   --bg-hover: #334155;
   --bg-n-tag: #0c4a6e;
+  --footer-bg: #1a2336;
 
   /* 文本颜色 - 暗色模式下的高对比度 */
   --text-primary: #f8fafc;

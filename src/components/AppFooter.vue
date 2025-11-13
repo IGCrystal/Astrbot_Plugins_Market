@@ -2,9 +2,13 @@
   <footer class="app-footer">
     <div class="footer-content">
       <div class="footer-section">
-        <img src="/logo.webp" alt="AstrBot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
+        <div class="footer-brand">
+          <img src="/logo.webp" alt="AstrBot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
+          <span class="footer-title">AstrBot 插件市场</span>
+          <span class="footer-badge">社区</span>
+        </div>
         <p class="footer-description">
-          Astrbot 插件市场 Re:Dive 是一个开放的插件分享平台，欢迎开发者们贡献优质插件。
+          AstrBot 插件市场 是一个开放的插件分享平台，欢迎开发者们贡献优质插件。本站致力于为 AstrBot 用户提供高质量扩展，帮助您快速找到喜欢的插件，并鼓励社区伙伴分享使用心得、提出改进建议。
         </p>
       </div>
       <div class="footer-links">
@@ -42,7 +46,7 @@
     </div>
     <div class="footer-bottom">
       <p class="copyright">
-        © {{ currentYear }} AstrBot 插件市场
+        <span class="copyright-text">© {{ currentYear }} AstrBot 插件市场</span>
         <span class="made-with">
           Made with <n-icon class="heart-icon"><heart /></n-icon> by Community
         </span>
@@ -68,8 +72,24 @@ const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'Lexend';
+  src: url('/font/lexend.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend';
+  src: url('/font/lexend-v25-latin-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 .app-footer {
-  background: var(--bg-card);
+  background: var(--footer-bg, var(--bg-card));
   border-top: 1px solid var(--border-base);
   padding: 48px 0 24px;
   margin-top: 60px;
@@ -81,7 +101,7 @@ const currentYear = computed(() => new Date().getFullYear())
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  gap: 48px;
+  gap: 100px;
 }
 
 .footer-section {
@@ -90,10 +110,38 @@ const currentYear = computed(() => new Date().getFullYear())
   gap: 16px;
 }
 
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .footer-logo {
   width: 40px;
   height: 40px;
   object-fit: contain;
+}
+
+.footer-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--primary-color);
+  color: #fff;
+  font-size: 1.04em;
+  font-weight: 600;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .footer-description {
@@ -136,10 +184,10 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-bottom {
-  border-top: 1px solid var(--border-base);
-  margin-top: 40px;
-  padding-top: 24px;
-  text-align: center;
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+  text-align: left;
 }
 
 .copyright {
@@ -147,9 +195,11 @@ const currentYear = computed(() => new Date().getFullYear())
   font-size: 0.9em;
   margin: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
+  text-align: left;
 }
 
 .made-with {
@@ -173,6 +223,10 @@ const currentYear = computed(() => new Date().getFullYear())
   .footer-links {
     gap: 28px;
   }
+
+  .footer-bottom {
+    padding: 0 20px;
+  }
 }
 
 /* 移动端适配 */
@@ -193,14 +247,26 @@ const currentYear = computed(() => new Date().getFullYear())
     gap: 12px;
   }
 
-  .footer-description {
+  .footer-brand {
+    justify-content: flex-start;
+  }
+
+  .footer-badge {
+    padding: 4px 8px;
     font-size: 0.9em;
-    line-height: 1.5;
+  }
+
+  .footer-description {
+    display: none;
+  }
+
+  .footer-title {
+    font-size: 1.35em;
   }
 
   .footer-links {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
   }
 
   .links-group {
@@ -214,8 +280,8 @@ const currentYear = computed(() => new Date().getFullYear())
 
   .footer-link {
     justify-content: flex-start;
-    margin-bottom: 10px;
-    padding: 8px 0;
+    margin-bottom: 6px;
+    padding: 4px 0;
   }
 
   .footer-link:hover {
@@ -224,15 +290,15 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 
   .footer-bottom {
-    margin-top: 28px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding: 0 16px;
   }
 
   .copyright {
     font-size: 0.85em;
     line-height: 1.4;
-    flex-direction: column;
     gap: 8px;
+    justify-content: flex-start;
   }
 }
 
@@ -257,8 +323,15 @@ const currentYear = computed(() => new Date().getFullYear())
     font-size: 0.85em;
   }
 
+  .footer-badge {
+    padding: 4px 10px;
+    font-size: 0.85em;
+    border-radius: 6px;
+  }
+
   .footer-links {
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .links-group h4 {
@@ -268,8 +341,8 @@ const currentYear = computed(() => new Date().getFullYear())
 
   .footer-link {
     font-size: 0.9em;
-    margin-bottom: 8px;
-    padding: 6px 0;
+    margin-bottom: 6px;
+    padding: 4px 0;
   }
 
   .footer-link .n-icon {
@@ -277,12 +350,13 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 
   .footer-bottom {
-    margin-top: 20px;
-    padding-top: 16px;
+    margin-top: 16px;
+    padding: 0 12px;
   }
 
   .copyright {
     font-size: 0.8em;
+    justify-content: flex-start;
   }
 
   .heart-icon {
