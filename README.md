@@ -1,5 +1,5 @@
 <p align="left">
-  <a href="https://astrbot.tech">
+  <a href="https://plugins.astrbot.tech">
     <img src="https://github.wenturc.com/Neo-Life/.github/refs/heads/main/img/IMG_20251114_021641.png" alt="Meow" width="70%">
   </a>
 </p>
