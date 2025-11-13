@@ -6,163 +6,167 @@
     :content-style="{ padding: '8px 16px' }"
     @click="showDetails"
     role="article"
-    :aria-label="`插件: ${plugin.name}`"
+    :aria-label="`插件: ${displayName}`"
     aria-roledescription="插件卡片"
     :aria-expanded="showPluginDetails"
     tabindex="0"
     ref="cardRef"
   >
-    <template #header>
-      <div 
-        class="card-header" 
-        role="banner" 
-        aria-labelledby="plugin-header-content"
-      >
-        <img
-          v-if="plugin.logo && !showFallbackLogo"
-          :src="plugin.logo"
-          :alt="`${plugin.name} logo`"
-          class="plugin-logo"
-          loading="lazy"
-          @error="handleLogoError"
-        />
-        <n-icon
-          v-else
-          size="32"
-          class="plugin-logo plugin-logo--placeholder"
-          aria-hidden="true"
-        >
-          <extension-puzzle-outline />
-        </n-icon>
-        <div 
-          id="plugin-header-content"
-          class="plugin-name-container" 
-          ref="nameContainer" 
-          role="heading" 
-          aria-level="2"
-          aria-label="插件卡片标题区域"
-        >
-          <h3 
-            class="plugin-name" 
-            :class="{ 'marquee': isTextOverflow }"
-            ref="pluginNameEl"
-            role="heading"
-            aria-level="3"
-            :aria-label="plugin.name"
-            :aria-description="`插件：${plugin.name}，版本 ${plugin.version}`"
-          >
-            <span 
-              class="plugin-name-text" 
-              ref="nameTextEl"
-              :aria-hidden="isTextOverflow"
-            >{{ plugin.name }}</span>
-          </h3>
-        </div>
-        <n-tag
-          type="success"
-          size="small"
-          :bordered="false"
-          class="version-tag"
-          role="text"
-          :aria-label="`版本号：v${plugin.version.replace(/^v/i, '')}`"
-        >
-          v{{ plugin.version.replace(/^v/i, '') }}
-        </n-tag>
-      </div>
-    </template>
-    <n-space vertical class="card-content">
-      <p class="description" role="contentinfo" aria-label="插件描述">{{ plugin.desc }}</p>
-      <div 
-        class="tags-container" 
-        role="region" 
-        aria-label="插件标签区域"
-      >
-        <n-space class="tags-space" role="list" aria-label="标签列表">
-          <n-tag
-            v-for="tag in plugin.tags"
-            :key="tag"
-            size="small"
-            :bordered="false"
-            type="info"
-            class="plugin-tag"
-            role="listitem"
-            :aria-label="`标签：${tag}`"
-          >
-            {{ tag }}
-          </n-tag>
-        </n-space>
-      </div>
-      <div class="plugin-meta" role="group" aria-label="插件元数据">
-        <span class="author" role="text" :aria-label="`作者: ${plugin.author}`">作者: {{ plugin.author }}</span>
-        <n-space align="center" class="stars" role="group" aria-label="星标数">
-          <n-icon aria-hidden="true"><star-sharp /></n-icon>
-          <span role="text">{{ plugin.stars }}</span>
-        </n-space>
-      </div>
-      <!-- 优化后的按钮区域 -->
-      <div class="plugin-links" role="toolbar" aria-label="插件操作区">
-        <div class="button-group" role="group" aria-label="插件链接操作">
-          <n-button
-            type="primary"
-            secondary
-            size="small"
-            @click="(e) => openUrl(plugin.repo, e)"
-            class="main-button"
-            role="link"
-            :aria-label="`查看 ${plugin.name} 的仓库`"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            查看仓库
-          </n-button>
-          <div class="icon-buttons" role="group" aria-label="快捷操作按钮组">
-            <n-tooltip placement="top" trigger="hover">
-              <template #trigger>
-                <n-button
-                  secondary
-                  size="small"
-                  circle
-                  @click="copyRepoUrl"
-                  role="button"
-                  :aria-label="`复制 ${plugin.name} 的仓库链接`"
-                  :aria-pressed="isCopied"
-                  aria-live="polite"
+      <n-space vertical class="card-content" role="group" aria-label="插件卡片内容布局">
+        <div class="card-layout" role="group" aria-labelledby="plugin-header-content">
+          <div class="logo-column">
+            <img
+              v-if="plugin.logo && !showFallbackLogo"
+              :src="plugin.logo"
+              :alt="`${displayName} logo`"
+              class="plugin-logo"
+              loading="lazy"
+              @error="handleLogoError"
+            />
+            <n-icon
+              v-else
+              size="32"
+              class="plugin-logo plugin-logo--placeholder"
+              aria-hidden="true"
+            >
+              <extension-puzzle-outline />
+            </n-icon>
+          </div>
+          <div class="card-main">
+            <div 
+              class="card-header" 
+              role="group"
+              aria-labelledby="plugin-header-content"
+            >
+              <div 
+                id="plugin-header-content"
+                class="plugin-name-container" 
+                ref="nameContainer" 
+                role="heading" 
+                aria-level="2"
+                aria-label="插件卡片标题区域"
+              >
+                <h3 
+                  class="plugin-name" 
+                  :class="{ 'marquee': isTextOverflow }"
+                  ref="pluginNameEl"
+                  role="heading"
+                  aria-level="3"
+                  :aria-label="displayName"
+                  :aria-description="`插件：${displayName}，版本 ${plugin.version}`"
                 >
-                  <n-icon size="18" aria-hidden="true">
-                    <template v-if="isCopied">
-                      <checkmark-outline />
-                    </template>
-                    <template v-else>
-                      <link-outline />
-                    </template>
-                  </n-icon>
-                </n-button>
-              </template>
-              <span role="tooltip">{{ isCopied ? '已复制链接！' : '复制仓库链接' }}</span>
-            </n-tooltip>
-            <n-tooltip v-if="plugin.social_link" placement="top" trigger="hover">
-              <template #trigger>
-                <n-button
-                  secondary
-                  size="small"
-                  circle
-                  @click="(e) => openUrl(plugin.social_link, e)"
-                  role="link"
-                  :aria-label="`访问${plugin.author}的主页`"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <n-icon size="18" aria-hidden="true">
-                    <person-outline />
-                  </n-icon>
-                </n-button>
-              </template>
-              <span role="tooltip">访问作者主页</span>
-            </n-tooltip>
+                  <span 
+                    class="plugin-name-text" 
+                    ref="nameTextEl"
+                    :aria-hidden="isTextOverflow"
+                  >{{ displayName }}</span>
+                </h3>
+              </div>
+              <n-tag
+                type="success"
+                size="small"
+                :bordered="false"
+                class="version-tag"
+                role="text"
+                :aria-label="`版本号：v${plugin.version.replace(/^v/i, '')}`"
+              >
+                v{{ plugin.version.replace(/^v/i, '') }}
+              </n-tag>
+            </div>
+            <p class="description" role="contentinfo" aria-label="插件描述">{{ plugin.desc }}</p>
           </div>
         </div>
-      </div>
-    </n-space>
+        <div 
+          class="tags-container" 
+          role="region" 
+          aria-label="插件标签区域"
+        >
+          <n-space class="tags-space" role="list" aria-label="标签列表">
+            <n-tag
+              v-for="tag in plugin.tags"
+              :key="tag"
+              size="small"
+              :bordered="false"
+              type="info"
+              class="plugin-tag"
+              role="listitem"
+              :aria-label="`标签：${tag}`"
+            >
+              {{ tag }}
+            </n-tag>
+          </n-space>
+        </div>
+        <div class="plugin-meta" role="group" aria-label="插件元数据">
+          <span class="author" role="text" :aria-label="`作者: ${plugin.author}`">作者: {{ plugin.author }}</span>
+          <n-space align="center" class="stars" role="group" aria-label="星标数">
+            <n-icon aria-hidden="true"><star-sharp /></n-icon>
+            <span role="text">{{ plugin.stars }}</span>
+          </n-space>
+        </div>
+        <!-- 优化后的按钮区域 -->
+        <div class="plugin-links" role="toolbar" aria-label="插件操作区">
+          <div class="button-group" role="group" aria-label="插件链接操作">
+            <n-button
+              type="primary"
+              secondary
+              size="small"
+              @click="(e) => openUrl(plugin.repo, e)"
+              class="main-button"
+              role="link"
+              :aria-label="`查看 ${displayName} 的仓库`"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              查看仓库
+            </n-button>
+            <div class="icon-buttons" role="group" aria-label="快捷操作按钮组">
+              <n-tooltip placement="top" trigger="hover">
+                <template #trigger>
+                  <n-button
+                    secondary
+                    size="small"
+                    circle
+                    @click="copyRepoUrl"
+                    role="button"
+                    :aria-label="`复制 ${displayName} 的仓库链接`"
+                    :aria-pressed="isCopied"
+                    aria-live="polite"
+                  >
+                    <n-icon size="18" aria-hidden="true">
+                      <template v-if="isCopied">
+                        <checkmark-outline />
+                      </template>
+                      <template v-else>
+                        <link-outline />
+                      </template>
+                    </n-icon>
+                  </n-button>
+                </template>
+                <span role="tooltip">{{ isCopied ? '已复制链接！' : '复制仓库链接' }}</span>
+              </n-tooltip>
+              <n-tooltip v-if="plugin.social_link" placement="top" trigger="hover">
+                <template #trigger>
+                  <n-button
+                    secondary
+                    size="small"
+                    circle
+                    @click="(e) => openUrl(plugin.social_link, e)"
+                    role="link"
+                    :aria-label="`访问${plugin.author}的主页`"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <n-icon size="18" aria-hidden="true">
+                      <person-outline />
+                    </n-icon>
+                  </n-button>
+                </template>
+                <span role="tooltip">访问作者主页</span>
+              </n-tooltip>
+            </div>
+          </div>
+        </div>
+      </n-space>
   </n-card>
 
   <!-- 插件详情模态框 -->
@@ -173,7 +177,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, onUnmounted, watch } from 'vue'
+import { ref, onMounted, nextTick, onUnmounted, watch, computed } from 'vue'
 import {
   NCard,
   NSpace,
@@ -211,6 +215,11 @@ const cardRef = ref(null)
 const resizeObserver = ref(null)
 
 const showFallbackLogo = ref(false)
+
+const displayName = computed(() => {
+  const rawName = props.plugin?.name || ''
+  return rawName.replace(/^astrbot_plugin_/i, '')
+})
 
 const handleLogoError = (e) => {
   if (e && e.target) {
@@ -313,26 +322,29 @@ const showDetails = () => {
 
 <style scoped>
 .plugin-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
   object-fit: cover;
-  margin-right: 12px;
   flex: 0 0 auto;
+  box-shadow: var(--shadow-xs, 0 2px 4px rgba(0, 0, 0, 0.08));
 }
 
 .plugin-logo--placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
   background: var(--bg-hover);
   border: 1px solid var(--border-base);
   color: var(--primary-color);
 }
 
 .plugin-logo--placeholder :deep(svg) {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
 }
 @keyframes cardAppear {
   0% {
@@ -368,24 +380,36 @@ const showDetails = () => {
   box-shadow: var(--shadow-md);
 }
 
-.card-header {
+.card-layout {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border-base);
-  background: var(--bg-card);
-  border-radius: 15px 15px 0 0;
-  min-height: 44px;
+  gap: 16px;
+  align-items: flex-start;
 }
 
-:deep(.n-card__header) {
-  margin-bottom: 0 !important;
-  padding-bottom: 6px !important;
+.logo-column {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
 }
-:deep(.n-card-header) {
-  margin-bottom: 0 !important;
-  padding-bottom: 6px !important;
+
+.card-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--border-base);
+  min-height: 44px;
+  margin-bottom: 8px;
 }
 
 .plugin-name-container {
@@ -450,12 +474,39 @@ const showDetails = () => {
     transform: translateX(0);
   }
 }
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 120px;
+}
+
+@media (max-width: 1024px) {
+  .plugin-name-container {
+    max-width: 100%;
+  }
+}
 
 @media (max-width: 768px) {
-  .plugin-name-container {
-    max-width: 70%;
+  .card-layout {
+    gap: 12px;
   }
-  
+
+  .logo-column {
+    justify-content: flex-start;
+  }
+
+  .card-header {
+    padding-top: 0;
+  }
+
+  .plugin-logo,
+  .plugin-logo--placeholder {
+    width: 88px;
+    height: 88px;
+  }
+
   @keyframes marqueeSlide {
     0% {
       transform: translateX(0);
@@ -477,11 +528,17 @@ const showDetails = () => {
 
 @media (max-width: 480px) {
   .plugin-name-container {
-    max-width: 65%;
+    max-width: 100%;
   }
   
   .card-header h3 {
     font-size: 1.1em;
+  }
+
+  .plugin-logo,
+  .plugin-logo--placeholder {
+    width: 92px;
+    height: 92px;
   }
 }
 
@@ -493,13 +550,6 @@ const showDetails = () => {
   font-weight: 600;
   flex-shrink: 0;
   margin-left: auto; 
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 120px;
 }
 
 .description {
