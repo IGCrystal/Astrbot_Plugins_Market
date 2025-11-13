@@ -2,6 +2,7 @@
   <footer class="app-footer">
     <div class="footer-content">
       <div class="footer-section">
+        <!-- 这里的 logo 路径主人记得确认为 /logo.webp 哦 -->
         <img src="/logo.webp" alt="Astrbot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
         <p class="footer-description">
           Astrbot 插件市场是一个开放的插件分享平台，欢迎开发者们贡献优质插件。
@@ -42,7 +43,8 @@
     </div>
     <div class="footer-bottom">
       <p class="copyright">
-        © {{ currentYear }} Astrbot Plugin Market
+        <!-- Re:Dive 真的加上去啦！好帅气喵！ -->
+        © {{ currentYear }} AstrBot Plugins Market Re:Dive
         <span class="made-with">
           Made with <n-icon class="heart-icon"><heart /></n-icon> by Community
         </span>
@@ -69,6 +71,7 @@ const currentYear = computed(() => new Date().getFullYear())
 
 <style scoped>
 .app-footer {
+  /* 这里的变量需要全局定义哦，如果没有的话会是透明的喵 */
   background: var(--bg-card);
   border-top: 1px solid var(--border-base);
   padding: 48px 0 24px;
@@ -290,3 +293,4 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 }
 </style>
+
