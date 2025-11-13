@@ -14,7 +14,7 @@ export default defineConfig({
       generateRobotsTxt: true,
       readable: true,
       priority: 1.0,
-      lastmod: now,
+      lastmod: new Date(), 
     })
   ],
   base: './',
