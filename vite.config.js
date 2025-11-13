@@ -4,7 +4,6 @@ import { resolve } from 'path'
 import sitemap from 'vite-plugin-sitemap'
 import externalSitemaps from './sitemaps.config.js'
 
-const hostname = (process.env.VITE_SITE_URL || 'https://plugins.astrbot.app').replace(/\/$/, '')
 function normalizeAndDedupe(routes) {
   const normalized = routes.map(r => {
     if (!r || r === '/') return '/'
@@ -15,12 +14,15 @@ function normalizeAndDedupe(routes) {
   return Array.from(new Set(normalized))
 }
 
+const hostname = (process.env.VITE_SITE_URL || 'https://plugins.astrbot.app').replace(/\/$/, '')
+const routes = normalizeAndDedupe(['/', '/submit'])
+
 export default defineConfig({
   plugins: [
     vue(),
     sitemap({
       hostname,
-      dynamicRoutes: () => normalizeAndDedupe(['/', '/submit']),
+      dynamicRoutes: routes,
       externalSitemaps,
       generateRobotsTxt: true,
       readable: true,
@@ -30,15 +32,11 @@ export default defineConfig({
         const now = new Date().toISOString()
         let priority = 0.6
         let changefreq = 'daily'
-
         if (route === '/') {
           priority = 1.0
-          changefreq = 'daily'
         } else if (route === '/submit') {
           priority = 0.9
-          changefreq = 'daily'
         }
-
         return {
           loc: route,
           lastmod: now,
