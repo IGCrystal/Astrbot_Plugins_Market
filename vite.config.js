@@ -5,18 +5,27 @@ import sitemap from 'vite-plugin-sitemap'
 import externalSitemaps from './sitemaps.config.js'
 
 const hostname = (process.env.VITE_SITE_URL || 'https://plugins.astrbot.app').replace(/\/$/, '')
+function normalizeAndDedupe(routes) {
+  const normalized = routes.map(r => {
+    if (!r || r === '/') return '/'
+    let s = r.startsWith('/') ? r : `/${r}`
+    s = s.replace(/\/+/g, '/').replace(/\/$/, '')
+    return s === '' ? '/' : s
+  })
+  return Array.from(new Set(normalized))
+}
 
 export default defineConfig({
   plugins: [
     vue(),
     sitemap({
       hostname,
-      dynamicRoutes: ['/', '/submit'],
+      dynamicRoutes: () => normalizeAndDedupe(['/', '/submit']),
       externalSitemaps,
       generateRobotsTxt: true,
       readable: true,
-      changefreq: 'daily', 
-      priority: 0.6,       
+      changefreq: 'daily',
+      priority: 0.6,
       transform: async (route) => {
         const now = new Date().toISOString()
         let priority = 0.6
