@@ -4,19 +4,42 @@ import { resolve } from 'path'
 import sitemap from 'vite-plugin-sitemap'
 import externalSitemaps from './sitemaps.config.js'
 
+const hostname = (process.env.VITE_SITE_URL || 'https://plugins.astrbot.app').replace(/\/$/, '')
+
 export default defineConfig({
   plugins: [
     vue(),
     sitemap({
-      hostname: process.env.VITE_SITE_URL || 'https://plugins.astrbot.app',
-      dynamicRoutes: ['/submit'],
+      hostname,
+      dynamicRoutes: ['/', '/submit'],
       externalSitemaps,
       generateRobotsTxt: true,
-      readable: true
+      readable: true,
+      changefreq: 'daily', 
+      priority: 0.6,       
+      transform: async (route) => {
+        const now = new Date().toISOString()
+        let priority = 0.6
+        let changefreq = 'daily'
+
+        if (route === '/') {
+          priority = 1.0
+          changefreq = 'daily'
+        } else if (route === '/submit') {
+          priority = 0.9
+          changefreq = 'daily'
+        }
+
+        return {
+          loc: route,
+          lastmod: now,
+          changefreq,
+          priority
+        }
+      }
     })
   ],
   base: './',
-  assetsInclude: ['**/*.md'],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
