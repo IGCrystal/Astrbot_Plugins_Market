@@ -2,10 +2,9 @@
   <footer class="app-footer">
     <div class="footer-content">
       <div class="footer-section">
-        <!-- 这里的 logo 路径主人记得确认为 /logo.webp 哦 -->
-        <img src="/logo.webp" alt="Astrbot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
+        <img src="/logo.webp" alt="AstrBot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
         <p class="footer-description">
-          Astrbot 插件市场是一个开放的插件分享平台，欢迎开发者们贡献优质插件。
+          Astrbot 插件市场 Re:Dive 是一个开放的插件分享平台，欢迎开发者们贡献优质插件。
         </p>
       </div>
       <div class="footer-links">
@@ -43,8 +42,7 @@
     </div>
     <div class="footer-bottom">
       <p class="copyright">
-        <!-- 麦咪把 Re:Dive 包起来啦！加了 class="redive-text" -->
-        © {{ currentYear }} AstrBot 插件市场 <span class="redive-text" title="Project Re:Dive">Re:Dive</span>
+        © {{ currentYear }} AstrBot 插件市场
         <span class="made-with">
           Made with <n-icon class="heart-icon"><heart /></n-icon> by Community
         </span>
@@ -71,7 +69,6 @@ const currentYear = computed(() => new Date().getFullYear())
 
 <style scoped>
 .app-footer {
-  /* 这里的变量需要全局定义哦，如果没有的话会是透明的喵 */
   background: var(--bg-card);
   border-top: 1px solid var(--border-base);
   padding: 48px 0 24px;
@@ -153,24 +150,6 @@ const currentYear = computed(() => new Date().getFullYear())
   align-items: center;
   justify-content: center;
   gap: 6px;
-}
-
-/* 👇 这里的魔法！Re:Dive 的样式 */
-.redive-text {
-  font-weight: 600;
-  transition: all 0.4s ease;
-  cursor: default;
-  position: relative;
-  padding: 0 4px;
-  border-radius: 4px;
-}
-
-/* 鼠标放上去的时候变色 + 发光 */
-.redive-text:hover {
-  color: #38bdf8; /* 漂亮的天蓝色 (Tailwind sky-400) */
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); /* 淡淡的蓝色光晕 */
-  background: rgba(56, 189, 248, 0.1); /* 极淡的背景色 */
-  letter-spacing: 1px; /* 微微展开一点点 */
 }
 
 .made-with {
@@ -311,5 +290,3 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 }
 </style>
-
-
