@@ -78,7 +78,6 @@
         :total-pages="totalPages"
       />
     </div>
-    <!-- 给 Footer 加类名，用于粘底 -->
     <app-footer class="sticky-footer" />
   </n-layout>
 </template>
@@ -161,7 +160,7 @@ onMounted(() => {
   align-content: start;  
   align-items: start;   
   flex: 1 1 auto;
-  min-height: 100vh;
+  min-height: 0;
 }
 
 @keyframes gridAppear {
@@ -245,10 +244,7 @@ onMounted(() => {
   color: var(--text-color-2);
   opacity: 0.8;
 }
-</style>
 
-<!-- 非 scoped，全局生效，确保能作用到子组件根节点 -->
-<style>
 .sticky-footer {
   margin-top: auto;
 }
