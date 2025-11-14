@@ -125,7 +125,7 @@ onMounted(() => {
 
 <style scoped>
 .main-layout {
-  min-height: 100vh;
+  min-height: 100vh !important;
   display: flex;
   flex-direction: column;
 }
