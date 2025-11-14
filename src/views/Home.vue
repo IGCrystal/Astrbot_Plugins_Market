@@ -161,7 +161,7 @@ onMounted(() => {
   align-content: start;  
   align-items: start;   
   flex: 1 1 auto;
-  min-height: 0;
+  min-height: 100vh;
 }
 
 @keyframes gridAppear {
