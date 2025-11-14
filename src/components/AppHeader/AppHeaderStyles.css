@@ -530,11 +530,9 @@
 	opacity: 0;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	pointer-events: none;
-	backdrop-filter: blur(28px) saturate(140%);
-	-webkit-backdrop-filter: blur(28px) saturate(140%) !important;
 	background: var(--sticky-bg);
 	border-bottom: 2px solid var(--border-base);
-	box-shadow: none;
+	box-shadow: var(--shadow-sm);
 	box-sizing: border-box;
 }
 
@@ -648,7 +646,7 @@
 	}
 
 	.sticky-header-spacer {
-		height: 72px;
+		height: 98px;
 	}
 
 	.sticky-header-content {
@@ -659,13 +657,13 @@
 	}
 
 	.sticky-title {
-		font-size: 1.35em;
+		font-size: 1.55em;
 		line-height: 1.1;
 	}
 
 	.sticky-logo {
-		width: 36px;
-		height: 36px;
+		width: 46px;
+		height: 46px;
 	}
 
 	.sticky-header-center {
@@ -680,7 +678,7 @@
 	}
 
 	.sticky-header {
-		height: 72px;
+		height: 98px;
 	}
 
 	.sticky-desktop-toolbar {
@@ -756,12 +754,12 @@
 	}
 
 	.sticky-title {
-		font-size: 1.2em;
+		font-size: 1.4em;
 	}
 
 	.sticky-logo {
-		width: 34px;
-		height: 34px;
+		width: 44px;
+		height: 44px;
 	}
 
 	.third-party-badge--sticky {
@@ -774,7 +772,11 @@
 	}
 
 	.sticky-header {
-		height: 68px;
+		height: 84px;
+	}
+
+	.sticky-header-spacer {
+		height: 84px;
 	}
 
 	.hidden-on-search {

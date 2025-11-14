@@ -121,11 +121,10 @@ onUnmounted(() => {
 .pagination-container {
   display: flex;
   justify-content: center;
-  padding: 12px 20px;
+  padding: 8px 20px;
   position: relative;
   z-index: 1;
   border-radius: 50px;
-  background: var(--pagination-bg, rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(10px);
   width: fit-content;
   box-shadow: var(--shadow-sm);
@@ -154,8 +153,8 @@ onUnmounted(() => {
   background: var(--pagination-item-bg, rgba(255, 255, 255, 0.08)) !important;
   border: none !important;
   backdrop-filter: blur(8px);
-  min-width: 32px;
-  height: 32px;
+  min-width: 22px;
+  height: 22px;
   border-radius: 6px;
   font-weight: 500;
   min-width: 32px;
@@ -243,8 +242,8 @@ onUnmounted(() => {
   }
   
   :deep(.n-pagination .n-pagination-item) {
-    min-width: 30px;
-    height: 30px;
+    min-width: 20px;
+    height: 20px;
   }
 }
 
@@ -253,7 +252,6 @@ onUnmounted(() => {
   .pagination-wrapper {
     margin: 1.25rem 0;
     padding: 0.5rem 12px;
-    background: var(--bg-secondary, rgba(0, 0, 0, 0.02));
     border-radius: 12px;
   }
   
@@ -267,9 +265,9 @@ onUnmounted(() => {
   }
   
   :deep(.n-pagination .n-pagination-item) {
-    min-width: 36px;
-    height: 36px;
-    min-height: 36px;
+    min-width: 26px;
+    height: 26px;
+    min-height: 26px;
     border-radius: 8px;
   }
   

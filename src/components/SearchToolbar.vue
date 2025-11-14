@@ -18,6 +18,7 @@
         </n-icon>
       </div>
       <n-select
+        v-if="props.showSort"
         :value="props.sortBy"
         :options="compact ? compactSortOptions : sortOptions"
         @update:value="handleSortChange"
@@ -44,6 +45,10 @@ const props = defineProps({
   onHeader: {
     type: Boolean,
     default: false
+  },
+  showSort: {
+    type: Boolean,
+    default: true
   }
 })
 

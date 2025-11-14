@@ -1,7 +1,11 @@
 <template>
   <div class="float-button-wrapper">
     <transition name="float-button-fade">
-      <div class="help-button-container">
+      <div 
+        class="help-button-container"
+        @mouseenter="showHelpText = true"
+        @mouseleave="showHelpText = false"
+      >
         <div class="help-text-container">
           <div class="help-text" :class="{ 'help-text--show': showHelpText }">
             有疑问？来看看呗！
@@ -133,9 +137,6 @@ const toggleHelp = () => {
   showHelp.value = !showHelp.value
 }
 
-setInterval(() => {
-  showHelpText.value = !showHelpText.value
-}, 3000)
 
 const openPanelUrl = () => {
   if (panelUrl.value) {

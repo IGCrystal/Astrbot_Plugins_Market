@@ -33,16 +33,16 @@
 
     <main class="plugins-grid">
       <!-- 加载状态 -->
-      <div v-if="isLoading" class="loading-container">
-        <div class="custom-loading">
-          <div class="loading-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-          </div>
-          <div class="loading-text">正在加载插件数据</div>
-        </div>
-      </div>
+      <template v-if="isLoading">
+        <div class="pagination-ghost" aria-hidden="true"></div>
+        <plugin-card-skeleton
+          v-for="index in skeletonCount"
+          :key="`skeleton-${index}`"
+          :tag-widths="skeletonTagWidths"
+          :icon-count="skeletonIconCount"
+        />
+        <div class="pagination-ghost" aria-hidden="true"></div>
+      </template>
       
       <!-- 空状态提示 -->
       <div v-else-if="!isLoading && filteredPlugins.length === 0" class="empty-state">
@@ -85,12 +85,13 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { NLayout, NSpin, NIcon, NButton } from 'naive-ui'
+import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
 import AppHeader from '../components/AppHeader'
 import PluginCard from '../components/PluginCard.vue'
 import AppPagination from '../components/AppPagination.vue'
 import AppFooter from '../components/AppFooter.vue'
+import PluginCardSkeleton from '../components/ui/PluginCardSkeleton.vue'
 import { usePluginStore } from '../stores/plugins'
 
 const store = usePluginStore()
@@ -112,6 +113,10 @@ const filterKey = computed(() => {
   return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
 })
 
+const skeletonCount = 12
+const skeletonTagWidths = ['72px', '56px', '64px']
+const skeletonIconCount = 2
+
 const { refreshRandomOrder } = store
 onMounted(() => {
   store.loadPlugins()
@@ -123,14 +128,6 @@ onMounted(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.top-pagination-wrapper,
-.bottom-pagination-wrapper {
-  min-height: 48px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .grid-toolbar {
@@ -205,91 +202,14 @@ onMounted(() => {
   justify-self: center;
 }
 
-.loading-container {
+.pagination-ghost {
   grid-column: 1 / -1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-  padding-top: 0;
+  height: var(--pagination-ghost-height, 60px);
+  max-width: none;
+  justify-self: stretch;
+  pointer-events: none;
 }
 
-.custom-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-}
-
-.loading-dots {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  animation: dotPulse 1.4s ease-in-out infinite both;
-}
-
-.dot:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.dot:nth-child(2) {
-  animation-delay: -0.16s;
-}
-
-.dot:nth-child(3) {
-  animation-delay: 0s;
-}
-
-@keyframes dotPulse {
-  0%, 80%, 100% {
-    transform: scale(0.6);
-    opacity: 0.4;
-  }
-  40% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.loading-text {
-  font-size: 16px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  opacity: 0.8;
-  animation: fadeInOut 2s ease-in-out infinite;
-}
-
-@keyframes fadeInOut {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
-.loading-container :deep(.n-spin) {
-  will-change: transform;
-  transform: translateZ(0); 
-}
-
-.loading-container :deep(.n-spin-icon) {
-  animation-timing-function: linear !important;
-  animation-duration: 1s !important; 
-  will-change: transform;
-  transform: translateZ(0); 
-}
-
-.loading-container :deep(.n-spin-body) {
-  will-change: auto;
-}
 
 .empty-state {
   grid-column: 1 / -1;
