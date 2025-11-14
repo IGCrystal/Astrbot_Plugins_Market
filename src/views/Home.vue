@@ -147,19 +147,21 @@ onMounted(() => {
   font-size: 13px;
 }
 
-  .plugins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    max-width: 1400px;
-    gap: 24px;
-    padding: 20px;
-    margin: 0 auto;
-    animation: gridAppear 0.3s ease-out;
-    animation-delay: 0.7s;
-    animation-fill-mode: backwards;
-    align-content: start;  
-    align-items: start;   
-  }
+.plugins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  max-width: 1400px;
+  gap: 24px;
+  padding: 20px;
+  margin: 0 auto;
+  animation: gridAppear 0.3s ease-out;
+  animation-delay: 0.7s;
+  animation-fill-mode: backwards;
+  align-content: start;  
+  align-items: start;   
+  flex: 1 1 auto;
+  min-height: 0;
+}
 
 @keyframes gridAppear {
   from {
