@@ -22,7 +22,7 @@ import { storeToRefs } from 'pinia'
 import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
 import { highlightConfig } from './plugins/highlight'
 
-import BackToTop from './components/BackToTop.vue'
+import BackToTop from './components/ui/BackToTop.vue'
 
 import { lightThemeOverrides } from './config/lightTheme'
 import { darkThemeOverrides } from './config/darkTheme'

@@ -99,7 +99,7 @@
 import { ref, computed } from 'vue'
 import { NIcon, NModal, NCard, NSpace, NH2, NH3, NText, NButton, NInput } from 'naive-ui'
 import { HelpCircle, OpenOutline } from '@vicons/ionicons5'
-import { helpContent } from '../config/helpContent'
+import { helpContent } from '../../config/helpContent'
 import { marked } from 'marked'
 
 const isMobile = ref(window.innerWidth <= 768)
