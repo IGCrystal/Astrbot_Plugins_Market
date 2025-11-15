@@ -38,7 +38,8 @@ const props = defineProps({
   }
 })
 
-const screenWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1440)
+const isClient = typeof window !== 'undefined'
+const screenWidth = ref(isClient ? window.innerWidth : 1440)
 
 const pageSlot = computed(() => {
   if (screenWidth.value <= 480) {
@@ -53,27 +54,34 @@ const pageSlot = computed(() => {
 const showQuickJumper = computed(() => screenWidth.value > 768 && props.totalPages > 10)
 
 const itemSize = computed(() => {
-  if (screenWidth.value <= 480) return 26
-  if (screenWidth.value <= 768) return 28
+  if (screenWidth.value <= 360) return 28
+  if (screenWidth.value <= 480) return 34
+  if (screenWidth.value <= 768) return 26
   if (screenWidth.value <= 1024) return 30
   return 32
 })
 
 const pageWidth = computed(() => itemSize.value)
-const navWidth = computed(() => (screenWidth.value <= 480 ? itemSize.value + 6 : itemSize.value + 16))
+const navWidth = computed(() => {
+  if (screenWidth.value <= 360) return itemSize.value + 4
+  if (screenWidth.value <= 480) return itemSize.value + 6
+  if (screenWidth.value <= 768) return itemSize.value + 8
+  if (screenWidth.value <= 1024) return itemSize.value + 10
+  return itemSize.value + 14
+})
 
 const handleResize = () => {
-  if (typeof window === 'undefined') return
+  if (!isClient) return
   screenWidth.value = window.innerWidth
 }
 
 onMounted(() => {
-  if (typeof window === 'undefined') return
+  if (!isClient) return
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
-  if (typeof window === 'undefined') return
+  if (!isClient) return
   window.removeEventListener('resize', handleResize)
 })
 </script>

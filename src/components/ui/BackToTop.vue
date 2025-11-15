@@ -25,7 +25,7 @@ import { ChevronUp } from '@vicons/ionicons5'
 import { FloatActionButton } from './Button'
 
 import HelpButton from './Help'
-import SubmitPluginButton from './SubmitPluginButton.vue'
+import SubmitPluginButton from './SubmitPlugin.vue'
 
 const show = ref(false)
 const scrollThreshold = 300
