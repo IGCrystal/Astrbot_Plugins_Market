@@ -184,7 +184,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
 import { 
   NLayoutHeader,
   NTimeline,

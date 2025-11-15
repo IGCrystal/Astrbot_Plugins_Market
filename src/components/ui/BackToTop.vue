@@ -22,9 +22,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ChevronUp } from '@vicons/ionicons5'
-import { FloatActionButton } from './Button'
-
-import HelpButton from './Help'
+import FloatActionButton from './Button/FloatActionButton.vue'
+import HelpButton from './Help/index.vue'
 import SubmitPluginButton from './SubmitPlugin.vue'
 
 const show = ref(false)

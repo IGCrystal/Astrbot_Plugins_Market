@@ -1,8 +1,10 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 
+const isClient = typeof window !== 'undefined'
+
 export const usePluginStore = defineStore('plugins', () => {
-  const savedTheme = localStorage.getItem('theme-preference')
+  const savedTheme = isClient ? window.localStorage.getItem('theme-preference') : null
   const plugins = ref(null)
   const searchQuery = ref('')
   const selectedTag = ref(null)
@@ -14,7 +16,8 @@ export const usePluginStore = defineStore('plugins', () => {
   const randomSeed = ref(0)
   
   watch(isDarkMode, (newValue) => {
-    localStorage.setItem('theme-preference', newValue ? 'dark' : 'light')
+    if (!isClient) return
+    window.localStorage.setItem('theme-preference', newValue ? 'dark' : 'light')
   })
 
   watch(sortBy, (value) => {

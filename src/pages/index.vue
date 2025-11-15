@@ -83,17 +83,17 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
-import { usePluginStore } from '../stores/plugins'
-import PaginationSkeleton from '../components/ui/PaginationSkeleton.vue'
-import PluginCardSkeleton from '../components/ui/PluginCardSkeleton.vue'
-import AppHeader from '../components/AppHeader'
-import AppFooter from '../components/AppFooter'
-import AppPagination from '../components/AppPagination'
-import PluginCard from '../components/PluginCard'
+import { usePluginStore } from '@/stores/plugins'
+import PaginationSkeleton from '@/components/ui/PaginationSkeleton.vue'
+import PluginCardSkeleton from '@/components/ui/PluginCardSkeleton.vue'
+import AppHeader from '@/components/AppHeader/index.vue'
+import AppFooter from '@/components/AppFooter/index.vue'
+import AppPagination from '@/components/AppPagination/index.vue'
+import PluginCard from '@/components/PluginCard/index.vue'
 
 const store = usePluginStore()
 const { 
@@ -119,9 +119,6 @@ const skeletonTagWidths = ['72px', '56px', '64px']
 const skeletonIconCount = 2
 
 const { refreshRandomOrder } = store
-onMounted(() => {
-  store.loadPlugins()
-})
 </script>
 
 <style scoped>

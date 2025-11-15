@@ -22,7 +22,7 @@
 import { ref } from 'vue'
 import { AddCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
-import { FloatActionButton } from './Button'
+import FloatActionButton from './Button/FloatActionButton.vue'
 
 const router = useRouter()
 const showTipText = ref(false)

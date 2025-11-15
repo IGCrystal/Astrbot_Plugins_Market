@@ -1,13 +1,13 @@
 <template>
-  <n-config-provider 
-    :theme="theme" 
+  <n-config-provider
+    :theme="theme"
     :theme-overrides="isDarkMode ? darkThemeOverrides : lightThemeOverrides"
     :hljs="highlightConfig.hljs"
   >
     <n-message-provider>
       <div class="app-container" :class="{ dark: isDarkMode }">
-        <back-to-top v-if="!isSubmitPage" />
-        <router-view />
+        <BackToTop v-if="!isSubmitPage" />
+        <NuxtPage />
       </div>
     </n-message-provider>
   </n-config-provider>
@@ -17,38 +17,27 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
-import { highlightConfig } from './utils/highlight'
-
-import BackToTop from './components/ui/BackToTop.vue'
-
-import { lightThemeOverrides } from './utils/config/lightTheme'
-import { darkThemeOverrides } from './utils/config/darkTheme'
-import { usePluginStore } from './stores/plugins'
-
+import { darkTheme } from 'naive-ui'
+import BackToTop from '@/components/ui/BackToTop.vue'
+import { highlightConfig } from '@/utils/highlight'
+import { lightThemeOverrides } from '@/utils/config/lightTheme'
+import { darkThemeOverrides } from '@/utils/config/darkTheme'
+import { usePluginStore } from '@/stores/plugins'
 import { Analytics } from '@vercel/analytics/vue'
-import { SpeedInsights } from "@vercel/speed-insights/vue"
-
-const store = usePluginStore()
-const { 
-  isDarkMode,
-  searchQuery,
-  selectedTag,
-  currentPage,
-  sortBy,
-} = storeToRefs(store)
+import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 const route = useRoute()
+const store = usePluginStore()
+const { isDarkMode, plugins } = storeToRefs(store)
+
 const theme = computed(() => (isDarkMode.value ? darkTheme : null))
 const isSubmitPage = computed(() => route.path === '/submit')
-const filterKey = computed(() => {
-  return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
-})
 
 onMounted(() => {
-  store.loadPlugins()
+  if (!plugins.value) {
+    store.loadPlugins()
+  }
 })
 </script>
 
