@@ -87,13 +87,13 @@ import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
+import { usePluginStore } from '../stores/plugins'
 import PaginationSkeleton from '../components/ui/PaginationSkeleton.vue'
 import PluginCardSkeleton from '../components/ui/PluginCardSkeleton.vue'
 import AppHeader from '../components/AppHeader'
 import AppFooter from '../components/AppFooter'
 import AppPagination from '../components/AppPagination'
-import PluginCard from '../components/PluginCard.vue'
-import { usePluginStore } from '../stores/plugins'
+import PluginCard from '../components/PluginCard'
 
 const store = usePluginStore()
 const { 

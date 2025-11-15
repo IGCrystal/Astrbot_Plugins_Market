@@ -18,7 +18,7 @@
                 <extension-puzzle-outline />
               </n-icon>
               <h2 class="plugin-title">{{ plugin?.name }}</h2>
-              <n-tag type="success" size="small" :bordered="false" class="plugin-version">
+              <n-tag size="small" :bordered="false" class="plugin-version" :color="versionTagColor">
                 v{{ plugin?.version?.replace(/^v/i, '') }}
               </n-tag>
             </div>
@@ -96,7 +96,7 @@ import {
   NEmpty
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { usePluginStore } from '../stores/plugins'
+import { usePluginStore } from '../../stores/plugins'
 import {
   ExtensionPuzzleOutline,
   LogoGithub
@@ -125,6 +125,11 @@ const onLogoError = (e) => {
 const store = usePluginStore()
 const { isDarkMode } = storeToRefs(store)
 const commentTheme = computed(() => (isDarkMode.value ? 'dark' : 'light'))
+const versionTagColor = computed(() => ({
+  color: 'var(--primary-color)',
+  borderColor: 'transparent',
+  textColor: 'var(--text-tag, #ffffff)'
+}))
 
 onUnmounted(() => {
   document.body.style.overflow = ''

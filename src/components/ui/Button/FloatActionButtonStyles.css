@@ -1,0 +1,75 @@
+.float-button {
+  width: var(--float-button-size, 56px);
+  height: var(--float-button-size, 56px);
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.float-button--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.float-button__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--float-button-color, #ffffff);
+  background: var(--float-button-background, var(--primary-color));
+  box-shadow: var(--float-button-box-shadow, var(--shadow-md));
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  overflow: hidden;
+}
+
+.float-button:not(.float-button--disabled):hover .float-button__inner {
+  box-shadow: var(--float-button-hover-shadow, var(--shadow-lg));
+  background: var(--float-button-hover-background, var(--float-button-background));
+}
+
+.float-button:not(.float-button--disabled):active .float-button__inner {
+  transform: scale(0.95);
+  transition-duration: 0.1s;
+}
+
+.float-button__icon {
+  position: relative;
+  z-index: 2;
+  color: inherit;
+}
+
+.float-button__ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--float-button-ripple-color, rgba(255, 255, 255, 0.3));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.float-button:not(.float-button--disabled):active .float-button__ripple {
+  animation: float-button-ripple 0.6s ease-out;
+}
+
+@keyframes float-button-ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+  }
+}

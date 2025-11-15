@@ -1,4 +1,4 @@
-import helpMarkdown from './help.md?raw'
+import helpMarkdown from './config/help.md?raw'
 
 function parseMd(markdown) {
   const lines = markdown.split('\n')

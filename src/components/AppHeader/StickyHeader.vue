@@ -88,7 +88,7 @@
 import { ref, computed, h, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { NIcon, NInput, NButton, NDropdown } from 'naive-ui'
 import { CloseOutline, SearchOutline, FilterSharp, MoonSharp, SunnySharp, CheckmarkSharp } from '@vicons/ionicons5'
-import SearchToolbar from '../SearchToolbar.vue'
+import SearchToolbar from '../ui/SearchToolbar.vue'
 
 const props = defineProps({
   modelValue: Boolean,
