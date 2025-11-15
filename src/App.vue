@@ -20,7 +20,7 @@ import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
-import { highlightConfig } from './plugins/highlight'
+import { highlightConfig } from './utils/highlight'
 
 import BackToTop from './components/ui/BackToTop.vue'
 

@@ -4,7 +4,6 @@ import { create, NConfigProvider } from 'naive-ui'
 import App from './App.vue'
 import './assets/theme.css'
 import router from './router'
-import { highlightConfig } from './plugins/highlight'
 
 const naive = create({
   components: [NConfigProvider],
