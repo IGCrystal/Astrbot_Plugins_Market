@@ -1,218 +1,52 @@
 <template>
   <div class="submit-plugin-page">
-    <n-layout-header class="page-header">
-      <div class="header-content">
-        <div class="header-left">
-          <n-button quaternary circle @click="goBack">
-            <template #icon>
-              <n-icon><arrow-back /></n-icon>
-            </template>
-          </n-button>
-          <h1>提交插件</h1>
-        </div>
-        <div class="header-right">
-          <n-button quaternary circle @click="toggleTheme">
-            <template #icon>
-              <n-icon>
-                <moon v-if="isDarkMode" />
-                <sunny v-else />
-              </n-icon>
-            </template>
-          </n-button>
-        </div>
-      </div>
-    </n-layout-header>
+    <submit-header
+      :is-dark-mode="isDarkMode"
+      @go-back="goBack"
+      @toggle-theme="toggleTheme"
+    />
 
-    <div class="steps-section">
-      <div class="custom-steps">
-        <div 
-          v-for="(step, index) in steps" 
-          :key="index"
-          class="step-item"
-          :class="{
-            'step-current': currentStep === index + 1,
-            'step-finished': currentStep > index + 1
-          }"
-        >
-          <div class="step-indicator">{{ index + 1 }}</div>
-          <div class="step-content">
-            <div class="step-title">{{ step.title }}</div>
-            <div class="step-description">{{ step.description }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <submit-steps
+      :steps="steps"
+      :current-step="currentStep"
+    />
 
     <div class="page-content">
       <div class="main-section">
-        <!-- 步骤1：表单 -->
-        <div v-if="currentStep === 1" class="form-section">
-          <n-card title="基本信息" class="form-card">
-            <n-form ref="formRef" :model="formData" :rules="rules">
-              <n-grid :x-gap="12" :cols="1" :item-responsive="true">
-                <n-grid-item>
-                  <n-form-item label="插件名" path="name">
-                    <n-input 
-                      v-model:value="formData.name" 
-                      placeholder="插件名，请以 astrbot_plugin_ 开头"
-                    />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="展示名称" path="display_name">
-                    <n-input 
-                      v-model:value="formData.display_name" 
-                      placeholder="用于展示的插件名，方便人类阅读"
-                    />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="插件介绍" path="desc">
-                    <n-input 
-                      v-model:value="formData.desc" 
-                      type="textarea" 
-                      placeholder="插件的简短介绍（最多70字）"
-                      :maxlength="70"
-                      :show-count="true"
-                      :rows="4"
-                      class="desc-textarea"
-                      :resizable="false"
-                    />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="作者" path="author">
-                    <n-input v-model:value="formData.author" placeholder="请输入作者名称" />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="仓库地址" path="repo">
-                    <n-input v-model:value="formData.repo" placeholder="请输入GitHub仓库地址" />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="标签（可选，最多 5 个，按回车添加）" path="tags">
-                    <n-dynamic-tags 
-                      v-model:value="formData.tags" 
-                      :max="5"
-                    />
-                  </n-form-item>
-                </n-grid-item>
-                <n-grid-item>
-                  <n-form-item label="社交链接（可选）" path="social_link">
-                    <n-input 
-                      v-model:value="formData.social_link" 
-                      placeholder="请输入完整的社交链接，如个人主页、Twitter等，推荐 GitHub 主页" 
-                    />
-                  </n-form-item>
-                </n-grid-item>
-              </n-grid>
-            </n-form>
-          </n-card>
-        </div>
-
-        <!-- 步骤2：预览并提交 -->
-        <div v-if="currentStep === 2" class="json-preview-section">
-          <n-card title="预览插件信息" class="json-card">
-            <div class="json-content">
-              <n-code
-                :code="generatedJSON || '点击生成按钮生成JSON'"
-                language="json"
-                :word-wrap="true"
-              />
-            </div>
-            <div style="margin-top: 16px; padding: 16px; background: var(--bg-base); border-radius: 8px;">
-              <p style="margin: 0 0 12px 0; color: var(--text-secondary); font-size: 14px;">
-                点击下方按钮将自动打开 GitHub Issue 页面，插件信息会自动填充，你只需要勾选确认项并提交即可。
-              </p>
-            </div>
-          </n-card>
-        </div>
+        <submit-form
+          ref="submitFormRef"
+          :form-data="formData"
+          :rules="rules"
+          :current-step="currentStep"
+          :generated-json="generatedJSON"
+        />
       </div>
-
-      <!-- 底部操作栏 -->
-      <n-card class="action-bar">
-        <div class="action-content">
-          <div class="action-left">
-            <transition name="action-button" mode="out-in">
-              <n-button 
-                v-if="currentStep > 1" 
-                @click="prevStep"
-                quaternary
-                key="prev"
-                class="action-button-item"
-              >
-                <template #icon>
-                  <n-icon><arrow-back /></n-icon>
-                </template>
-                上一步
-              </n-button>
-            </transition>
-          </div>
-          <div class="action-right">
-            <transition name="action-button" mode="out-in">
-              <n-button 
-                v-if="currentStep === 1"
-                type="primary"
-                @click="validateAndGenerateJSON"
-                :disabled="!formData.name"
-                key="next1"
-                class="action-button-item"
-              >
-                预览并提交
-              </n-button>
-              <n-button 
-                v-else
-                type="primary"
-                @click="submitPlugin"
-                key="submit"
-                class="action-button-item"
-              >
-                <template #icon>
-                  <n-icon><logo-github /></n-icon>
-                </template>
-                提交到GitHub
-              </n-button>
-            </transition>
-          </div>
-        </div>
-      </n-card>
     </div>
+
+    <submit-action-bar
+      :current-step="currentStep"
+      :disable-next="!formData.name"
+      @prev-step="prevStep"
+      @validate="validateAndGenerateJSON"
+      @submit="submitPlugin"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { 
-  NLayoutHeader,
-  NTimeline,
-  NTimelineItem,
-  NGrid,
-  NGridItem,
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NButton,
-  NDynamicTags,
-  NCard,
-  NIcon,
-  NCode,
-  useMessage
-} from 'naive-ui'
-import { 
-  ArrowBack, 
-  Copy,
-  Moon,
-  Sunny,
-  LogoGithub
-} from '@vicons/ionicons5'
+import { useMessage } from 'naive-ui'
+import SubmitHeader from '@/components/SubmitPage/SubmitHeader.vue'
+import SubmitSteps from '@/components/SubmitPage/SubmitSteps.vue'
+import SubmitForm from '@/components/SubmitPage/SubmitForm.vue'
+import SubmitActionBar from '@/components/SubmitPage/SubmitActionBar.vue'
 import { usePluginStore } from '@/stores/plugins'
 
 const router = useRouter()
 const message = useMessage()
 const store = usePluginStore()
-const formRef = ref(null)
+const submitFormRef = ref(null)
 const generatedJSON = ref('')
 const currentStep = ref(1)
 const MAX_DESC_LENGTH = 70
@@ -231,11 +65,6 @@ const { isDarkMode } = storeToRefs(store)
 const toggleTheme = () => {
   store.toggleTheme()
 }
-
-const stepChecks = reactive({
-  copied: false,
-  issueOpened: false
-})
 
 const formData = reactive({
   name: '',
@@ -317,7 +146,7 @@ const goBack = () => {
 }
 
 const validateAndGenerateJSON = () => {
-  formRef.value?.validate((errors) => {
+  submitFormRef.value?.validate((errors) => {
     if (!errors) {
       const jsonData = {
         name: formData.name,
@@ -334,16 +163,6 @@ const validateAndGenerateJSON = () => {
       message.error('请完善必填信息')
     }
   })
-}
-
-const copyJSON = async () => {
-  try {
-    await navigator.clipboard.writeText(generatedJSON.value)
-    message.success('JSON已复制到剪贴板')
-    stepChecks.copied = true
-  } catch (err) {
-    message.error('复制失败')
-  }
 }
 
 const nextStep = () => {
@@ -371,7 +190,6 @@ const submitPlugin = () => {
   
   const issueUrl = `${baseUrl}?${params.toString()}`
   window.open(issueUrl, '_blank')
-  stepChecks.issueOpened = true
 }
 </script>
 
@@ -384,223 +202,6 @@ const submitPlugin = () => {
   flex-direction: column;
   --action-bar-height: 72px;
   overflow: hidden; 
-}
-
-.page-header {
-  background: var(--bg-base);
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
-  border-bottom: 2px solid var(--border-base);
-  
-  &:hover {
-    background: var(--bg-base);
-  }
-}
-
-.header-content {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  transition: padding 0.3s ease;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-left h1 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  transition: color 0.2s ease;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-left .n-button,
-.header-right .n-button {
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.steps-section {
-  padding: 24px 0;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.custom-steps {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 16px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
-}
-
-.step-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  gap: 8px;
-  width: 120px; 
-  
-  @media (min-width: 426px) {
-    &:first-child {
-      margin-right: auto;
-    }
-    
-    &:last-child {
-      margin-left: auto;
-    }
-  }
-}
-
-.step-indicator {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-color);
-  color: var(--text-tertiary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-  background: var(--bg-base);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 2;
-}
-
-.step-content {
-  text-align: center;
-  min-width: 100px;
-  padding: 0 8px;
-}
-
-.step-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: var(--text-primary);
-  transition: color 0.3s;
-}
-
-.step-description {
-  font-size: 12px;
-  color: var(--text-secondary);
-  transition: color 0.3s;
-}
-
-.step-current {
-  .step-indicator {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: #fff;
-  }
-  
-  .step-title {
-    color: var(--primary-color);
-  }
-  
-  .step-description {
-    color: var(--text-secondary);
-  }
-}
-
-.step-finished {
-  .step-indicator {
-    background: var(--success-color);
-    border-color: var(--success-color);
-    color: var(--text-tag);
-  }
-  
-  .step-title {
-    color: var(--text-primary);
-  }
-}
-
-@media (max-width: 768px) {
-  .steps-section {
-    padding: 16px 0;
-  }
-  
-  .custom-steps {
-    padding: 0 24px;
-  }
-  
-  .step-content {
-    min-width: 80px;
-  }
-  
-  .step-description {
-    display: none;
-  }
-}
-
-@media (max-width: 425px) {
-  .custom-steps {
-    justify-content: center;
-  }
-  
-  .step-item {
-    display: none;
-    width: auto;
-    
-    &.step-current {
-      display: flex;
-      flex-direction: row;
-      gap: 12px;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      
-      .step-indicator {
-        flex: 0 0 32px; 
-      }
-      
-      .step-content {
-        text-align: left;
-      }
-      
-      .step-description {
-        display: block;
-      }
-    }
-  }
-  
-  .step-line {
-    display: none;
-  }
 }
 
 .page-content {
@@ -631,259 +232,17 @@ const submitPlugin = () => {
   box-sizing: border-box;
   position: relative;
 }
-
-.form-card,
-.json-card,
-.guide-card {
-  margin-bottom: 24px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.form-card,
-.json-card,
-.guide-card {
-  border: 2px solid var(--primary-color);
-}
-
-.form-section,
-.json-preview-section,
-.submit-guide-section {
-  width: 100%;
-  min-height: 400px;
-  box-sizing: border-box;
-}
-
-.json-preview-section {
-  :deep(.n-code) {
-    border-radius: 8px;
-    background: var(--bg-base);
-  }
-}
-
-.json-content {
-  position: relative;
-  opacity: 0;
-  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
-}
-
-.copy-button {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.action-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 90;
-  border-radius: 0;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-lg);
-}
-
-.action-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  height: var(--action-bar-height, 72px);
-  padding: 0 24px;
-}
-
-.action-left,
-.action-right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.action-button-item {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-:deep(.n-form-item) {
-  margin-bottom: 24px;
-}
-
-:deep(.n-form-item-feedback-wrapper) {
-  min-height: 24px;
-  margin-top: 4px;
-}
-
-:deep(.n-form-item-feedback) {
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-:deep(.n-input-group) {
-  width: 100%;
-}
-
-.desc-textarea :deep(.n-input__textarea-el) {
-  height: 120px !important;
-  min-height: 120px !important;
-  max-height: 120px !important;
-  resize: none !important;
-}
-
-.desc-textarea :deep(textarea) {
-  resize: none !important;
-}
-
-.desc-textarea :deep(.n-input__textarea) {
-  resize: none !important;
-}
-
-.desc-textarea :deep(.n-input-wrapper) {
-  resize: none !important;
-}
-
-:deep(.n-timeline) {
-  padding: 16px;
-}
-
-.timeline-item {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.action-button-enter-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.action-button-leave-active {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.action-button-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.action-button-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.form-card,
-.json-card,
-.guide-card {
-  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.n-button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    transition-duration: 0.1s;
-  }
-}
-
-:deep(.n-form-item) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &:hover {
-    transform: translateX(2px);
-  }
-}
-
 @media (max-width: 768px) {
-  .page-header {
-    padding: 12px 0;
-  }
-
-  .header-content {
-    padding: 0 16px;
-  }
-
-  .steps-section {
-    padding: 16px 0;
-  }
-
   .submit-plugin-page {
     --action-bar-height: 64px;
   }
 }
 
 @media (max-width: 425px) {
-    .submit-steps {
-    :deep(.n-step) {
-      display: none;
-      
-      &.n-step--current {
-        display: flex;
-        flex: 0 1 auto;
-      }
-    }
-    
-    :deep(.n-step-splitor) {
-      display: none;
-    }
-    
-    :deep(.n-steps-content) {
-      justify-content: center;
-    }
-    
-    :deep(.n-step-header__title) {
-      font-size: 16px;
-      display: block !important;
-    }
-  }
-
   .page-content {
     padding: 16px;
     padding-bottom: calc(var(--action-bar-height, 64px) + 16px);
     height: calc(100vh - 120px);
-  }
-
-  .action-content {
-    padding: 0 16px;
-    height: var(--action-bar-height);
   }
 
   :deep(.n-card-header) {
