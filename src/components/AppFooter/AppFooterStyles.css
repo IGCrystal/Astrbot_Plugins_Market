@@ -83,6 +83,14 @@
   gap: 32px;
 }
 
+
+.links-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .links-group h4 {
   color: var(--text-primary);
   margin: 0 0 16px;
@@ -91,18 +99,17 @@
 }
 
 .footer-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
   text-decoration: none;
-  margin-bottom: 12px;
-  transition: all 0.3s ease;
+  margin-bottom: 0;
+  transition: color 0.3s ease;
 }
 
 .footer-link:hover {
   color: var(--primary-color);
-  transform: translateX(4px);
 }
 
 .footer-link .n-icon {
@@ -195,6 +202,7 @@
 
   .links-group {
     text-align: left;
+    gap: 4px;
   }
 
   .links-group h4 {
@@ -206,11 +214,6 @@
     justify-content: flex-start;
     margin-bottom: 6px;
     padding: 4px 0;
-  }
-
-  .footer-link:hover {
-    transform: none;
-    color: var(--primary-color);
   }
 
   .footer-bottom {
@@ -260,6 +263,10 @@
   .links-group h4 {
     font-size: 0.9em;
     margin-bottom: 10px;
+  }
+
+  .links-group {
+    gap: 4px;
   }
 
   .footer-link {

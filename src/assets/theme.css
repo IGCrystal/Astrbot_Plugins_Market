@@ -12,6 +12,8 @@
   --bg-n-tag: #e0f2fe;
   --bg-header: #b3d4fc;
   --footer-bg: #eef3f9;
+  --pagination-skeleton-bg: rgba(255, 255, 255, 0.65);
+  --pagination-skeleton-wave: rgba(255, 255, 255, 0.4);
 
   /* 文本颜色 - 提升对比度 */
   --text-primary: #0f172a;
@@ -26,6 +28,7 @@
   --border-base: #e2e8f0;
   --border-hover: #4682b4;
 
+  --pagination-item-bg: rgba(255, 255, 255, 0.72);
   /* 阴影 - 更自然的阴影效果 */
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -52,6 +55,7 @@
   /* 下拉菜单变量 */
   --dropdown-bg: #ffffff;
   --dropdown-text: #0f172a;
+  --pagination-item-bg: rgba(90, 112, 151, 0.081);
   --dropdown-border: #e2e8f0;
 
   /* 滚动条变量 */
@@ -65,6 +69,7 @@
 ::-webkit-scrollbar {
   width: var(--scrollbar-width);
   height: var(--scrollbar-width);
+    --pagination-container-bg: rgba(255, 255, 255, 0.74);
 }
 
 ::-webkit-scrollbar-track {
@@ -119,6 +124,9 @@
   --bg-hover: #334155;
   --bg-n-tag: #0c4a6e;
   --footer-bg: #1a2336;
+  --pagination-skeleton-bg: rgba(38, 45, 63, 0.75);
+  --pagination-skeleton-wave: rgba(255, 255, 255, 0.18);
+  --pagination-container-bg: rgba(20, 30, 46, 0.88);
 
   /* 文本颜色 - 暗色模式下的高对比度 */
   --text-primary: #f8fafc;

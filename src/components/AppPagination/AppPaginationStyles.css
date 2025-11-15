@@ -30,10 +30,10 @@
   box-shadow: var(--shadow-sm);
   will-change: transform, opacity;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--pagination-container-bg, rgba(255, 255, 255, 0.74));
 }
 
 .pagination-container:hover {
-  background: var(--pagination-bg-hover, rgba(255, 255, 255, 0.08));
   transform: translateY(-2px);
 }
 
@@ -44,13 +44,12 @@
 }
 
 :deep(.n-pagination:hover .n-pagination-item:not(:hover):not(.n-pagination-item--active)) {
-  opacity: 0.7;
   transform: scale(0.95);
 }
 
 :deep(.n-pagination .n-pagination-item) {
   color: var(--pagination-text, rgba(0, 0, 0, 0.85)) !important;
-  background: var(--pagination-item-bg, rgba(255, 255, 255, 0.08)) !important;
+  background: var(--pagination-item-bg, rgba(255, 255, 255, 0.12)) !important;
   border: none !important;
   backdrop-filter: blur(8px);
   min-width: 32px;

@@ -106,6 +106,7 @@ onUnmounted(() => {
   width: fit-content;
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--pagination-skeleton-bg);
 }
 
 .pagination-container--skeleton {
@@ -150,6 +151,7 @@ onUnmounted(() => {
 
 :deep(.n-skeleton)::after {
   animation-duration: var(--skeleton-animation-duration, 1.2s) !important;
+  background: var(--pagination-skeleton-wave);
 }
 
 @media (max-width: 1024px) {
