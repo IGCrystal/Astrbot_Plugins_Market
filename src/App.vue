@@ -4,8 +4,18 @@
     :theme-overrides="isDarkMode ? darkThemeOverrides : lightThemeOverrides"
     :hljs="highlightConfig.hljs"
   >
+    <n-global-style />
     <n-message-provider>
-      <div class="app-container" :class="{ dark: isDarkMode }">
+      <div
+        v-if="!isNaiveHydrated"
+        class="hydration-gradient"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="app-container"
+        :class="{ dark: isDarkMode, 'app-container--hidden': !isNaiveHydrated }"
+        :style="containerStyle"
+      >
         <BackToTop v-if="!isSubmitPage" />
         <NuxtPage />
       </div>
@@ -17,6 +27,8 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
+import { useRoute } from '#vue-router'
+import { useHead } from '#imports'
 import { storeToRefs } from 'pinia'
 import { darkTheme } from 'naive-ui'
 import BackToTop from '@/components/ui/BackToTop.vue'
@@ -26,13 +38,40 @@ import { darkThemeOverrides } from '@/utils/config/darkTheme'
 import { usePluginStore } from '@/stores/plugins'
 import { Analytics } from '@vercel/analytics/vue'
 import { SpeedInsights } from '@vercel/speed-insights/vue'
+import { useNaiveHydration } from '@/composables/useNaiveHydration'
 
 const route = useRoute()
 const store = usePluginStore()
 const { isDarkMode, plugins } = storeToRefs(store)
+const { isNaiveHydrated } = useNaiveHydration()
+
+const containerStyle = computed(() => (
+  isNaiveHydrated.value
+    ? undefined
+    : {
+        visibility: 'hidden',
+        pointerEvents: 'none'
+      }
+))
 
 const theme = computed(() => (isDarkMode.value ? darkTheme : null))
 const isSubmitPage = computed(() => route.path === '/submit')
+
+const themeInitScript = `!function(){try{var t='theme-preference',e='data-theme',n=document.documentElement,r=document.body||document.getElementsByTagName('body')[0],o=function(i){i==='dark'?(n.classList.add('dark'),r&&r.classList.add('dark')):(n.classList.remove('dark'),r&&r.classList.remove('dark')),n.setAttribute(e,i)};var a=function(){var i=document.cookie.match(/(?:^|; )theme-preference=([^;]+)/);return i?decodeURIComponent(i[1]):null}();var l=null;try{l=window.localStorage.getItem(t)}catch(i){}var s=l||a;!s&&window.matchMedia&&(s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');o(s==='dark'?'dark':'light')}catch(t){}}();`
+
+useHead({
+  script: [
+    {
+      key: 'theme-init',
+      innerHTML: themeInitScript,
+      tagPosition: 'head',
+      tagPriority: 'critical'
+    }
+  ],
+  __dangerouslyDisableSanitizersByTagID: {
+    'theme-init': ['innerHTML']
+  }
+})
 
 onMounted(() => {
   if (!plugins.value) {
@@ -44,7 +83,7 @@ onMounted(() => {
 <style>
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .app-container {
@@ -52,6 +91,21 @@ body {
   background: var(--body-color, #f5f5f5);
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.app-container--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hydration-gradient {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #b5d3f1 0%, #d0e4f9 45%, #9bc4ec 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .main-layout {
