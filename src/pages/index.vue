@@ -84,6 +84,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useHead } from '#imports'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
@@ -110,8 +111,117 @@ const {
   randomSeed
 } = storeToRefs(store)
 
+const cleanObject = (value) => {
+  if (Array.isArray(value)) {
+    return value
+      .map((entry) => cleanObject(entry))
+      .filter((entry) => {
+        if (entry === undefined || entry === null) return false
+        if (typeof entry === 'string') return entry.trim() !== ''
+        if (Array.isArray(entry)) return entry.length > 0
+        if (typeof entry === 'object') return Object.keys(entry).length > 0
+        return true
+      })
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.entries(value).reduce((acc, [key, val]) => {
+      const cleaned = cleanObject(val)
+      if (cleaned === undefined || cleaned === null) return acc
+      if (typeof cleaned === 'string' && cleaned.trim() === '') return acc
+      if (Array.isArray(cleaned) && cleaned.length === 0) return acc
+      if (typeof cleaned === 'object' && !Array.isArray(cleaned) && Object.keys(cleaned).length === 0) return acc
+      acc[key] = cleaned
+      return acc
+    }, {})
+  }
+
+  return value
+}
+
 const filterKey = computed(() => {
   return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
+})
+
+const structuredData = computed(() => {
+  if (!filteredPlugins.value || filteredPlugins.value.length === 0) {
+    return null
+  }
+
+  const itemListElement = filteredPlugins.value
+    .map((plugin, index) => {
+      const name = plugin.display_name || plugin.name || plugin.id
+      if (!name) return null
+
+      const description = typeof plugin.desc === 'string' ? plugin.desc.replace(/\s+/g, ' ').trim() : undefined
+      const url = plugin.repo || plugin.homepage || plugin.social_link
+      const keywords = Array.isArray(plugin.tags) && plugin.tags.length ? plugin.tags.join(', ') : undefined
+      const stars = Number(plugin.stars)
+      const aggregateRating = !Number.isNaN(stars) && stars > 0
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: stars,
+            ratingCount: Math.max(Math.round(stars), 1)
+          }
+        : undefined
+
+      const item = cleanObject({
+        '@type': 'SoftwareApplication',
+        name,
+        description,
+        applicationCategory: 'Chatbot Plugin',
+        operatingSystem: 'AstrBot Framework',
+        url,
+        keywords,
+        image: plugin.logo,
+        softwareVersion: plugin.version,
+        author: plugin.author
+          ? {
+              '@type': 'Person',
+              name: plugin.author
+            }
+          : undefined,
+        aggregateRating
+      })
+
+      return cleanObject({
+        '@type': 'ListItem',
+        position: index + 1,
+        item
+      })
+    })
+    .filter(Boolean)
+
+  if (!itemListElement.length) {
+    return null
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'AstrBot 插件列表',
+    description: 'AstrBot 插件市场提供的社区插件列表',
+    itemListElement
+  }
+})
+
+useHead(() => {
+  if (!structuredData.value) {
+    return { script: [] }
+  }
+
+  return {
+    script: [
+      {
+        key: 'plugins-ld',
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(structuredData.value)
+      }
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      'plugins-ld': ['innerHTML']
+    }
+  }
 })
 
 const skeletonCount = 12

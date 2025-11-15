@@ -86,6 +86,12 @@ body {
   font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+html.hydration-lock,
+html.hydration-lock body,
+body.hydration-lock {
+  overflow: hidden;
+}
+
 .app-container {
   min-height: 100vh;
   background: var(--body-color, #f5f5f5);
@@ -103,7 +109,6 @@ body {
 .hydration-gradient {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #b5d3f1 0%, #d0e4f9 45%, #9bc4ec 100%);
   pointer-events: none;
   z-index: 0;
 }
