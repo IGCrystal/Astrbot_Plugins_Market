@@ -144,4 +144,8 @@ const props = defineProps({
 .skeleton-card :deep(.n-skeleton) {
   border-radius: 10px !important;
 }
+
+.skeleton-card :deep(.n-skeleton)::after {
+  animation-duration: var(--skeleton-animation-duration, 1.2s) !important;
+}
 </style>

@@ -10,8 +10,9 @@
       :total-pages="totalPages"
     />
     <div class="top-pagination-wrapper">
+      <pagination-skeleton v-if="isLoading" :total-pages="totalPages" />
       <app-pagination
-        v-if="totalPages > 1"
+        v-else-if="totalPages > 1"
         v-model="currentPage"
         :total-pages="totalPages"
         class="top-pagination"
@@ -31,17 +32,15 @@
       </div>
     </div>
 
-    <main class="plugins-grid">
+    <main class="plugins-grid" :class="{ 'is-loading': isLoading }">
       <!-- 加载状态 -->
       <template v-if="isLoading">
-        <div class="pagination-ghost" aria-hidden="true"></div>
         <plugin-card-skeleton
           v-for="index in skeletonCount"
           :key="`skeleton-${index}`"
           :tag-widths="skeletonTagWidths"
           :icon-count="skeletonIconCount"
         />
-        <div class="pagination-ghost" aria-hidden="true"></div>
       </template>
       
       <!-- 空状态提示 -->
@@ -72,8 +71,9 @@
       </template>
     </main>
     <div class="bottom-pagination-wrapper">
+      <pagination-skeleton v-if="isLoading" :total-pages="totalPages" />
       <app-pagination
-        v-if="totalPages > 1"
+        v-else-if="totalPages > 1"
         v-model="currentPage"
         :total-pages="totalPages"
       />
@@ -91,6 +91,7 @@ import AppHeader from '../components/AppHeader'
 import PluginCard from '../components/PluginCard.vue'
 import AppPagination from '../components/AppPagination.vue'
 import AppFooter from '../components/AppFooter/index.vue'
+import PaginationSkeleton from '../components/ui/PaginationSkeleton.vue'
 import PluginCardSkeleton from '../components/ui/PluginCardSkeleton.vue'
 import { usePluginStore } from '../stores/plugins'
 
@@ -167,6 +168,11 @@ onMounted(() => {
   align-items: start;   
 }
 
+.plugins-grid.is-loading {
+  animation: none;
+  animation-delay: 0s;
+}
+
 @keyframes gridAppear {
   from {
     opacity: 0;
@@ -207,15 +213,6 @@ onMounted(() => {
   max-width: 500px;
   justify-self: center;
 }
-
-.pagination-ghost {
-  grid-column: 1 / -1;
-  height: var(--pagination-ghost-height, 60px);
-  max-width: none;
-  justify-self: stretch;
-  pointer-events: none;
-}
-
 
 .empty-state {
   grid-column: 1 / -1;
