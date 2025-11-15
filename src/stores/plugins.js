@@ -1,8 +1,12 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { useCookie } from '#app'
+
+const isClient = typeof window !== 'undefined'
 
 export const usePluginStore = defineStore('plugins', () => {
-  const savedTheme = localStorage.getItem('theme-preference')
+  const themeCookie = useCookie('theme-preference')
+  const savedTheme = themeCookie.value ?? (isClient ? window.localStorage.getItem('theme-preference') : null)
   const plugins = ref(null)
   const searchQuery = ref('')
   const selectedTag = ref(null)
@@ -13,8 +17,37 @@ export const usePluginStore = defineStore('plugins', () => {
   const sortBy = ref('default') 
   const randomSeed = ref(0)
   
+  const applyThemeClass = (dark) => {
+    if (!isClient) return
+    const root = document.documentElement
+    const body = document.body
+    const theme = dark ? 'dark' : 'light'
+    root.classList.toggle('dark', dark)
+    body?.classList.toggle('dark', dark)
+    root.setAttribute('data-theme', theme)
+  }
+
+  if (isClient) {
+    if (savedTheme) {
+      window.localStorage.setItem('theme-preference', savedTheme)
+      applyThemeClass(savedTheme === 'dark')
+    } else {
+      const prefersDark = document.documentElement.classList.contains('dark')
+      const preferredTheme = prefersDark ? 'dark' : 'light'
+      isDarkMode.value = prefersDark
+      themeCookie.value = preferredTheme
+      window.localStorage.setItem('theme-preference', preferredTheme)
+      applyThemeClass(prefersDark)
+    }
+  }
+
   watch(isDarkMode, (newValue) => {
-    localStorage.setItem('theme-preference', newValue ? 'dark' : 'light')
+    const theme = newValue ? 'dark' : 'light'
+    themeCookie.value = theme
+    if (isClient) {
+      window.localStorage.setItem('theme-preference', theme)
+      applyThemeClass(newValue)
+    }
   })
 
   watch(sortBy, (value) => {

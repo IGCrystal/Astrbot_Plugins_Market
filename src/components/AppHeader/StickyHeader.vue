@@ -6,7 +6,7 @@
   >
     <div class="sticky-header-content">
       <div class="sticky-header-left">
-        <img src="/logo.webp" alt="Astrbot Logo" class="sticky-logo" width="32" height="32">
+        <img :src="logoUrl" alt="Astrbot Logo" class="sticky-logo" width="32" height="32">
         <h2 class="sticky-title" :class="{ 'hidden-on-search': isMobileSearchOpen }">AstrBot 插件市场</h2>
         <span class="third-party-badge third-party-badge--sticky" :class="{ 'hidden-on-search': isMobileSearchOpen }">社区</span>
       </div>
@@ -87,6 +87,7 @@
 <script setup>
 import { ref, computed, h, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { NIcon, NInput, NButton, NDropdown } from 'naive-ui'
+import logoUrl from '@/assets/logo.webp'
 import { CloseOutline, SearchOutline, FilterSharp, MoonSharp, SunnySharp, CheckmarkSharp } from '@vicons/ionicons5'
 import SearchToolbar from '../ui/SearchToolbar.vue'
 

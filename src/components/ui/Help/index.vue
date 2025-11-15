@@ -110,7 +110,7 @@ import {
   NInput
 } from 'naive-ui'
 import { HelpCircle, OpenOutline } from '@vicons/ionicons5'
-import { FloatActionButton } from '../Button'
+import FloatActionButton from '../Button/FloatActionButton.vue'
 import { useHelpButton } from './useHelpButton'
 
 marked.setOptions({

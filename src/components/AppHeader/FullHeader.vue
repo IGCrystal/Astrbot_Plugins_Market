@@ -24,7 +24,7 @@
     </n-space>
 
     <div class="header-title">
-      <img src="/logo.webp" alt="Astrbot Logo" class="header-logo" width="48" height="48" decoding="async" fetchpriority="high">
+      <img :src="logoUrl" alt="Astrbot Logo" class="header-logo" width="48" height="48" decoding="async" fetchpriority="high">
       <div class="title-wrapper">
         <h1 class="animated-title" aria-label="AstrBot 插件市场">
           <span
@@ -54,6 +54,7 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { NIcon, NSpace, NSwitch } from 'naive-ui'
+import logoUrl from '@/assets/logo.webp'
 import { MoonSharp, SunnySharp } from '@vicons/ionicons5'
 import SearchToolbar from '../ui/SearchToolbar.vue'
 
