@@ -1,3 +1,8 @@
+.plugin-card-wrapper {
+  display: block;
+  width: 100%;
+}
+
 .plugin-logo {
   width: 100px;
   height: 100px;
@@ -48,7 +53,9 @@
   max-height: max-content;
   display: flex;
   flex-direction: column;
-  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   animation: cardAppear 0.5s cubic-bezier(0.23, 1, 0.32, 1) backwards;
   animation-delay: calc(0.4s + (var(--card-index, 0) * 0.08s));
 }

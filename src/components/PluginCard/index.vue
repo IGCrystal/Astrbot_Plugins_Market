@@ -1,17 +1,44 @@
 <template>
-  <n-card
-    class="plugin-card"
-    :bordered="false"
-    :style="{ borderRadius: '16px', '--card-index': String(index) }"
-    :content-style="{ padding: '8px 16px' }"
-    @click="showDetails"
-    role="article"
+  <article
+    class="plugin-card-wrapper"
+    itemscope
+    itemtype="https://schema.org/SoftwareApplication"
     :aria-label="`插件: ${displayName}`"
-    aria-roledescription="插件卡片"
     :aria-expanded="showPluginDetails"
     tabindex="0"
     ref="cardRef"
+    @keydown.enter.prevent="showDetails"
+    @keydown.space.prevent="showDetails"
   >
+    <meta itemprop="name" :content="displayName">
+    <meta v-if="descriptionContent" itemprop="description" :content="descriptionContent">
+    <meta v-if="plugin.version" itemprop="softwareVersion" :content="plugin.version">
+    <meta itemprop="applicationCategory" content="Chatbot Plugin">
+    <meta itemprop="operatingSystem" content="AstrBot Framework">
+    <meta v-if="plugin.logo && !showFallbackLogo" itemprop="image" :content="plugin.logo">
+    <meta v-if="primaryUrl" itemprop="url" :content="primaryUrl">
+    <meta v-if="keywordsContent" itemprop="keywords" :content="keywordsContent">
+    <span v-if="plugin.author" itemprop="author" itemscope itemtype="https://schema.org/Person" aria-hidden="true">
+      <meta itemprop="name" :content="plugin.author">
+    </span>
+    <span
+      v-if="starsValue > 0"
+      itemprop="aggregateRating"
+      itemscope
+      itemtype="https://schema.org/AggregateRating"
+      aria-hidden="true"
+    >
+      <meta itemprop="ratingValue" :content="starsValue">
+      <meta itemprop="ratingCount" :content="ratingCount">
+    </span>
+
+    <n-card
+      class="plugin-card"
+      :bordered="false"
+      :style="{ borderRadius: '16px', '--card-index': String(index) }"
+      :content-style="{ padding: '8px 16px' }"
+      @click="showDetails"
+    >
     <n-space vertical class="card-content" role="group" aria-label="插件卡片内容布局">
       <div class="card-layout" role="group" aria-labelledby="plugin-header-content">
         <div class="logo-column">
@@ -167,6 +194,7 @@
       </div>
     </n-space>
   </n-card>
+  </article>
 
   <plugin-details
     v-model:show="showPluginDetails"
@@ -175,7 +203,7 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import {
   NCard,
   NSpace,
@@ -209,6 +237,18 @@ const props = defineProps({
 })
 
 const PluginDetails = defineAsyncComponent(() => import('../ui/PluginDetails.vue'))
+
+const primaryUrl = computed(() => props.plugin?.repo || props.plugin?.homepage || props.plugin?.social_link || '')
+const descriptionContent = computed(() => {
+  const description = props.plugin?.desc
+  return typeof description === 'string' ? description.replace(/\s+/g, ' ').trim() : ''
+})
+const keywordsContent = computed(() => (Array.isArray(props.plugin?.tags) && props.plugin.tags.length ? props.plugin.tags.join(', ') : ''))
+const starsValue = computed(() => {
+  const value = Number(props.plugin?.stars ?? 0)
+  return Number.isFinite(value) ? value : 0
+})
+const ratingCount = computed(() => (starsValue.value > 0 ? Math.max(Math.round(starsValue.value), 1) : 0))
 
 const {
   showPluginDetails,

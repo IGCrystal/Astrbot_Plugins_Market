@@ -3,7 +3,7 @@
     <div class="footer-content">
       <div class="footer-section">
         <div class="footer-brand">
-          <img src="/logo.webp" alt="AstrBot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
+          <img :src="logoUrl" alt="AstrBot Logo" class="footer-logo" width="40" height="40" decoding="async" fetchpriority="low">
           <span class="footer-title">AstrBot 插件市场</span>
           <span class="footer-badge">社区</span>
         </div>
@@ -82,6 +82,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { NIcon } from 'naive-ui'
+import logoUrl from '@/assets/logo.webp'
 import {
   LogoGithub,
   GitBranch,
