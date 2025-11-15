@@ -83,7 +83,6 @@
   gap: 32px;
 }
 
-
 .links-group {
   display: flex;
   flex-direction: column;
@@ -141,9 +140,89 @@
   gap: 6px;
 }
 
+.heart-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.heart-link:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.heart-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
 .heart-icon {
   color: #ff4d4f;
   font-size: 16px;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.heart-link:hover .heart-icon,
+.heart-link:focus-visible .heart-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 4px rgba(255, 77, 79, 0.4));
+}
+
+.heart-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, #ff6b81 0%, #ff4d4f 100%);
+  border-radius: 3px;
+  transform: translate(-50%, -50%) scale(0.4) rotate(45deg);
+  opacity: 0;
+  pointer-events: none;
+  animation: heart-burst var(--duration, 600ms) cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms) forwards;
+  will-change: transform, opacity;
+  z-index: 1;
+}
+
+.heart-burst::before,
+.heart-burst::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.heart-burst::before {
+  top: -5px;
+  left: 0;
+}
+
+.heart-burst::after {
+  top: 0;
+  left: -5px;
+}
+
+@keyframes heart-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4) rotate(45deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, -24px)) scale(var(--scale, 1)) rotate(45deg) rotate(var(--rotation, 0deg));
+    opacity: 0;
+  }
 }
 
 @media (max-width: 1024px) {

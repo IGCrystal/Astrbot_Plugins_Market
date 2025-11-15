@@ -44,7 +44,35 @@
       <p class="copyright">
         <span class="copyright-text">© {{ currentYear }} AstrBot 插件市场</span>
         <span class="made-with">
-          Made with <n-icon class="heart-icon"><heart /></n-icon> by Community
+          Made with
+          <a
+            class="heart-link"
+            href="https://github.com/Neo-Life/AAA_Neko"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="AAA_Neko GitHub repository"
+            @click="handleHeartClick"
+            @keydown.enter="handleHeartKeyboard"
+            @keydown.space="handleHeartKeyboard"
+          >
+            <span class="heart-icon-wrapper">
+              <n-icon class="heart-icon"><heart /></n-icon>
+              <span
+                v-for="burst in heartBursts"
+                :key="burst.id"
+                class="heart-burst"
+                :style="{
+                  '--tx': burst.tx + 'px',
+                  '--ty': burst.ty + 'px',
+                  '--scale': burst.scale,
+                  '--duration': burst.duration + 'ms',
+                  '--delay': burst.delay + 'ms',
+                  '--rotation': burst.rotation + 'deg'
+                }"
+              ></span>
+            </span>
+          </a>
+          by Community
         </span>
       </p>
     </div>
@@ -52,13 +80,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { NIcon } from 'naive-ui'
 import {
   LogoGithub,
   GitBranch,
   DocumentText,
-  CodeSlash,
   Heart,
   StarOutline,
   DocumentOutline
@@ -68,6 +95,101 @@ import { useFooterHeight } from './useFooterHeight'
 const currentYear = computed(() => new Date().getFullYear())
 
 const { footerRef, footerHeight } = useFooterHeight()
+
+const heartBursts = ref([])
+let nextBurstId = 0
+const burstTimeouts = new Map()
+let navigationTimeoutId
+
+const HEART_NAVIGATION_DELAY = 700
+
+const triggerHeartBurst = () => {
+  const burstCount = 6
+  const newBursts = Array.from({ length: burstCount }, () => {
+    const id = nextBurstId++
+    return {
+      id,
+      tx: (Math.random() - 0.5) * 48,
+      ty: -Math.random() * 48 - 8,
+      scale: 0.7 + Math.random() * 0.6,
+      duration: 520 + Math.random() * 260,
+      delay: Math.random() * 80,
+      rotation: (Math.random() - 0.5) * 120
+    }
+  })
+
+  heartBursts.value.push(...newBursts)
+
+  newBursts.forEach((burst) => {
+    const timeoutId = setTimeout(() => {
+      heartBursts.value = heartBursts.value.filter((item) => item.id !== burst.id)
+      burstTimeouts.delete(burst.id)
+    }, burst.duration + burst.delay)
+
+    burstTimeouts.set(burst.id, timeoutId)
+  })
+}
+
+const navigateToHeartLink = (anchorElement) => {
+  if (!anchorElement) return
+
+  const href = anchorElement.getAttribute('href') ?? ''
+  if (!href) return
+
+  const target = anchorElement.getAttribute('target') ?? '_self'
+  const rel = anchorElement.getAttribute('rel') ?? ''
+  const openInNewTab = target === '_blank'
+
+  if (navigationTimeoutId) {
+    clearTimeout(navigationTimeoutId)
+  }
+
+  navigationTimeoutId = window.setTimeout(() => {
+    if (openInNewTab) {
+      const noopener = rel.includes('noopener') ? 'noopener' : ''
+      const noreferrer = rel.includes('noreferrer') ? 'noreferrer' : ''
+      const featureString = [noopener, noreferrer].filter(Boolean).join(',') || undefined
+      window.open(href, target, featureString)
+    } else {
+      window.location.assign(href)
+    }
+    navigationTimeoutId = undefined
+  }, HEART_NAVIGATION_DELAY)
+}
+
+const shouldBypassCustomNavigation = (event) => {
+  const isPrimaryButton = typeof event.button !== 'number' || event.button === 0
+  return !isPrimaryButton || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+}
+
+const handleHeartClick = (event) => {
+  if (shouldBypassCustomNavigation(event)) {
+    return
+  }
+
+  event.preventDefault()
+  triggerHeartBurst()
+  navigateToHeartLink(event.currentTarget)
+}
+
+const handleHeartKeyboard = (event) => {
+  if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+    return
+  }
+
+  event.preventDefault()
+  triggerHeartBurst()
+  navigateToHeartLink(event.currentTarget)
+}
+
+onBeforeUnmount(() => {
+  burstTimeouts.forEach((timeoutId) => clearTimeout(timeoutId))
+  burstTimeouts.clear()
+
+  if (navigationTimeoutId) {
+    clearTimeout(navigationTimeoutId)
+  }
+})
 
 defineExpose({ footerHeight })
 </script>
