@@ -24,8 +24,8 @@ import { highlightConfig } from './utils/highlight'
 
 import BackToTop from './components/ui/BackToTop.vue'
 
-import { lightThemeOverrides } from './config/lightTheme'
-import { darkThemeOverrides } from './config/darkTheme'
+import { lightThemeOverrides } from './utils/config/lightTheme'
+import { darkThemeOverrides } from './utils/config/darkTheme'
 import { usePluginStore } from './stores/plugins'
 
 import { Analytics } from '@vercel/analytics/vue'
