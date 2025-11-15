@@ -1,5 +1,6 @@
 <template>
   <header
+    ref="stickyHeaderRef"
     class="sticky-header"
     :class="{ 'sticky-header--visible': showStickyHeader, 'is-search-open': isMobileSearchOpen }"
   >
@@ -84,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, computed, h } from 'vue'
+import { ref, computed, h, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { NIcon, NInput, NButton, NDropdown } from 'naive-ui'
 import { CloseOutline, SearchOutline, FilterSharp, MoonSharp, SunnySharp, CheckmarkSharp } from '@vicons/ionicons5'
 import SearchToolbar from '../SearchToolbar.vue'
@@ -105,6 +106,84 @@ const handleCurrentPageChange = (value) => emit('update:currentPage', value)
 const handleSortByChange = (value) => emit('update:sortBy', value)
 
 const isMobileSelectOpen = ref(false)
+const stickyHeaderRef = ref(null)
+const stickyHeaderHeight = ref(0)
+const MOBILE_BREAKPOINT = 1024
+let resizeObserver
+
+const setStickyHeaderVar = (value) => {
+  if (typeof document === 'undefined') return
+  if (value > 0) {
+    document.documentElement.style.setProperty('--app-sticky-header-height', `${value}px`)
+  } else {
+    document.documentElement.style.removeProperty('--app-sticky-header-height')
+  }
+}
+
+const updateStickyHeaderHeight = () => {
+  if (typeof window === 'undefined' || window.innerWidth >= MOBILE_BREAKPOINT) {
+    stickyHeaderHeight.value = 0
+    setStickyHeaderVar(0)
+    return
+  }
+
+  const el = stickyHeaderRef.value?.$el ?? stickyHeaderRef.value
+  if (!(el instanceof HTMLElement)) return
+
+  const height = el.getBoundingClientRect().height
+  stickyHeaderHeight.value = height
+  setStickyHeaderVar(height)
+}
+
+const attachObserver = () => {
+  if (typeof ResizeObserver === 'undefined') return
+  if (typeof window !== 'undefined' && window.innerWidth >= MOBILE_BREAKPOINT) return
+  const el = stickyHeaderRef.value?.$el ?? stickyHeaderRef.value
+  if (!(el instanceof HTMLElement)) return
+
+  resizeObserver = new ResizeObserver(() => {
+    updateStickyHeaderHeight()
+  })
+  resizeObserver.observe(el)
+}
+
+const detachObserver = () => {
+  resizeObserver?.disconnect()
+  resizeObserver = undefined
+}
+
+const handleResize = () => {
+  if (typeof window === 'undefined') return
+  const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+  if (!isMobile) {
+    detachObserver()
+    stickyHeaderHeight.value = 0
+    setStickyHeaderVar(0)
+    return
+  }
+
+  updateStickyHeaderHeight()
+  if (!resizeObserver) {
+    attachObserver()
+  }
+}
+
+onMounted(() => {
+  if (typeof window === 'undefined') return
+  window.addEventListener('resize', handleResize)
+  nextTick(() => {
+    updateStickyHeaderHeight()
+    attachObserver()
+  })
+})
+
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', handleResize)
+  }
+  detachObserver()
+  setStickyHeaderVar(0)
+})
 
 const mobileSortOptions = computed(() => {
   const make = (text, key) => ({
@@ -130,6 +209,8 @@ const mobileSortOptions = computed(() => {
 
 const handleMobileDropdownSelect = (key) => emit('update:sortBy', key)
 const toggleMobileSearch = () => emit('update:isMobileSearchOpen', !props.isMobileSearchOpen)
+
+defineExpose({ stickyHeaderRef, stickyHeaderHeight })
 </script>
 
 <style scoped>

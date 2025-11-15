@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { NIcon, NSpace, NSwitch } from 'naive-ui'
 import { MoonSharp, SunnySharp } from '@vicons/ionicons5'
 import SearchToolbar from '../SearchToolbar.vue'
@@ -82,8 +82,85 @@ const railStyle = ({ focused, checked }) => {
 }
 
 const fullHeader = ref(null)
+const headerHeight = ref(0)
+const DESKTOP_BREAKPOINT = 1024
+let resizeObserver
 
-defineExpose({ fullHeader })
+const setHeaderHeightVar = (value) => {
+  if (typeof document === 'undefined') return
+  if (value > 0) {
+    document.documentElement.style.setProperty('--app-header-height', `${value}px`)
+  } else {
+    document.documentElement.style.removeProperty('--app-header-height')
+  }
+}
+
+const updateHeaderHeight = () => {
+  if (typeof window === 'undefined' || window.innerWidth < DESKTOP_BREAKPOINT) {
+    headerHeight.value = 0
+    setHeaderHeightVar(0)
+    return
+  }
+
+  const el = fullHeader.value?.$el ?? fullHeader.value
+  if (!(el instanceof HTMLElement)) return
+
+  const height = el.getBoundingClientRect().height
+  headerHeight.value = height
+  setHeaderHeightVar(height)
+}
+
+const attachObserver = () => {
+  if (typeof ResizeObserver === 'undefined') return
+  if (typeof window !== 'undefined' && window.innerWidth < DESKTOP_BREAKPOINT) return
+  const el = fullHeader.value?.$el ?? fullHeader.value
+  if (!(el instanceof HTMLElement)) return
+
+  resizeObserver = new ResizeObserver(() => {
+    updateHeaderHeight()
+  })
+  resizeObserver.observe(el)
+}
+
+const detachObserver = () => {
+  resizeObserver?.disconnect()
+  resizeObserver = undefined
+}
+
+const handleResize = () => {
+  if (typeof window === 'undefined') return
+  const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT
+  if (!isDesktop) {
+    detachObserver()
+    headerHeight.value = 0
+    setHeaderHeightVar(0)
+    return
+  }
+
+  updateHeaderHeight()
+  if (!resizeObserver) {
+    attachObserver()
+  }
+}
+
+onMounted(() => {
+  if (typeof window === 'undefined') return
+  window.addEventListener('resize', handleResize)
+  nextTick(() => {
+    updateHeaderHeight()
+    attachObserver()
+  })
+})
+
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', handleResize)
+  }
+  detachObserver()
+  setHeaderHeightVar(0)
+})
+
+defineExpose({ fullHeader, headerHeight })
 </script>
 
 <style scoped>

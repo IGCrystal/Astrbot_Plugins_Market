@@ -24,7 +24,7 @@
         <span class="toolbar-tip">随机推荐</span>
         <n-button size="small" tertiary @click="refreshRandomOrder">
           <template #icon>
-                         <n-icon><sync-outline /></n-icon>
+            <n-icon><sync-outline /></n-icon>
           </template>
           换一换
         </n-button>
@@ -90,7 +90,7 @@ import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
 import AppHeader from '../components/AppHeader'
 import PluginCard from '../components/PluginCard.vue'
 import AppPagination from '../components/AppPagination.vue'
-import AppFooter from '../components/AppFooter.vue'
+import AppFooter from '../components/AppFooter/index.vue'
 import PluginCardSkeleton from '../components/ui/PluginCardSkeleton.vue'
 import { usePluginStore } from '../stores/plugins'
 
@@ -147,19 +147,25 @@ onMounted(() => {
   font-size: 13px;
 }
 
-  .plugins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    max-width: 1400px;
-    gap: 24px;
-    padding: 20px;
-    margin: 0 auto;
-    animation: gridAppear 0.3s ease-out;
-    animation-delay: 0.7s;
-    animation-fill-mode: backwards;
-    align-content: start;  
-    align-items: start;   
-  }
+.plugins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  max-width: 1400px;
+  min-height: calc(
+    100vh
+    - var(--app-header-height, 0px)
+    - var(--app-sticky-header-height, 0px)
+    - var(--app-footer-height, 0px)
+  );
+  gap: 24px;
+  padding: 20px;
+  margin: 0 auto;
+  animation: gridAppear 0.3s ease-out;
+  animation-delay: 0.7s;
+  animation-fill-mode: backwards;
+  align-content: start;  
+  align-items: start;   
+}
 
 @keyframes gridAppear {
   from {
