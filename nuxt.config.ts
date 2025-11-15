@@ -19,6 +19,35 @@ export default defineNuxtConfig({
   vite: {
     ssr: {
       noExternal: ['naive-ui', 'vueuc']
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) {
+              return undefined
+            }
+
+            if (id.includes('naive-ui') || id.includes('vueuc')) {
+              return 'ui-vendor'
+            }
+
+            if (id.includes('@vicons')) {
+              return 'icons'
+            }
+
+            if (id.includes('highlight.js')) {
+              return 'code-highlight'
+            }
+
+            if (id.includes('@giscus')) {
+              return 'comments'
+            }
+
+            return 'vendor'
+          }
+        }
+      }
     }
   },
   nitro: {
