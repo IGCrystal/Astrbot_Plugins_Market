@@ -257,7 +257,8 @@ const { refreshRandomOrder } = store
 
 .plugins-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  width: 100%;
   max-width: 1400px;
   min-height: calc(
     100vh
@@ -273,6 +274,7 @@ const { refreshRandomOrder } = store
   animation-fill-mode: backwards;
   align-content: start;  
   align-items: start;   
+  box-sizing: border-box;
 }
 
 .plugins-grid.is-loading {
@@ -301,7 +303,7 @@ const { refreshRandomOrder } = store
 /* 小平板屏幕 */
 @media (max-width: 768px) and (min-width: 481px) {
   .plugins-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
     gap: 18px;
     padding: 16px;
   }
@@ -317,8 +319,10 @@ const { refreshRandomOrder } = store
 }
 
 .plugins-grid > * {
-  max-width: 500px;
-  justify-self: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: stretch;
 }
 
 .empty-state {
