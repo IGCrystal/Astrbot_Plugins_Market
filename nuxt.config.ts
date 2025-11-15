@@ -8,8 +8,14 @@ const nitroPreset = runtimeEnv.NITRO_PRESET ?? (runtimeEnv.VERCEL ? 'vercel' : '
 
 export default defineNuxtConfig({
   srcDir: 'src',
+  serverDir: 'src/server',
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
   css: ['@/assets/theme.css'],
+  runtimeConfig: {
+    public: {
+      siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? ''
+    }
+  },
   imports: {
     dirs: ['stores']
   },
@@ -22,6 +28,9 @@ export default defineNuxtConfig({
     }
   },
   nitro: {
-    preset: nitroPreset
+    preset: nitroPreset,
+    prerender: {
+      routes: ['/sitemap.xml', '/robots.txt']
+    }
   }
 })
