@@ -23,13 +23,13 @@
     </span>
     <span
       v-if="starsValue > 0"
-      itemprop="aggregateRating"
+      itemprop="interactionStatistic"
       itemscope
-      itemtype="https://schema.org/AggregateRating"
+      itemtype="https://schema.org/InteractionCounter"
       aria-hidden="true"
     >
-      <meta itemprop="ratingValue" :content="starsValue">
-      <meta itemprop="ratingCount" :content="ratingCount">
+      <meta itemprop="interactionType" content="https://schema.org/LikeAction">
+      <meta itemprop="userInteractionCount" :content="starsValue">
     </span>
 
     <n-card
@@ -246,9 +246,8 @@ const descriptionContent = computed(() => {
 const keywordsContent = computed(() => (Array.isArray(props.plugin?.tags) && props.plugin.tags.length ? props.plugin.tags.join(', ') : ''))
 const starsValue = computed(() => {
   const value = Number(props.plugin?.stars ?? 0)
-  return Number.isFinite(value) ? value : 0
+  return Number.isFinite(value) ? Math.max(value, 0) : 0
 })
-const ratingCount = computed(() => (starsValue.value > 0 ? Math.max(Math.round(starsValue.value), 1) : 0))
 
 const {
   showPluginDetails,
