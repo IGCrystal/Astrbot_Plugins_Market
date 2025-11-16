@@ -28,37 +28,54 @@
   <div class="sticky-header-spacer" aria-hidden="true"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import FullHeader from './FullHeader.vue'
 import StickyHeader from './StickyHeader.vue'
+import type { SortOption } from '@/stores/plugins'
 
-const props = defineProps({
-  modelValue: Boolean,
-  searchQuery: String,
-  currentPage: Number,
-  sortBy: String,
-  totalPages: Number,
-  selectedTag: String,
-  tagOptions: Array
-})
+type TagOption = {
+  label: string
+  value: string
+}
 
-const emit = defineEmits([
-  'update:modelValue',
-  'update:searchQuery',
-  'update:currentPage',
-  'update:sortBy',
-  'update:selectedTag'
-])
+type HeaderProps = {
+  modelValue: boolean
+  searchQuery: string
+  currentPage: number
+  sortBy: SortOption
+  totalPages?: number
+  selectedTag?: string | null
+  tagOptions?: TagOption[]
+}
 
-const fullHeaderComponent = ref(null)
+const props = defineProps<HeaderProps>()
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'update:searchQuery', value: string): void
+  (e: 'update:currentPage', value: number): void
+  (e: 'update:sortBy', value: SortOption): void
+  (e: 'update:selectedTag', value: string | null): void
+}>()
+
+type FullHeaderExpose = {
+  fullHeader?: Ref<HTMLElement | null>
+  $el?: HTMLElement
+}
+
+const fullHeaderComponent = ref<InstanceType<typeof FullHeader> | null>(null)
 const showStickyHeader = ref(false)
 const isMobileSearchOpen = ref(false)
 
-const resolveHeaderElement = () => {
-  const instance = fullHeaderComponent.value
+const resolveHeaderElement = (): HTMLElement | null => {
+  const instance = fullHeaderComponent.value as FullHeaderExpose | null
   if (!instance) return null
-  return instance.fullHeader?.value ?? instance.$el ?? null
+  if (instance.fullHeader?.value instanceof HTMLElement) {
+    return instance.fullHeader.value
+  }
+  return instance.$el ?? null
 }
 
 const handleScroll = () => {
@@ -78,7 +95,7 @@ const handleScroll = () => {
   showStickyHeader.value = rect.bottom <= 0
 }
 
-const handleMobileSearchToggle = (value) => {
+const handleMobileSearchToggle = (value: boolean) => {
   isMobileSearchOpen.value = value
 }
 

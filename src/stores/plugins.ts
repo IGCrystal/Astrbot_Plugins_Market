@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 import type { PluginRecord } from '@/types/plugin'
 
-type SortOption = 'default' | 'stars' | 'updated' | 'random'
+export type SortOption = 'default' | 'stars' | 'updated' | 'random'
 type TagOption = { label: string; value: string }
 
 const isClient = typeof window !== 'undefined'

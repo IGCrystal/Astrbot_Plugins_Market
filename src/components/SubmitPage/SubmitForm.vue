@@ -84,7 +84,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, defineExpose } from 'vue'
 import {
   NCard,
@@ -96,29 +96,30 @@ import {
   NDynamicTags,
   NCode
 } from 'naive-ui'
+import type { FormInst, FormRules, FormValidationError } from 'naive-ui'
 
-const props = defineProps({
-  formData: {
-    type: Object,
-    required: true
-  },
-  rules: {
-    type: Object,
-    required: true
-  },
-  currentStep: {
-    type: Number,
-    required: true
-  },
-  generatedJSON: {
-    type: String,
-    default: ''
-  }
+type SubmitFormData = {
+  name: string
+  display_name: string
+  desc: string
+  author: string
+  repo: string
+  tags: string[]
+  social_link: string
+}
+
+const props = withDefaults(defineProps<{
+  formData: SubmitFormData
+  rules: FormRules
+  currentStep: number
+  generatedJSON?: string
+}>(), {
+  generatedJSON: ''
 })
 
-const formRef = ref(null)
+const formRef = ref<FormInst | null>(null)
 
-const validate = (callback) => {
+const validate = (callback?: (errors?: Array<FormValidationError> | undefined) => void) => {
   return formRef.value?.validate(callback)
 }
 

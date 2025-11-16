@@ -85,7 +85,7 @@
   </teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import {
@@ -96,28 +96,30 @@ import {
   NEmpty
 } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { usePluginStore } from '../../stores/plugins'
+import { usePluginStore } from '@/stores/plugins'
 import {
   ExtensionPuzzleOutline,
   LogoGithub
 } from '@vicons/ionicons5'
 import PluginComment from './PluginComment.vue'
+import type { PluginRecord } from '@/types/plugin'
 
-const props = defineProps({
-  show: Boolean,
-  plugin: Object
+const props = withDefaults(defineProps<{ show: boolean; plugin?: PluginRecord | null }>(), {
+  show: false,
+  plugin: null
 })
 
-const emit = defineEmits(['update:show'])
+const emit = defineEmits<{ (event: 'update:show', value: boolean): void }>()
 
 const show = ref(props.show)
 const loading = ref(false)
 const error = ref(false)
 const readmeHtml = ref('')
 
-const onLogoError = (e) => {
-  if (e && e.target) {
-    e.target.style.display = 'none'
+const onLogoError = (event: Event) => {
+  const target = event.target as HTMLImageElement | null
+  if (target) {
+    target.style.display = 'none'
   }
 }
 
@@ -149,31 +151,46 @@ watch(show, (newVal) => {
   }
 })
 
-const openUrl = (url) => {
+const openUrl = (url?: string | null) => {
   if (url) {
     window.open(url, '_blank')
   }
 }
 
+const fetchWithTimeout = async (input: RequestInfo | URL, options: RequestInit = {}, timeout = 10000) => {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeout)
+  try {
+    return await fetch(input, { ...options, signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 async function fetchReadme() {
-  if (!props.plugin?.repo) return
-  
+  const repoPath = props.plugin?.repo
+  if (!repoPath) return
+
+  const segments = repoPath.split('/').filter(Boolean)
+  if (segments.length < 2) return
+  const [owner, repo] = segments.slice(-2)
+
   loading.value = true
   error.value = false
-  
-  try {
-    const [owner, repo] = props.plugin.repo.split('/').slice(-2)
 
+  try {
     let readmeText = ''
 
     try {
-      const apiResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/vnd.github.v3.raw'
-        },
-        timeout: 10000
-      })
+      const apiResp = await fetchWithTimeout(
+        `https://api.github.com/repos/${owner}/${repo}/readme`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/vnd.github.v3.raw'
+          }
+        }
+      )
 
       if (apiResp.ok) {
         readmeText = await apiResp.text()
@@ -181,6 +198,7 @@ async function fetchReadme() {
         throw new Error(`GitHub API /readme returned ${apiResp.status}`)
       }
     } catch (apiErr) {
+      console.error('Error fetching README via API:', apiErr)
       const branches = ['main', 'master']
       const candidates = ['README.md', 'Readme.md', 'readme.md', 'README.MD', 'README']
 
@@ -188,20 +206,22 @@ async function fetchReadme() {
       for (const branch of branches) {
         for (const filename of candidates) {
           try {
-            const resp = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`, {
-              method: 'GET',
-              headers: {
-                'Accept': 'text/plain'
-              },
-              timeout: 10000
-            })
+            const resp = await fetchWithTimeout(
+              `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`,
+              {
+                method: 'GET',
+                headers: {
+                  Accept: 'text/plain'
+                }
+              }
+            )
             if (resp.ok) {
               readmeText = await resp.text()
               found = true
               break
             }
-          } catch (_) {
-            // 忽略，尝试下一个候选
+          } catch (rawErr) {
+            console.error('Error fetching README via raw URL:', rawErr)
           }
         }
         if (found) break
@@ -216,7 +236,8 @@ async function fetchReadme() {
       throw new Error('README 内容为空')
     }
 
-    readmeHtml.value = marked(readmeText)
+    const parsed = marked.parse(readmeText)
+    readmeHtml.value = typeof parsed === 'string' ? parsed : await parsed
   } catch (err) {
     console.error('Error fetching README:', err)
     error.value = true

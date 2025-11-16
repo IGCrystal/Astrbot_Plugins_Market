@@ -25,19 +25,22 @@
   <SpeedInsights />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useRoute } from '#vue-router'
-import { useHead } from '#imports'
+import type { CSSProperties } from 'vue'
+import { useRoute } from 'vue-router'
+import { useHead } from 'nuxt/app'
 import { storeToRefs } from 'pinia'
 import { darkTheme } from 'naive-ui'
+import { Analytics } from '@vercel/analytics/vue'
+import { SpeedInsights } from '@vercel/speed-insights/vue'
+
 import BackToTop from '@/components/ui/BackToTop.vue'
+
 import { highlightConfig } from '@/utils/highlight'
 import { lightThemeOverrides } from '@/utils/config/lightTheme'
 import { darkThemeOverrides } from '@/utils/config/darkTheme'
 import { usePluginStore } from '@/stores/plugins'
-import { Analytics } from '@vercel/analytics/vue'
-import { SpeedInsights } from '@vercel/speed-insights/vue'
 import { useNaiveHydration } from '@/composables/useNaiveHydration'
 
 const route = useRoute()
@@ -45,7 +48,7 @@ const store = usePluginStore()
 const { isDarkMode, plugins } = storeToRefs(store)
 const { isNaiveHydrated } = useNaiveHydration()
 
-const containerStyle = computed(() => (
+const containerStyle = computed<CSSProperties | undefined>(() => (
   isNaiveHydrated.value
     ? undefined
     : {
@@ -59,19 +62,19 @@ const isSubmitPage = computed(() => route.path === '/submit')
 
 const themeInitScript = `!function(){try{var t='theme-preference',e='data-theme',n=document.documentElement,r=document.body||document.getElementsByTagName('body')[0],o=function(i){i==='dark'?(n.classList.add('dark'),r&&r.classList.add('dark')):(n.classList.remove('dark'),r&&r.classList.remove('dark')),n.setAttribute(e,i)};var a=function(){var i=document.cookie.match(/(?:^|; )theme-preference=([^;]+)/);return i?decodeURIComponent(i[1]):null}();var l=null;try{l=window.localStorage.getItem(t)}catch(i){}var s=l||a;!s&&window.matchMedia&&(s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');o(s==='dark'?'dark':'light')}catch(t){}}();`
 
-useHead({
+useHead(() => ({
   script: [
     {
       key: 'theme-init',
       innerHTML: themeInitScript,
-      tagPosition: 'head',
-      tagPriority: 'critical'
+      tagPosition: 'head' as const,
+      tagPriority: 'critical' as const
     }
   ],
   __dangerouslyDisableSanitizersByTagID: {
     'theme-init': ['innerHTML']
   }
-})
+}))
 
 onMounted(() => {
   if (!plugins.value) {

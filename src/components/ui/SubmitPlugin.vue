@@ -7,7 +7,7 @@
     </div>
     <float-action-button
       class="submit-plugin"
-      aria-label="提交插件"
+      ariaLabel="提交插件"
       :icon-size="22"
       @click="navigateToSubmit"
     >
@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { AddCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'

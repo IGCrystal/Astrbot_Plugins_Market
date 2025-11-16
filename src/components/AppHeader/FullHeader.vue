@@ -61,43 +61,52 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import type { CSSProperties } from 'vue'
 import { NIcon, NSpace, NSwitch } from 'naive-ui'
 import logoUrl from '@/assets/logo.webp'
 import { MoonSharp, SunnySharp } from '@vicons/ionicons5'
 import SearchToolbar from '../ui/SearchToolbar.vue'
+import type { SortOption } from '@/stores/plugins'
 
-const props = defineProps({
-  modelValue: Boolean,
-  searchQuery: String,
-  currentPage: Number,
-  sortBy: String
-})
-const emit = defineEmits(['update:modelValue', 'update:searchQuery', 'update:currentPage', 'update:sortBy'])
+type HeaderProps = {
+  modelValue: boolean
+  searchQuery: string
+  currentPage: number
+  sortBy: SortOption
+}
+
+const props = defineProps<HeaderProps>()
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'update:searchQuery', value: string): void
+  (e: 'update:currentPage', value: number): void
+  (e: 'update:sortBy', value: SortOption): void
+}>()
 
 const titleText = 'AstrBot 插件市场'
 const titleChars = computed(() => titleText.split('').map((char) => (char === ' ' ? '\u00A0' : char)))
 
-const handleThemeChange = (value) => emit('update:modelValue', value)
-const handleSearchQueryChange = (value) => emit('update:searchQuery', value)
-const handleCurrentPageChange = (value) => emit('update:currentPage', value)
-const handleSortByChange = (value) => emit('update:sortBy', value)
+const handleThemeChange = (value: boolean) => emit('update:modelValue', value)
+const handleSearchQueryChange = (value: string) => emit('update:searchQuery', value)
+const handleCurrentPageChange = (value: number) => emit('update:currentPage', value)
+const handleSortByChange = (value: SortOption) => emit('update:sortBy', value)
 
-const railStyle = ({ focused, checked }) => {
-  const style = {}
+const railStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
+  const style: CSSProperties = {}
   if (checked) style.background = '#1e293b'
   else style.background = '#60a5fa'
   if (focused) style.boxShadow = '0 0 0 2px rgba(96, 165, 250, 0.3)'
   return style
 }
 
-const fullHeader = ref(null)
+const fullHeader = ref<HTMLElement | null>(null)
 const headerHeight = ref(0)
 const DESKTOP_BREAKPOINT = 1024
-let resizeObserver
+let resizeObserver: ResizeObserver | undefined
 
-const setHeaderHeightVar = (value) => {
+const setHeaderHeightVar = (value: number) => {
   if (typeof document === 'undefined') return
   if (value > 0) {
     document.documentElement.style.setProperty('--app-header-height', `${value}px`)
@@ -113,7 +122,7 @@ const updateHeaderHeight = () => {
     return
   }
 
-  const el = fullHeader.value?.$el ?? fullHeader.value
+  const el = fullHeader.value
   if (!(el instanceof HTMLElement)) return
 
   const height = el.getBoundingClientRect().height
@@ -124,7 +133,7 @@ const updateHeaderHeight = () => {
 const attachObserver = () => {
   if (typeof ResizeObserver === 'undefined') return
   if (typeof window !== 'undefined' && window.innerWidth < DESKTOP_BREAKPOINT) return
-  const el = fullHeader.value?.$el ?? fullHeader.value
+  const el = fullHeader.value
   if (!(el instanceof HTMLElement)) return
 
   resizeObserver = new ResizeObserver(() => {

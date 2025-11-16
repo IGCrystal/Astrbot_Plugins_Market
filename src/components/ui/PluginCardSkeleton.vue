@@ -45,18 +45,15 @@
   </article>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NSkeleton } from 'naive-ui'
 
-const props = defineProps({
-  tagWidths: {
-    type: Array,
-    default: () => ['72px', '56px', '64px']
-  },
-  iconCount: {
-    type: Number,
-    default: 2
-  }
+const props = withDefaults(defineProps<{
+  tagWidths?: Array<string | number>
+  iconCount?: number
+}>(), {
+  tagWidths: () => ['72px', '56px', '64px'],
+  iconCount: 2
 })
 </script>
 

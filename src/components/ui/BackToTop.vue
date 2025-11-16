@@ -5,7 +5,7 @@
       <float-action-button
         v-show="show"
         class="back-to-top"
-        aria-label="返回顶部"
+        ariaLabel="返回顶部"
         :icon-size="22"
         @click="scrollToTop"
       >
@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ChevronUp } from '@vicons/ionicons5'
 import FloatActionButton from './Button/FloatActionButton.vue'
@@ -30,18 +30,20 @@ const show = ref(false)
 const scrollThreshold = 300
 
 const checkScroll = () => {
+  if (typeof window === 'undefined') return
   show.value = window.pageYOffset > scrollThreshold
 }
 
 const scrollToTop = () => {
+  if (typeof window === 'undefined' || typeof requestAnimationFrame === 'undefined') return
   const currentPosition = window.pageYOffset
   const duration = 500 
   const startTime = performance.now()
 
-  function animation(currentTime) {
+  function animation(currentTime: number) {
     const timeElapsed = currentTime - startTime
     const progress = Math.min(timeElapsed / duration, 1)
-    const easing = progress => progress < 0.5
+    const easing = (progress: number) => progress < 0.5
       ? 2 * progress * progress
       : 1 - Math.pow(-2 * progress + 2, 2) / 2
 
@@ -56,11 +58,13 @@ const scrollToTop = () => {
 }
 
 onMounted(() => {
+  if (typeof window === 'undefined') return
   window.addEventListener('scroll', checkScroll, { passive: true })
   checkScroll() 
 })
 
 onUnmounted(() => {
+  if (typeof window === 'undefined') return
   window.removeEventListener('scroll', checkScroll)
 })
 </script>

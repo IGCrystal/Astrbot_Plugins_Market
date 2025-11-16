@@ -13,7 +13,7 @@
         </div>
         <float-action-button
           class="help-button"
-          aria-label="帮助"
+          ariaLabel="帮助"
           :icon-size="22"
           @click="toggleHelp"
         >
@@ -96,7 +96,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { marked } from 'marked'
 import {
   NIcon,

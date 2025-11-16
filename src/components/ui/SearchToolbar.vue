@@ -30,50 +30,55 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NSelect, NIcon } from 'naive-ui'
 import { Search, CloseCircle } from '@vicons/ionicons5'
+import type { SortOption } from '@/stores/plugins'
 
-const props = defineProps({
-  searchQuery: String,
-  currentPage: Number,
-  sortBy: String,
-  compact: {
-    type: Boolean,
-    default: false
-  },
-  onHeader: {
-    type: Boolean,
-    default: false
-  },
-  showSort: {
-    type: Boolean,
-    default: true
-  }
+const props = withDefaults(defineProps<{
+  searchQuery?: string
+  currentPage?: number
+  sortBy?: SortOption
+  compact?: boolean
+  onHeader?: boolean
+  showSort?: boolean
+}>(), {
+  searchQuery: '',
+  currentPage: 1,
+  sortBy: 'default',
+  compact: false,
+  onHeader: false,
+  showSort: true
 })
 
-const emit = defineEmits(['update:searchQuery', 'update:currentPage', 'update:sortBy'])
+const emit = defineEmits<{
+  (event: 'update:searchQuery', value: string): void
+  (event: 'update:currentPage', value: number): void
+  (event: 'update:sortBy', value: SortOption): void
+}>()
 
-const sortOptions = [
+const sortOptions: Array<{ label: string; value: SortOption }> = [
   { label: '默认排序', value: 'default' },
   { label: '随机推荐', value: 'random' },
   { label: '按更新时间', value: 'updated' },
   { label: '按 Star 数量', value: 'stars' }
 ]
 
-const compactSortOptions = [
+const compactSortOptions: Array<{ label: string; value: SortOption }> = [
   { label: '默认', value: 'default' },
   { label: '随机', value: 'random' },
   { label: '时间', value: 'updated' },
   { label: 'Star', value: 'stars' }
 ]
 
-const handleSortChange = (value) => {
+const handleSortChange = (value: SortOption) => {
   emit('update:sortBy', value)
 }
 
-const handleSearchInput = (e) => {
-  const value = e.target.value
+const handleSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (!target) return
+  const value = target.value
   emit('update:searchQuery', value)
   if (props.currentPage > 1) {
     emit('update:currentPage', 1)

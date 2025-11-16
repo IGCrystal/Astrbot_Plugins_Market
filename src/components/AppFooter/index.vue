@@ -79,7 +79,7 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { NIcon } from 'naive-ui'
 import logoUrl from '@/assets/logo.webp'
@@ -97,16 +97,26 @@ const currentYear = computed(() => new Date().getFullYear())
 
 const { footerRef, footerHeight } = useFooterHeight()
 
-const heartBursts = ref([])
+type HeartBurst = {
+  id: number
+  tx: number
+  ty: number
+  scale: number
+  duration: number
+  delay: number
+  rotation: number
+}
+
+const heartBursts = ref<HeartBurst[]>([])
 let nextBurstId = 0
-const burstTimeouts = new Map()
-let navigationTimeoutId
+const burstTimeouts = new Map<number, ReturnType<typeof setTimeout>>()
+let navigationTimeoutId: number | undefined
 
 const HEART_NAVIGATION_DELAY = 700
 
 const triggerHeartBurst = () => {
   const burstCount = 6
-  const newBursts = Array.from({ length: burstCount }, () => {
+  const newBursts: HeartBurst[] = Array.from({ length: burstCount }, () => {
     const id = nextBurstId++
     return {
       id,
@@ -131,7 +141,7 @@ const triggerHeartBurst = () => {
   })
 }
 
-const navigateToHeartLink = (anchorElement) => {
+const navigateToHeartLink = (anchorElement: HTMLAnchorElement | null) => {
   if (!anchorElement) return
 
   const href = anchorElement.getAttribute('href') ?? ''
@@ -158,29 +168,29 @@ const navigateToHeartLink = (anchorElement) => {
   }, HEART_NAVIGATION_DELAY)
 }
 
-const shouldBypassCustomNavigation = (event) => {
+const shouldBypassCustomNavigation = (event: MouseEvent) => {
   const isPrimaryButton = typeof event.button !== 'number' || event.button === 0
   return !isPrimaryButton || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
 }
 
-const handleHeartClick = (event) => {
+const handleHeartClick = (event: MouseEvent) => {
   if (shouldBypassCustomNavigation(event)) {
     return
   }
 
   event.preventDefault()
   triggerHeartBurst()
-  navigateToHeartLink(event.currentTarget)
+  navigateToHeartLink(event.currentTarget instanceof HTMLAnchorElement ? event.currentTarget : null)
 }
 
-const handleHeartKeyboard = (event) => {
+const handleHeartKeyboard = (event: KeyboardEvent) => {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
     return
   }
 
   event.preventDefault()
   triggerHeartBurst()
-  navigateToHeartLink(event.currentTarget)
+  navigateToHeartLink(event.currentTarget instanceof HTMLAnchorElement ? event.currentTarget : null)
 }
 
 onBeforeUnmount(() => {

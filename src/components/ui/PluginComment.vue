@@ -9,25 +9,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
 
-const props = defineProps({
-  repo: {
-    type: String,
-    required: true
-  },
-  theme: {
-    type: String,
-    default: 'light'
-  },
-  pluginName: {
-    type: String,
-    required: true
-  }
+const props = withDefaults(defineProps<{
+  repo: string
+  theme?: 'light' | 'dark'
+  pluginName: string
+}>(), {
+  theme: 'light'
 })
 
-const giscusRef = ref(null)
+const giscusRef = ref<HTMLDivElement | null>(null)
 
 // 加载 Giscus
 function loadGiscus() {
@@ -63,11 +56,12 @@ watch(() => props.theme, () => {
   loadGiscus()
 })
 
-const updateGiscusTheme = (theme) => {
-  const iframe = document.querySelector('.giscus-frame')
-  if (!iframe) return
-  
-  iframe.contentWindow.postMessage({
+const updateGiscusTheme = (theme: 'light' | 'dark') => {
+  const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
+  const contentWindow = iframe?.contentWindow
+  if (!contentWindow) return
+
+  contentWindow.postMessage({
     giscus: {
       setConfig: {
         theme: theme === 'dark' ? 'dark_tritanopia' : 'light_tritanopia'

@@ -20,17 +20,16 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  steps: {
-    type: Array,
-    required: true
-  },
-  currentStep: {
-    type: Number,
-    required: true
-  }
-})
+<script setup lang="ts">
+type StepItem = {
+  title: string
+  description: string
+}
+
+defineProps<{
+  steps: StepItem[]
+  currentStep: number
+}>()
 </script>
 
 <style scoped>

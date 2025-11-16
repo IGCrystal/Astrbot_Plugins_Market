@@ -25,7 +25,7 @@
   </n-layout-header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NLayoutHeader, NButton, NIcon } from 'naive-ui'
 import { ArrowBack, Moon, Sunny } from '@vicons/ionicons5'
 

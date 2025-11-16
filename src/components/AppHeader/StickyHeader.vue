@@ -92,35 +92,45 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, h, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import type { DropdownOption } from 'naive-ui'
 import { NIcon, NInput, NButton, NDropdown } from 'naive-ui'
 import logoUrl from '@/assets/logo.webp'
 import { CloseOutline, SearchOutline, FilterSharp, MoonSharp, SunnySharp, CheckmarkSharp } from '@vicons/ionicons5'
 import SearchToolbar from '../ui/SearchToolbar.vue'
+import type { SortOption } from '@/stores/plugins'
 
-const props = defineProps({
-  modelValue: Boolean,
-  searchQuery: String,
-  currentPage: Number,
-  sortBy: String,
-  showStickyHeader: Boolean,
-  isMobileSearchOpen: Boolean
-})
-const emit = defineEmits(['update:modelValue', 'update:searchQuery', 'update:currentPage', 'update:sortBy', 'update:isMobileSearchOpen'])
+type StickyHeaderProps = {
+  modelValue: boolean
+  searchQuery: string
+  currentPage: number
+  sortBy: SortOption
+  showStickyHeader: boolean
+  isMobileSearchOpen: boolean
+}
 
-const handleThemeChange = (value) => emit('update:modelValue', value)
-const handleSearchQueryChange = (value) => emit('update:searchQuery', value)
-const handleCurrentPageChange = (value) => emit('update:currentPage', value)
-const handleSortByChange = (value) => emit('update:sortBy', value)
+const props = defineProps<StickyHeaderProps>()
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'update:searchQuery', value: string): void
+  (e: 'update:currentPage', value: number): void
+  (e: 'update:sortBy', value: SortOption): void
+  (e: 'update:isMobileSearchOpen', value: boolean): void
+}>()
+
+const handleThemeChange = (value: boolean) => emit('update:modelValue', value)
+const handleSearchQueryChange = (value: string) => emit('update:searchQuery', value)
+const handleCurrentPageChange = (value: number) => emit('update:currentPage', value)
+const handleSortByChange = (value: SortOption) => emit('update:sortBy', value)
 
 const isMobileSelectOpen = ref(false)
-const stickyHeaderRef = ref(null)
+const stickyHeaderRef = ref<HTMLElement | null>(null)
 const stickyHeaderHeight = ref(0)
 const MOBILE_BREAKPOINT = 1024
-let resizeObserver
+let resizeObserver: ResizeObserver | undefined
 
-const setStickyHeaderVar = (value) => {
+const setStickyHeaderVar = (value: number) => {
   if (typeof document === 'undefined') return
   if (value > 0) {
     document.documentElement.style.setProperty('--app-sticky-header-height', `${value}px`)
@@ -136,7 +146,7 @@ const updateStickyHeaderHeight = () => {
     return
   }
 
-  const el = stickyHeaderRef.value?.$el ?? stickyHeaderRef.value
+  const el = stickyHeaderRef.value
   if (!(el instanceof HTMLElement)) return
 
   const height = el.getBoundingClientRect().height
@@ -147,7 +157,7 @@ const updateStickyHeaderHeight = () => {
 const attachObserver = () => {
   if (typeof ResizeObserver === 'undefined') return
   if (typeof window !== 'undefined' && window.innerWidth >= MOBILE_BREAKPOINT) return
-  const el = stickyHeaderRef.value?.$el ?? stickyHeaderRef.value
+  const el = stickyHeaderRef.value
   if (!(el instanceof HTMLElement)) return
 
   resizeObserver = new ResizeObserver(() => {
@@ -194,8 +204,8 @@ onBeforeUnmount(() => {
   setStickyHeaderVar(0)
 })
 
-const mobileSortOptions = computed(() => {
-  const make = (text, key) => ({
+const mobileSortOptions = computed<DropdownOption[]>(() => {
+  const make = (text: string, key: SortOption): DropdownOption => ({
     key,
     label: () => h(
       'div',
@@ -216,7 +226,7 @@ const mobileSortOptions = computed(() => {
   ]
 })
 
-const handleMobileDropdownSelect = (key) => emit('update:sortBy', key)
+const handleMobileDropdownSelect = (key: SortOption) => emit('update:sortBy', key)
 const toggleMobileSearch = () => emit('update:isMobileSearchOpen', !props.isMobileSearchOpen)
 
 defineExpose({ stickyHeaderRef, stickyHeaderHeight })

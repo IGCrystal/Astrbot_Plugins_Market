@@ -29,7 +29,7 @@
       aria-hidden="true"
     >
       <meta itemprop="interactionType" content="https://schema.org/LikeAction">
-      <meta itemprop="userInteractionCount" :content="starsValue">
+      <meta itemprop="userInteractionCount" :content="String(starsValue)">
     </span>
 
     <n-card
@@ -80,7 +80,7 @@
                 role="heading"
                 aria-level="3"
                 :aria-label="displayName"
-                :aria-description="`插件：${displayName}，版本 ${plugin.version}`"
+                :aria-description="versionAriaDescription"
               >
                 <span
                   class="plugin-name-text"
@@ -90,14 +90,15 @@
               </h3>
             </div>
             <n-tag
+              v-if="normalizedVersion"
               type="success"
               size="small"
               :bordered="false"
               class="version-tag"
               role="text"
-              :aria-label="`版本号：v${plugin.version.replace(/^v/i, '')}`"
+              :aria-label="`版本号：v${normalizedVersion}`"
             >
-              v{{ plugin.version.replace(/^v/i, '') }}
+              v{{ normalizedVersion }}
             </n-tag>
           </div>
           <p class="description" role="contentinfo" aria-label="插件描述">{{ plugin.desc }}</p>
@@ -136,7 +137,7 @@
             type="primary"
             secondary
             size="small"
-            @click="(e) => openUrl(plugin.repo, e)"
+            @click="handleRepoButtonClick"
             class="main-button"
             role="link"
             :aria-label="`查看 ${displayName} 的仓库`"
@@ -176,7 +177,7 @@
                   secondary
                   size="small"
                   circle
-                  @click="(e) => openUrl(plugin.social_link, e)"
+                  @click="handleSocialButtonClick"
                   role="link"
                   :aria-label="`访问${plugin.author}的主页`"
                   aria-haspopup="true"
@@ -202,7 +203,7 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, defineAsyncComponent } from 'vue'
 import {
   NCard,
@@ -221,19 +222,15 @@ import {
 } from '@vicons/ionicons5'
 import { usePluginCard } from './usePluginCard'
 
-const props = defineProps({
-  plugin: {
-    type: Object,
-    required: true
-  },
-  index: {
-    type: Number,
-    default: 0
-  },
-  seed: {
-    type: [Number, String],
-    default: 0
-  }
+import type { PluginRecord } from '@/types/plugin'
+
+const props = withDefaults(defineProps<{
+  plugin: PluginRecord
+  index?: number
+  seed?: number
+}>(), {
+  index: 0,
+  seed: 0
 })
 
 const PluginDetails = defineAsyncComponent(() => import('../ui/PluginDetails.vue'))
@@ -264,6 +261,24 @@ const {
   showDetails,
   isCopied
 } = usePluginCard(props)
+
+const normalizedVersion = computed(() => {
+  const version = props.plugin.version?.replace(/^v/i, '').trim()
+  return version && version.length > 0 ? version : null
+})
+
+const versionAriaDescription = computed(() => {
+  const version = normalizedVersion.value
+  return version ? `插件：${displayName.value}，版本 v${version}` : `插件：${displayName.value}`
+})
+
+const handleRepoButtonClick = (event: MouseEvent) => {
+  openUrl(props.plugin.repo, event)
+}
+
+const handleSocialButtonClick = (event: MouseEvent) => {
+  openUrl(props.plugin.social_link, event)
+}
 </script>
 
 <style scoped src="./PluginCardStyles.css"></style>

@@ -82,9 +82,9 @@
   </n-layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { useHead } from '#imports'
+import { useHead } from 'nuxt/app'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
@@ -111,7 +111,7 @@ const {
   randomSeed
 } = storeToRefs(store)
 
-const cleanObject = (value) => {
+const cleanObject = (value: unknown): unknown => {
   if (Array.isArray(value)) {
     return value
       .map((entry) => cleanObject(entry))
@@ -119,18 +119,20 @@ const cleanObject = (value) => {
         if (entry === undefined || entry === null) return false
         if (typeof entry === 'string') return entry.trim() !== ''
         if (Array.isArray(entry)) return entry.length > 0
-        if (typeof entry === 'object') return Object.keys(entry).length > 0
+        if (typeof entry === 'object' && entry !== null) {
+          return Object.keys(entry as Record<string, unknown>).length > 0
+        }
         return true
       })
   }
 
   if (value && typeof value === 'object') {
-    return Object.entries(value).reduce((acc, [key, val]) => {
+    return Object.entries(value as Record<string, unknown>).reduce<Record<string, unknown>>((acc, [key, val]) => {
       const cleaned = cleanObject(val)
       if (cleaned === undefined || cleaned === null) return acc
       if (typeof cleaned === 'string' && cleaned.trim() === '') return acc
       if (Array.isArray(cleaned) && cleaned.length === 0) return acc
-      if (typeof cleaned === 'object' && !Array.isArray(cleaned) && Object.keys(cleaned).length === 0) return acc
+      if (typeof cleaned === 'object' && cleaned !== null && !Array.isArray(cleaned) && Object.keys(cleaned as Record<string, unknown>).length === 0) return acc
       acc[key] = cleaned
       return acc
     }, {})
@@ -143,13 +145,27 @@ const filterKey = computed(() => {
   return `${searchQuery.value}-${selectedTag.value}-${sortBy.value}-${currentPage.value}`
 })
 
-const structuredData = computed(() => {
+type StructuredListItem = {
+  '@type': 'ListItem'
+  position: number
+  item: Record<string, unknown>
+}
+
+type StructuredData = {
+  '@context': 'https://schema.org'
+  '@type': 'ItemList'
+  name: string
+  description: string
+  itemListElement: StructuredListItem[]
+}
+
+const structuredData = computed<StructuredData | null>(() => {
   if (!filteredPlugins.value || filteredPlugins.value.length === 0) {
     return null
   }
 
   const itemListElement = filteredPlugins.value
-    .map((plugin, index) => {
+    .map<StructuredListItem | null>((plugin, index) => {
       const name = plugin.display_name || plugin.name || plugin.id
       if (!name) return null
 
@@ -184,13 +200,15 @@ const structuredData = computed(() => {
         interactionStatistic
       })
 
-      return cleanObject({
+      const listItem = cleanObject({
         '@type': 'ListItem',
         position: index + 1,
         item
-      })
+      }) as StructuredListItem | null
+
+      return listItem
     })
-    .filter(Boolean)
+    .filter((entry): entry is StructuredListItem => Boolean(entry))
 
   if (!itemListElement.length) {
     return null
@@ -205,7 +223,7 @@ const structuredData = computed(() => {
   }
 })
 
-useHead(() => {
+const structuredHeadConfig = computed(() => {
   if (!structuredData.value) {
     return { script: [] }
   }
@@ -223,6 +241,8 @@ useHead(() => {
     }
   }
 })
+
+useHead(() => structuredHeadConfig.value)
 
 const skeletonCount = 12
 const skeletonTagWidths = ['72px', '56px', '64px']

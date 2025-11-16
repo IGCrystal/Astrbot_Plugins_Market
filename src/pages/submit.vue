@@ -33,10 +33,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMessage } from 'naive-ui'
+import type { FormRules, FormValidationError } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import SubmitHeader from '@/components/SubmitPage/SubmitHeader.vue'
 import SubmitSteps from '@/components/SubmitPage/SubmitSteps.vue'
 import SubmitForm from '@/components/SubmitPage/SubmitForm.vue'
@@ -46,11 +48,11 @@ import { usePluginStore } from '@/stores/plugins'
 const router = useRouter()
 const message = useMessage()
 const store = usePluginStore()
-const submitFormRef = ref(null)
+const submitFormRef = ref<InstanceType<typeof SubmitForm> | null>(null)
 const generatedJSON = ref('')
 const currentStep = ref(1)
 const MAX_DESC_LENGTH = 70
-const steps = [
+const steps: Array<{ title: string; description: string }> = [
   {
     title: '填写信息',
     description: '填写插件基本信息'
@@ -66,7 +68,17 @@ const toggleTheme = () => {
   store.toggleTheme()
 }
 
-const formData = reactive({
+type SubmitFormData = {
+  name: string
+  display_name: string
+  desc: string
+  author: string
+  repo: string
+  tags: string[]
+  social_link: string
+}
+
+const formData = reactive<SubmitFormData>({
   name: '',
   display_name: '',
   desc: '',
@@ -76,11 +88,11 @@ const formData = reactive({
   social_link: ''
 })
 
-const rules = {
+const rules: FormRules = {
   name: [
     { required: true, message: '请输入插件名', trigger: 'blur' },
     { 
-      validator: (_, value) => {
+      validator: (_rule, value: string) => {
         if (!value) return true
         if (!value.startsWith('astrbot_plugin_')) {
           return new Error('插件名必须以 astrbot_plugin_ 开头')
@@ -111,7 +123,7 @@ const rules = {
   desc: [
     { required: true, message: '请输入插件的简短介绍', trigger: 'blur' },
     { 
-      validator: (_, value) => {
+      validator: (_rule, value: string) => {
         const length = (value || '').toString().length
         return length > 0 && length <= MAX_DESC_LENGTH
       },
@@ -130,7 +142,7 @@ const rules = {
   ],
   tags: [
     {
-      validator: (_, value) => !Array.isArray(value) || value.length <= 5,
+      validator: (_rule, value: string[] | undefined) => !Array.isArray(value) || value.length <= 5,
       message: '标签最多 5 个',
       trigger: ['change', 'blur']
     }
@@ -146,7 +158,7 @@ const goBack = () => {
 }
 
 const validateAndGenerateJSON = () => {
-  submitFormRef.value?.validate((errors) => {
+  submitFormRef.value?.validate((errors?: Array<FormValidationError> | undefined) => {
     if (!errors) {
       const jsonData = {
         name: formData.name,

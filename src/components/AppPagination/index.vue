@@ -20,34 +20,26 @@
             :for="quickJumperId"
           >跳转到</label>
         </template>
-        <template #goto-icon>
-          <span class="sr-only">确认跳转</span>
-        </template>
       </n-pagination>
     </div>
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NPagination } from 'naive-ui'
 import { usePagination } from './usePagination'
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    required: true
-  },
-  totalPages: {
-    type: Number,
-    required: true
-  },
-  size: {
-    type: String,
-    default: 'medium'
-  }
+type PaginationSize = 'small' | 'medium' | 'large'
+
+const props = withDefaults(defineProps<{
+  modelValue: number
+  totalPages: number
+  size?: PaginationSize
+}>(), {
+  size: 'medium'
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{ (e: 'update:modelValue', value: number): void }>()
 
 const {
   paginationRef,

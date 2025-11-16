@@ -51,7 +51,7 @@
   </n-card>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NCard, NButton, NIcon } from 'naive-ui'
 import { ArrowBack, LogoGithub } from '@vicons/ionicons5'
 

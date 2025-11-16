@@ -19,61 +19,41 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { NIcon } from 'naive-ui'
 
-const props = defineProps({
-  ariaLabel: {
-    type: String,
-    required: true
-  },
-  size: {
-    type: Number,
-    default: null
-  },
-  iconSize: {
-    type: Number,
-    default: 22
-  },
-  rippleColor: {
-    type: String,
-    default: 'rgba(255, 255, 255, 0.3)'
-  },
-  background: {
-    type: String,
-    default: 'var(--primary-color)'
-  },
-  hoverBackground: {
-    type: String,
-    default: 'var(--primary-hover)'
-  },
-  color: {
-    type: String,
-    default: '#ffffff'
-  },
-  boxShadow: {
-    type: String,
-    default: 'var(--shadow-md)'
-  },
-  hoverShadow: {
-    type: String,
-    default: 'var(--shadow-lg)'
-  },
-  tabIndex: {
-    type: Number,
-    default: 0
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  }
+type FloatButtonProps = {
+  ariaLabel: string
+  size?: number | null
+  iconSize?: number
+  rippleColor?: string
+  background?: string
+  hoverBackground?: string
+  color?: string
+  boxShadow?: string
+  hoverShadow?: string
+  tabIndex?: number
+  disabled?: boolean
+}
+
+const props = withDefaults(defineProps<FloatButtonProps>(), {
+  size: null,
+  iconSize: 22,
+  rippleColor: 'rgba(255, 255, 255, 0.3)',
+  background: 'var(--primary-color)',
+  hoverBackground: 'var(--primary-hover)',
+  color: '#ffffff',
+  boxShadow: 'var(--shadow-md)',
+  hoverShadow: 'var(--shadow-lg)',
+  tabIndex: 0,
+  disabled: false
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits<{ (e: 'click', event: MouseEvent | KeyboardEvent): void }>()
 
-const buttonStyle = computed(() => {
-  const style = {
+const buttonStyle = computed<Record<string, string>>(() => {
+  const style: Record<string, string> = {
     '--float-button-ripple-color': props.rippleColor,
     '--float-button-background': props.background,
     '--float-button-hover-background': props.hoverBackground,
@@ -91,7 +71,7 @@ const buttonStyle = computed(() => {
 
 const computedTabIndex = computed(() => (props.disabled ? -1 : props.tabIndex))
 
-const handleClick = (event) => {
+const handleClick = (event: MouseEvent | KeyboardEvent) => {
   if (props.disabled) {
     event?.preventDefault()
     return
@@ -99,7 +79,7 @@ const handleClick = (event) => {
   emit('click', event)
 }
 
-const handleKeydown = (event) => {
+const handleKeydown = (event: KeyboardEvent) => {
   if (props.disabled) return
   if (event.code === 'Enter' || event.code === 'Space' || event.key === ' ') {
     event.preventDefault()
