@@ -157,11 +157,11 @@ const structuredData = computed(() => {
       const url = plugin.repo || plugin.homepage || plugin.social_link
       const keywords = Array.isArray(plugin.tags) && plugin.tags.length ? plugin.tags.join(', ') : undefined
       const stars = Number(plugin.stars)
-      const aggregateRating = !Number.isNaN(stars) && stars > 0
+      const interactionStatistic = !Number.isNaN(stars) && stars > 0
         ? {
-            '@type': 'AggregateRating',
-            ratingValue: stars,
-            ratingCount: Math.max(Math.round(stars), 1)
+            '@type': 'InteractionCounter',
+            interactionType: 'https://schema.org/LikeAction',
+            userInteractionCount: Math.max(Math.round(stars), 1)
           }
         : undefined
 
@@ -181,7 +181,7 @@ const structuredData = computed(() => {
               name: plugin.author
             }
           : undefined,
-        aggregateRating
+        interactionStatistic
       })
 
       return cleanObject({
