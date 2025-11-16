@@ -1,3 +1,41 @@
+@font-face {
+  font-family: 'Lexend';
+  src: url('@/assets/font/Lexend/lexend.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lexend';
+  src: url('@/assets/font/Lexend/lexend-v25-latin-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('@/assets/font/NotoSansSC/NotoSansSC-ExtraBold.woff2') format('woff2'),
+       url('@/assets/font/NotoSansSC/NotoSansSC-ExtraBold.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF,
+                 U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('@/assets/font/NotoSansSC/NotoSansSC-ExtraBold.woff2') format('woff2'),
+       url('@/assets/font/NotoSansSC/NotoSansSC-ExtraBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF,
+                 U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF;
+}
+
 :root {
   /* 主色调 - 钢蓝色系 */
   --primary-color: #4682b4;

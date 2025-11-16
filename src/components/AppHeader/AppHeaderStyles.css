@@ -146,6 +146,15 @@
 	height: 48px;
 	object-fit: contain;
 	transform-origin: center;
+	-webkit-user-drag: none;
+	user-select: none;
+}
+
+.header-title,
+.animated-title,
+.title-char {
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .title-wrapper {
@@ -168,6 +177,8 @@
 	opacity: 0;
 	will-change: transform, opacity;
 	white-space: nowrap;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .third-party-badge--sticky {
@@ -176,22 +187,8 @@
 	border-radius: 6px;
 	animation: none;
 	opacity: 1;
-}
-
-@font-face {
-	font-family: 'Lexend';
-	src: url('@/assets/font/lexend.woff2') format('woff2');
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Lexend';
-	src: url('@/assets/font/lexend-v25-latin-600.woff2') format('woff2');
-	font-weight: 600;
-	font-style: normal;
-	font-display: swap;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .app-header h1 {
@@ -201,7 +198,7 @@
 	font-weight: 600;
 	letter-spacing: -0.5px;
 	transition: color 0.3s ease;
-	font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .animated-title {
@@ -569,6 +566,8 @@
 	height: 40px;
 	object-fit: contain;
 	border-radius: 6px;
+	-webkit-user-drag: none;
+	user-select: none;
 }
 
 .sticky-title {
@@ -576,8 +575,10 @@
 	font-size: 1.4em;
 	font-weight: 600;
 	color: var(--text-primary);
-	font-family: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	white-space: nowrap;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .sticky-header-center {

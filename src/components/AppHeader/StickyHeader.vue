@@ -6,7 +6,15 @@
   >
     <div class="sticky-header-content">
       <div class="sticky-header-left">
-        <img :src="logoUrl" alt="Astrbot Logo" class="sticky-logo" width="32" height="32">
+        <img
+          :src="logoUrl"
+          alt="Astrbot Logo"
+          class="sticky-logo"
+          width="32"
+          height="32"
+          draggable="false"
+          @dragstart.prevent
+        >
         <h2 class="sticky-title" :class="{ 'hidden-on-search': isMobileSearchOpen }">AstrBot 插件市场</h2>
         <span class="third-party-badge third-party-badge--sticky" :class="{ 'hidden-on-search': isMobileSearchOpen }">社区</span>
       </div>

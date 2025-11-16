@@ -24,7 +24,17 @@
     </n-space>
 
     <div class="header-title">
-      <img :src="logoUrl" alt="Astrbot Logo" class="header-logo" width="48" height="48" decoding="async" fetchpriority="high">
+      <img
+        :src="logoUrl"
+        alt="Astrbot Logo"
+        class="header-logo"
+        width="48"
+        height="48"
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+        @dragstart.prevent
+      >
       <div class="title-wrapper">
         <h1 class="animated-title" aria-label="AstrBot 插件市场">
           <span

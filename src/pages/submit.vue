@@ -202,6 +202,7 @@ const submitPlugin = () => {
   flex-direction: column;
   --action-bar-height: 72px;
   overflow: hidden; 
+  font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .page-content {

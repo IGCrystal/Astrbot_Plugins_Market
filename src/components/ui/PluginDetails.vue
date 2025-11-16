@@ -254,6 +254,7 @@ async function fetchReadme() {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* 深色模式下的样式 */
@@ -311,6 +312,7 @@ async function fetchReadme() {
   text-overflow: ellipsis;
   flex: 1;
   min-width: 0;
+  font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .modal-mask.dark .plugin-title {
@@ -396,6 +398,7 @@ async function fetchReadme() {
   line-height: 1.6;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .modal-mask.dark .markdown-content {
