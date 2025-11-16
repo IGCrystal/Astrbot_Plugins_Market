@@ -1,9 +1,11 @@
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 
 export function usePagination(props, emit) {
   const paginationRef = ref(null)
-  const quickJumperId = ref(`pagination-quick-jumper-${Math.random().toString(36).slice(2, 11)}`)
-  const screenWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
+  const id = useId()
+  const quickJumperId = `pagination-quick-jumper-${String(id).replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const gotoLabelId = `${quickJumperId}-label`
+  const screenWidth = ref(0)
 
   const showQuickJumper = computed(() => screenWidth.value > 768 && props.totalPages > 10)
 
@@ -24,8 +26,8 @@ export function usePagination(props, emit) {
   const updateQuickJumperAttrs = () => {
     const input = paginationRef.value?.$el?.querySelector('.n-pagination-quick-jumper input')
     if (!input) return
-    input.setAttribute('id', quickJumperId.value)
-    input.setAttribute('aria-labelledby', 'pagination-goto-label')
+    input.setAttribute('id', quickJumperId)
+    input.setAttribute('aria-labelledby', gotoLabelId)
     input.setAttribute('role', 'spinbutton')
     input.setAttribute('aria-valuemin', '1')
     input.setAttribute('aria-valuemax', props.totalPages.toString())
@@ -39,6 +41,7 @@ export function usePagination(props, emit) {
 
   onMounted(() => {
     if (typeof window !== 'undefined') {
+      handleResize()
       window.addEventListener('resize', handleResize)
     }
     nextTick(() => {
@@ -73,6 +76,7 @@ export function usePagination(props, emit) {
   return {
     paginationRef,
     quickJumperId,
+    gotoLabelId,
     showQuickJumper,
     pageSlot,
     handlePageChange

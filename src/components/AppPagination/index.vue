@@ -14,7 +14,7 @@
       >
         <template #goto>
           <label
-            id="pagination-goto-label"
+            :id="gotoLabelId"
             class="sr-only"
             :for="quickJumperId"
           >跳转到</label>
@@ -51,6 +51,7 @@ const emit = defineEmits(['update:modelValue'])
 const {
   paginationRef,
   quickJumperId,
+  gotoLabelId,
   showQuickJumper,
   pageSlot,
   handlePageChange
