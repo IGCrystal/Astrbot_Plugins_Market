@@ -32,6 +32,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--pagination-container-bg, rgba(255, 255, 255, 0.74));
   font-family: 'Lexend', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --quick-jumper-size: 32px;
+  --quick-jumper-radius: 6px;
 }
 
 .pagination-container:hover {
@@ -109,12 +111,29 @@
 }
 
 :deep(.n-pagination .n-pagination-quick-jumper .n-input) {
-  width: 60px !important;
+  width: var(--quick-jumper-size, 32px) !important;
+  min-width: var(--quick-jumper-size, 32px) !important;
+  max-width: var(--quick-jumper-size, 32px) !important;
+  height: var(--quick-jumper-size, 32px) !important;
+  border-radius: var(--quick-jumper-radius, 6px) !important;
+  background: var(rgba(255, 255, 255, 0.507)) !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+:deep(.n-pagination .n-pagination-quick-jumper .n-input .n-input-wrapper) {
+  padding: 0 !important;
+  min-height: 100%;
 }
 
 :deep(.n-pagination .n-pagination-quick-jumper .n-input .n-input__input-el) {
   text-align: center;
   font-size: 13px !important;
+  padding: 0 !important;
+  height: 100%;
 }
 
 .sr-only {
@@ -135,6 +154,10 @@
     padding: 0.75rem 0;
   }
 
+  .pagination-container {
+    --quick-jumper-size: 20px;
+  }
+
   :deep(.n-pagination) {
     --n-item-size: 30px;
     --n-item-font-size: 13px;
@@ -152,6 +175,11 @@
     margin: 1.25rem 0;
     padding: 0.5rem 12px;
     border-radius: 12px;
+  }
+
+  .pagination-container {
+    --quick-jumper-size: 26px;
+    --quick-jumper-radius: 8px;
   }
 
   :deep(.n-pagination) {
@@ -182,7 +210,12 @@
   }
 
   :deep(.n-pagination .n-pagination-quick-jumper) {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    margin-left: 0;
+    margin-top: 0;
   }
 
   :deep(.n-pagination .n-pagination-prefix),
@@ -201,6 +234,11 @@
   .pagination-wrapper {
     margin: 1rem 0;
     padding: 0.5rem 8px;
+  }
+
+  .pagination-container {
+    --quick-jumper-size: 34px;
+    --quick-jumper-radius: 10px;
   }
 
   :deep(.n-pagination) {
@@ -233,6 +271,11 @@
   .pagination-wrapper {
     margin: 0.75rem 0;
     padding: 0.5rem 4px;
+  }
+
+  .pagination-container {
+    --quick-jumper-size: 28px;
+    --quick-jumper-radius: 6px;
   }
 
   :deep(.n-pagination) {
@@ -270,6 +313,10 @@
     --n-item-font-size: 12px;
   }
 
+  .pagination-container {
+    --quick-jumper-size: 28px;
+  }
+
   :deep(.n-pagination .n-pagination-item) {
     min-width: 28px;
     height: 28px;
@@ -280,6 +327,11 @@
   :deep(.n-pagination .n-pagination-item) {
     min-width: 40px;
     min-height: 40px;
+  }
+
+  .pagination-container {
+    --quick-jumper-size: 40px;
+    --quick-jumper-radius: 10px;
   }
 
   :deep(.n-pagination .n-pagination-item--clickable:hover) {

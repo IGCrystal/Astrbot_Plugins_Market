@@ -19,6 +19,8 @@ export function usePagination(props, emit) {
     return 7
   })
 
+  const isSimple = computed(() => screenWidth.value <= 480)
+
   const handlePageChange = (page) => {
     emit('update:modelValue', page)
   }
@@ -79,6 +81,7 @@ export function usePagination(props, emit) {
     gotoLabelId,
     showQuickJumper,
     pageSlot,
+    isSimple,
     handlePageChange
   }
 }

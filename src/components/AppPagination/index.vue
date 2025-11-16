@@ -9,6 +9,7 @@
         :show-size-picker="false"
         :show-quick-jumper="showQuickJumper"
         :page-slot="pageSlot"
+        :simple="isSimple"
         aria-label="页面导航"
         ref="paginationRef"
       >
@@ -54,6 +55,7 @@ const {
   gotoLabelId,
   showQuickJumper,
   pageSlot,
+  isSimple,
   handlePageChange
 } = usePagination(props, emit)
 </script>
