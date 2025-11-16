@@ -4,7 +4,7 @@ const isNaiveHydrated = ref(false)
 let hasScheduledHydration = false
 const HYDRATION_SCROLL_CLASS = 'hydration-lock'
 
-const toggleScrollLock = (locked) => {
+const toggleScrollLock = (locked: boolean) => {
   if (typeof document === 'undefined') return
   const root = document.documentElement
   const body = document.body

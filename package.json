@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--no-deprecation nuxt dev",
     "build": "cross-env NODE_OPTIONS=--no-deprecation nuxt build",
-    "preview": "cross-env NODE_OPTIONS=--no-deprecation nuxt preview"
+    "preview": "cross-env NODE_OPTIONS=--no-deprecation nuxt preview",
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@giscus/vue": "^3.1.1",
@@ -23,6 +24,9 @@
   "devDependencies": {
     "nuxt": "^4.2.1",
     "nuxtjs-naive-ui": "^1.0.2",
-    "cross-env": "^10.1.0"
+    "cross-env": "^10.1.0",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.1.4"
   }
 }

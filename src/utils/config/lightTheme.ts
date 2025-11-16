@@ -1,5 +1,5 @@
 export const lightThemeOverrides = {
-  'common': { 
+  common: {
     duration: '0.2s',
     borderRadius: '8px',
     primaryColor: '#3b82f6',
@@ -9,30 +9,30 @@ export const lightThemeOverrides = {
     textColor2: '#1e293b',
     textColor3: '#64748b'
   },
-  'InternalSelection': {
+  InternalSelection: {
     textColor: '#1e293b',
     placeholderColor: '#64748b'
   },
-  'Pagination': {
+  Pagination: {
     itemTextColor: '#fff',
     itemColorHover: 'rgba(255, 255, 255, 0.1)',
     itemColorPressed: 'rgba(255, 255, 255, 0.2)',
     itemColorActive: 'rgba(255, 255, 255, 0.2)',
     itemBorderRadius: '6px'
   },
-  'Tag': {
+  Tag: {
     borderRadius: '6px'
   },
-  'Input': {
+  Input: {
     borderHover: '#60a5fa',
     borderFocus: '#3b82f6'
   },
-  'Card': {
+  Card: {
     borderRadius: '16px',
     color: '#ffffff',
     colorModal: '#ffffff'
   },
-  'Select': {
+  Select: {
     peers: {
       InternalSelection: {
         textColor: '#1e293b',
@@ -53,7 +53,7 @@ export const lightThemeOverrides = {
       }
     }
   },
-  'Button': {
+  Button: {
     borderRadius: '8px',
     paddingMedium: '0 18px',
     heightMedium: '34px',
@@ -66,4 +66,4 @@ export const lightThemeOverrides = {
     colorQuaternaryHover: 'rgba(0, 0, 0, 0.05)',
     colorQuaternaryPressed: 'rgba(0, 0, 0, 0.1)'
   }
-}
+} as const

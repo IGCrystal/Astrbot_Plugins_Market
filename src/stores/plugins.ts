@@ -1,31 +1,68 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { useCookie } from '#app'
+import { useCookie } from 'nuxt/app'
+import type { PluginRecord } from '@/types/plugin'
+
+type SortOption = 'default' | 'stars' | 'updated' | 'random'
+type TagOption = { label: string; value: string }
 
 const isClient = typeof window !== 'undefined'
 
+type PluginApiPayload = Partial<PluginRecord> & {
+  tags?: string[] | string
+}
+
+type PluginApiResponse = Record<string, PluginApiPayload>
+
+const normalizeTags = (value?: string[] | string): string[] => {
+  if (!value) return []
+  if (Array.isArray(value)) return value.filter(Boolean)
+  return [value]
+}
+
+const toPluginRecord = (entry: [string, PluginApiPayload]): PluginRecord => {
+  const [machineName, details] = entry
+  const displayName = details.display_name || details.name || machineName
+  return {
+    ...details,
+    id: machineName,
+    name: displayName,
+    display_name: displayName,
+    tags: normalizeTags(details.tags)
+  }
+}
+
+function stableHash(input: string, seedNumber: number): number {
+  let h = (Math.floor(seedNumber * 1e9) ^ 5381) >>> 0
+  for (let i = 0; i < input.length; i += 1) {
+    h = (((h << 5) + h) + input.charCodeAt(i)) >>> 0
+  }
+  return h >>> 0
+}
+
+const applyThemeClass = (dark: boolean) => {
+  if (!isClient) return
+  const root = document.documentElement
+  const body = document.body
+  const theme = dark ? 'dark' : 'light'
+  root.classList.toggle('dark', dark)
+  body?.classList.toggle('dark', dark)
+  root.setAttribute('data-theme', theme)
+}
+
 export const usePluginStore = defineStore('plugins', () => {
-  const themeCookie = useCookie('theme-preference')
+  const themeCookie = useCookie<string | null>('theme-preference')
   const savedTheme = themeCookie.value ?? (isClient ? window.localStorage.getItem('theme-preference') : null)
-  const plugins = ref(null)
+
+  const plugins = ref<PluginRecord[] | null>(null)
   const searchQuery = ref('')
-  const selectedTag = ref(null)
+  const selectedTag = ref<string | null>(null)
   const currentPage = ref(1)
   const pageSize = ref(12)
   const isDarkMode = ref(savedTheme === 'dark')
   const isLoading = ref(true)
-  const sortBy = ref('default') 
+  const sortBy = ref<SortOption>('default')
   const randomSeed = ref(0)
-  
-  const applyThemeClass = (dark) => {
-    if (!isClient) return
-    const root = document.documentElement
-    const body = document.body
-    const theme = dark ? 'dark' : 'light'
-    root.classList.toggle('dark', dark)
-    body?.classList.toggle('dark', dark)
-    root.setAttribute('data-theme', theme)
-  }
 
   if (isClient) {
     if (savedTheme) {
@@ -60,68 +97,60 @@ export const usePluginStore = defineStore('plugins', () => {
     isDarkMode.value = !isDarkMode.value
   }
 
-  function stableHash(input, seedNumber) {
-    let h = (Math.floor(seedNumber * 1e9) ^ 5381) >>> 0
-    for (let i = 0; i < input.length; i += 1) {
-      h = (((h << 5) + h) + input.charCodeAt(i)) >>> 0 
-    }
-    return h >>> 0
-  }
-
   const allTags = computed(() => {
-    const tags = new Set()
+    const tags = new Set<string>()
     if (plugins.value) {
-      plugins.value.forEach(plugin => {
-        if (plugin.tags) {
-          plugin.tags.forEach(tag => tags.add(tag))
-        }
+      plugins.value.forEach((plugin) => {
+        plugin.tags?.forEach((tag) => tags.add(tag))
       })
     }
     return Array.from(tags).sort()
   })
 
-  const tagOptions = computed(() => 
-    allTags.value.map(tag => ({ label: tag, value: tag }))
+  const tagOptions = computed<TagOption[]>(() =>
+    allTags.value.map((tag) => ({ label: tag, value: tag }))
   )
 
-  const filteredPlugins = computed(() => {
+  const filteredPlugins = computed<PluginRecord[]>(() => {
     if (!plugins.value) return []
-    
-    let filtered = plugins.value.filter(plugin => {
-      const searchValue = searchQuery.value ? searchQuery.value.toLowerCase() : ''
+
+    const searchValue = searchQuery.value.trim().toLowerCase()
+
+    let filtered = plugins.value.filter((plugin) => {
       if (!searchValue && !selectedTag.value) return true
-      
-      const matchesSearch = !searchValue || 
-        (plugin.name && plugin.name.toLowerCase().includes(searchValue)) ||
-        (plugin.display_name && plugin.display_name.toLowerCase().includes(searchValue)) ||
-        (plugin.id && plugin.id.toLowerCase().includes(searchValue)) ||
-        (plugin.desc && plugin.desc.toLowerCase().includes(searchValue)) ||
-        (plugin.author && plugin.author.toLowerCase().includes(searchValue))
-      
-      const matchesTag = !selectedTag.value || 
-        (Array.isArray(plugin.tags) && plugin.tags.includes(selectedTag.value))
-      
+
+      const matchesSearch = !searchValue || [
+        plugin.name,
+        plugin.display_name,
+        plugin.id,
+        plugin.desc,
+        plugin.author
+      ].some((field) => field?.toLowerCase().includes(searchValue))
+
+      const matchesTag = !selectedTag.value || plugin.tags.includes(selectedTag.value)
+
       return matchesSearch && matchesTag
     })
 
     if (sortBy.value === 'stars') {
-      filtered.sort((a, b) => (b.stars || 0) - (a.stars || 0))
+      filtered = filtered.sort((a, b) => (b.stars ?? 0) - (a.stars ?? 0))
     } else if (sortBy.value === 'updated') {
-      filtered.sort((a, b) => {
-        const dateA = a.updated_at ? new Date(a.updated_at) : new Date(0)
-        const dateB = b.updated_at ? new Date(b.updated_at) : new Date(0)
+      filtered = filtered.sort((a, b) => {
+        const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0
+        const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0
         return dateB - dateA
       })
     } else if (sortBy.value === 'random') {
-      filtered.sort((a, b) => {
+      filtered = filtered.sort((a, b) => {
         const ha = stableHash(a.id || a.name || '', randomSeed.value)
         const hb = stableHash(b.id || b.name || '', randomSeed.value)
         return ha - hb
       })
     } else {
-      filtered.sort((a, b) => {
-        const indexA = plugins.value.findIndex(p => (p.id || p.name) === (a.id || a.name))
-        const indexB = plugins.value.findIndex(p => (p.id || p.name) === (b.id || b.name))
+      filtered = filtered.sort((a, b) => {
+        const list = plugins.value ?? []
+        const indexA = list.findIndex((p) => (p.id || p.name) === (a.id || a.name))
+        const indexB = list.findIndex((p) => (p.id || p.name) === (b.id || b.name))
         return indexA - indexB
       })
     }
@@ -145,26 +174,12 @@ export const usePluginStore = defineStore('plugins', () => {
     return filteredPlugins.value.slice(start, end)
   })
 
-  async function loadPlugins() {
+  const loadPlugins = async () => {
     isLoading.value = true
     try {
       const response = await fetch('https://api.soulter.top/astrbot/plugins', { cache: 'no-store' })
-      const data = await response.json()
-      plugins.value = Object.entries(data).map(([keyName, details]) => {
-        const tags = details.tags ? 
-          (Array.isArray(details.tags) ? details.tags : [details.tags]) 
-          : []
-        const machineName = keyName
-        const displayName = details.display_name || details.name || machineName
-
-        return {
-          ...details,
-          id: machineName,
-          name: displayName,          
-          display_name: displayName,  
-          tags
-        }
-      })
+      const data = (await response.json()) as PluginApiResponse
+      plugins.value = Object.entries(data).map(toPluginRecord)
     } catch (error) {
       console.error('Error loading plugins:', error)
       plugins.value = []
@@ -173,23 +188,23 @@ export const usePluginStore = defineStore('plugins', () => {
     }
   }
 
-  function setDarkMode(value) {
+  const setDarkMode = (value: boolean) => {
     isDarkMode.value = value
   }
 
-  function setSearchQuery(query) {
+  const setSearchQuery = (query: string) => {
     searchQuery.value = query
   }
 
-  function setSelectedTag(tag) {
+  const setSelectedTag = (tag: string | null) => {
     selectedTag.value = tag
   }
 
-  function setCurrentPage(page) {
+  const setCurrentPage = (page: number) => {
     currentPage.value = page
   }
 
-  function setSortBy(value) {
+  const setSortBy = (value: SortOption) => {
     sortBy.value = value
     if (value === 'random') {
       randomSeed.value = Math.random()
@@ -197,14 +212,13 @@ export const usePluginStore = defineStore('plugins', () => {
     currentPage.value = 1
   }
 
-  function refreshRandomOrder() {
+  const refreshRandomOrder = () => {
     if (sortBy.value === 'random') {
       randomSeed.value = Math.random()
     }
   }
 
   return {
-    // 状态
     plugins,
     searchQuery,
     selectedTag,
@@ -213,13 +227,12 @@ export const usePluginStore = defineStore('plugins', () => {
     sortBy,
     isLoading,
     randomSeed,
-    // 计算属性
+    pageSize,
     allTags,
     tagOptions,
     filteredPlugins,
     totalPages,
     paginatedPlugins,
-    // 动作
     loadPlugins,
     setDarkMode,
     setSearchQuery,

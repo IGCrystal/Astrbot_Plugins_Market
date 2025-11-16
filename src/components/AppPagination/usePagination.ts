@@ -1,7 +1,12 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 
-export function usePagination(props, emit) {
-  const paginationRef = ref(null)
+export type PaginationProps = {
+  modelValue: number
+  totalPages: number
+}
+
+export function usePagination(props: PaginationProps, emit: (event: 'update:modelValue', value: number) => void) {
+  const paginationRef = ref<{ $el?: HTMLElement } | null>(null)
   const id = useId()
   const quickJumperId = `pagination-quick-jumper-${String(id).replace(/[^a-zA-Z0-9_-]/g, '')}`
   const gotoLabelId = `${quickJumperId}-label`
@@ -21,12 +26,12 @@ export function usePagination(props, emit) {
 
   const isSimple = computed(() => screenWidth.value <= 480)
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     emit('update:modelValue', page)
   }
 
   const updateQuickJumperAttrs = () => {
-    const input = paginationRef.value?.$el?.querySelector('.n-pagination-quick-jumper input')
+    const input = paginationRef.value?.$el?.querySelector<HTMLInputElement>('.n-pagination-quick-jumper input')
     if (!input) return
     input.setAttribute('id', quickJumperId)
     input.setAttribute('aria-labelledby', gotoLabelId)

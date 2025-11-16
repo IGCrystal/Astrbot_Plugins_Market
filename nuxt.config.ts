@@ -7,6 +7,7 @@ const runtimeEnv = (globalThis as {
 const nitroPreset = runtimeEnv.NITRO_PRESET ?? (runtimeEnv.VERCEL ? 'vercel' : 'node-server')
 
 export default defineNuxtConfig({
+  compatibilityDate: '2025-11-15',
   srcDir: 'src',
   serverDir: 'src/server',
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],

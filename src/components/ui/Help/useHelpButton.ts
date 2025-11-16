@@ -1,8 +1,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { helpContent } from '../../../utils/helpContent'
+import { helpContent } from '@/utils/helpContent'
 
 const MOBILE_BREAKPOINT = 768
 const isClient = typeof window !== 'undefined'
+
+type ModalStyle = {
+  width: string
+  maxWidth: string
+}
 
 export function useHelpButton() {
   const isMobile = ref(isClient ? window.innerWidth <= MOBILE_BREAKPOINT : false)
@@ -10,7 +15,7 @@ export function useHelpButton() {
   const showHelpText = ref(false)
   const panelUrl = ref('')
 
-  const modalStyle = computed(() => {
+  const modalStyle = computed<ModalStyle>(() => {
     if (isMobile.value) {
       return {
         width: '100%',

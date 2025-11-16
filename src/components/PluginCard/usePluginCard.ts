@@ -1,15 +1,22 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useMessage } from 'naive-ui'
+import type { PluginRecord } from '@/types/plugin'
 
-export function usePluginCard(props) {
+export type PluginCardProps = {
+  plugin: PluginRecord
+  index: number
+  seed: number
+}
+
+export function usePluginCard(props: PluginCardProps) {
   const showPluginDetails = ref(false)
   const showFallbackLogo = ref(false)
   const isTextOverflow = ref(false)
-  const nameContainer = ref(null)
-  const nameTextEl = ref(null)
-  const pluginNameEl = ref(null)
-  const cardRef = ref(null)
-  const resizeObserver = ref(null)
+  const nameContainer = ref<HTMLElement | null>(null)
+  const nameTextEl = ref<HTMLElement | null>(null)
+  const pluginNameEl = ref<HTMLElement | null>(null)
+  const cardRef = ref<HTMLElement | null>(null)
+  const resizeObserver = ref<ResizeObserver | null>(null)
   const isCopied = ref(false)
   const message = useMessage()
 
@@ -18,9 +25,10 @@ export function usePluginCard(props) {
     return rawName.replace(/^astrbot_plugin_/i, '')
   })
 
-  const handleLogoError = (event) => {
-    if (event && event.target) {
-      event.target.style.display = 'none'
+  const handleLogoError = (event?: Event) => {
+    const target = event?.target as HTMLElement | undefined
+    if (target) {
+      target.style.display = 'none'
     }
     showFallbackLogo.value = true
   }
@@ -32,14 +40,13 @@ export function usePluginCard(props) {
     }
   )
 
-  const updateMarqueeAnimation = (containerWidth, textWidth) => {
+  const updateMarqueeAnimation = (containerWidth: number, textWidth: number) => {
     if (pluginNameEl.value) {
       const translateDistance = textWidth - containerWidth + 20
       pluginNameEl.value.style.setProperty('--translate-distance', `-${translateDistance}px`)
     }
   }
 
-  // Measure title width and tune marquee when needed.
   const checkTextOverflow = () => {
     nextTick(() => {
       if (!nameContainer.value || !nameTextEl.value) {
@@ -57,9 +64,8 @@ export function usePluginCard(props) {
     })
   }
 
-  // Re-trigger entrance animation after pagination reshuffles cards.
   const replayCardAppearAnimation = () => {
-    const element = cardRef.value && (cardRef.value.$el || cardRef.value)
+    const element = cardRef.value
     if (!element) {
       return
     }
@@ -70,12 +76,12 @@ export function usePluginCard(props) {
 
   onMounted(() => {
     checkTextOverflow()
-    if (nameContainer.value && window.ResizeObserver) {
+    if (nameContainer.value && typeof window !== 'undefined' && 'ResizeObserver' in window) {
       resizeObserver.value = new ResizeObserver(() => {
         checkTextOverflow()
       })
       resizeObserver.value.observe(nameContainer.value)
-    } else {
+    } else if (typeof window !== 'undefined') {
       window.addEventListener('resize', checkTextOverflow)
     }
   })
@@ -94,12 +100,12 @@ export function usePluginCard(props) {
   onUnmounted(() => {
     if (resizeObserver.value) {
       resizeObserver.value.disconnect()
-    } else {
+    } else if (typeof window !== 'undefined') {
       window.removeEventListener('resize', checkTextOverflow)
     }
   })
 
-  const copyRepoUrl = async (event) => {
+  const copyRepoUrl = async (event?: Event) => {
     event?.stopPropagation()
     if (!props.plugin.repo) {
       return
@@ -115,7 +121,7 @@ export function usePluginCard(props) {
     }
   }
 
-  const openUrl = (url, event) => {
+  const openUrl = (url?: string, event?: Event) => {
     event?.stopPropagation()
     if (url) {
       window.open(url, '_blank')
