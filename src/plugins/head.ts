@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
       {
         name: 'description',
-        content: 'AstrBot 插件市场是一个开放的插件分享平台，在这里您可以发现、下载和分享各种 Astrbot 框架插件。'
+        content: 'AstrBot 插件市场是一个开放的插件分享平台，在这里您可以发现、下载和分享各种 AstrBot 框架插件。'
       },
       {
         name: 'keywords',
@@ -21,7 +21,7 @@ export default defineNuxtPlugin(() => {
       },
       { name: 'author', content: 'IGCrystal' },
       { property: 'og:title', content: 'AstrBot 插件市场 [社区]' },
-      { property: 'og:description', content: '发现、下载和分享 Astrbot 框架插件的开放平台' },
+      { property: 'og:description', content: '发现、下载和分享 AstrBot 框架插件的开放平台' },
       { property: 'og:image', content: logoUrl },
       { property: 'og:type', content: 'website' },
       { name: 'theme-color', content: '#60a5fa' },
