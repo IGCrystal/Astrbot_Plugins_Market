@@ -4,9 +4,9 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt build",
-    "preview": "nuxt preview"
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation nuxt dev",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation nuxt build",
+    "preview": "cross-env NODE_OPTIONS=--no-deprecation nuxt preview"
   },
   "dependencies": {
     "@giscus/vue": "^3.1.1",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "nuxt": "^4.2.1",
-    "nuxtjs-naive-ui": "^1.0.2"
+    "nuxtjs-naive-ui": "^1.0.2",
+    "cross-env": "^7.0.3"
   }
 }

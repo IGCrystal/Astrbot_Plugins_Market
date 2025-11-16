@@ -25,6 +25,18 @@ export default defineNuxtConfig({
   vite: {
     ssr: {
       noExternal: ['naive-ui', 'vueuc']
+    },
+    build: {
+      chunkSizeWarningLimit: 1024,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'naive-ui': ['naive-ui', 'vueuc', '@css-render/vue3-ssr'],
+            giscus: ['@giscus/vue'],
+            highlight: ['highlight.js']
+          }
+        }
+      }
     }
   },
   nitro: {
