@@ -16,7 +16,7 @@
         :class="{ dark: isDarkMode, 'app-container--hidden': !isNaiveHydrated }"
         :style="containerStyle"
       >
-        <BackToTop v-if="!isSubmitPage" />
+        <BackToTop v-if="!isSubmitPage && !isLoginPage" />
         <NuxtPage />
       </div>
     </n-message-provider>
@@ -59,6 +59,7 @@ const containerStyle = computed<CSSProperties | undefined>(() => (
 
 const theme = computed(() => (isDarkMode.value ? darkTheme : null))
 const isSubmitPage = computed(() => route.path === '/submit')
+const isLoginPage = computed(() => route.path === '/login')
 
 const themeInitScript = `!function(){try{var t='theme-preference',e='data-theme',n=document.documentElement,r=document.body||document.getElementsByTagName('body')[0],o=function(i){i==='dark'?(n.classList.add('dark'),r&&r.classList.add('dark')):(n.classList.remove('dark'),r&&r.classList.remove('dark')),n.setAttribute(e,i)};var a=function(){var i=document.cookie.match(/(?:^|; )theme-preference=([^;]+)/);return i?decodeURIComponent(i[1]):null}();var l=null;try{l=window.localStorage.getItem(t)}catch(i){}var s=l||a;!s&&window.matchMedia&&(s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');o(s==='dark'?'dark':'light')}catch(t){}}();`
 

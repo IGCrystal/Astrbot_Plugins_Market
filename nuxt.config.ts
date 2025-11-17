@@ -1,4 +1,8 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { config as loadEnv } from 'dotenv'
+
+loadEnv()
+loadEnv({ path: '.env.local', override: true })
 
 const runtimeEnv = (globalThis as {
   process?: { env?: Record<string, string | undefined> }
