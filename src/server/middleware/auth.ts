@@ -4,6 +4,14 @@ import { readAuthSession } from '../utils/auth'
 const PUBLIC_PATHS = new Set(['/login', '/robots.txt', '/sitemap.xml'])
 const PUBLIC_PREFIXES = ['/_nuxt/', '/__nuxt_error', '/public/', '/favicon', '/api/auth/', '/_ipx/', '/.well-known/']
 
+function normalizePath(pathname: string) {
+  if (!pathname || pathname === '/') {
+    return '/'
+  }
+  const trimmed = pathname.replace(/\/+$/, '')
+  return trimmed === '' ? '/' : trimmed
+}
+
 function isPublicPath(pathname: string) {
   if (PUBLIC_PATHS.has(pathname)) {
     return true
@@ -12,7 +20,8 @@ function isPublicPath(pathname: string) {
 }
 
 export default defineEventHandler((event) => {
-  const path = event.path ?? '/'
+  const rawPath = event.path ?? '/'
+  const path = normalizePath(rawPath)
 
   if (isPublicPath(path)) {
     return
@@ -25,7 +34,7 @@ export default defineEventHandler((event) => {
       throw createError({ statusCode: 401, statusMessage: 'Authentication required.' })
     }
 
-    const search = new URLSearchParams({ next: path }).toString()
+    const search = new URLSearchParams({ next: rawPath }).toString()
     return sendRedirect(event, `/login?${search}`, 302)
   }
 
