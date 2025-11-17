@@ -13,6 +13,14 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
   css: ['@/assets/theme.css'],
   runtimeConfig: {
+    auth: {
+      githubClientId: runtimeEnv.GITHUB_CLIENT_ID ?? '',
+      githubClientSecret: runtimeEnv.GITHUB_CLIENT_SECRET ?? '',
+      githubCallbackUrl: runtimeEnv.GITHUB_CALLBACK_URL ?? '',
+      allowedUsers: runtimeEnv.GITHUB_ALLOWED_USERS ?? '',
+      cookieSecret: runtimeEnv.AUTH_COOKIE_SECRET ?? '',
+      sessionMaxAge: Number(runtimeEnv.AUTH_SESSION_MAX_AGE ?? 60 * 60 * 24 * 7)
+    },
     public: {
       siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? ''
     }

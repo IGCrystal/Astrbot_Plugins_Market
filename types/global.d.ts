@@ -61,3 +61,10 @@ declare module '@/composables/useNaiveHydration' {
 declare module './usePluginCard' {
   export * from '../src/components/PluginCard/usePluginCard'
 }
+
+declare module 'h3' {
+  import type { AuthSession } from '../src/server/utils/auth'
+  interface H3EventContext {
+    authUser?: AuthSession | null
+  }
+}

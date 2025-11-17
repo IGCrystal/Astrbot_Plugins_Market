@@ -3,7 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "#app": [".nuxt/dist/app"],
+      "#app/*": [".nuxt/dist/app/*"],
+      "#imports": [".nuxt/imports"]
     },
     "typeRoots": [
       "./types",
