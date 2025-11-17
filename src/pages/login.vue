@@ -1,12 +1,19 @@
 <template>
   <main class="mui-login">
     <div class="mui-login__container">
-      <figure class="mui-login__visual" aria-hidden="true">
+      <figure
+        class="mui-login__visual"
+        :class="{ 'is-loaded': heroImageLoaded, 'is-fallback': heroImageFailed }"
+        aria-hidden="true"
+      >
         <img
+          ref="heroImageRef"
           src="https://api.wenturc.com/"
           alt="AstrBot related visual from Wenturc API"
           decoding="async"
           loading="eager"
+          @load="onHeroImageLoad"
+          @error="onHeroImageError"
         >
         <figcaption>图像来源 api.wenturc.com</figcaption>
       </figure>
@@ -66,7 +73,12 @@
             :disabled="isRedirecting"
             @click="startLogin"
           >
-            <span class="mui-button__label">{{ isRedirecting ? '跳转中…' : '使用 GitHub 登录' }}</span>
+            <span class="mui-button__label">
+              <n-icon size="20" class="mui-button__icon" aria-hidden="true">
+                <logo-github />
+              </n-icon>
+              <span>{{ isRedirecting ? '跳转中…' : '使用 GitHub 登录' }}</span>
+            </span>
           </button>
 
           <button
@@ -85,7 +97,7 @@
 
 <script setup lang="ts">
 import { NIcon } from 'naive-ui'
-import { LockClosedOutline } from '@vicons/ionicons5'
+import { LockClosedOutline, LogoGithub } from '@vicons/ionicons5'
 import logoUrl from '@/assets/logo.webp'
 
 const route = useRoute()
@@ -113,6 +125,10 @@ const authState = useState('auth-state', () => ({
   checked: false,
   authenticated: false
 }))
+
+const heroImageRef = ref<HTMLImageElement | null>(null)
+const heroImageLoaded = ref(false)
+const heroImageFailed = ref(false)
 
 watchEffect(() => {
   if (userData.value) {
@@ -145,6 +161,23 @@ function startLogin() {
   const target = `/api/auth/login?next=${encodeURIComponent(nextPath.value)}`
   window.location.href = target
 }
+
+function onHeroImageLoad() {
+  heroImageLoaded.value = true
+  heroImageFailed.value = false
+}
+
+function onHeroImageError() {
+  heroImageFailed.value = true
+  heroImageLoaded.value = false
+}
+
+onMounted(() => {
+  const img = heroImageRef.value
+  if (img && img.complete && img.naturalWidth > 0) {
+    onHeroImageLoad()
+  }
+})
 
 async function handleLogout() {
   await $fetch('/api/auth/logout', { method: 'POST' })
@@ -208,12 +241,28 @@ useHead({
   background: var(--login-color-bg-darker);
 }
 
+.mui-login__visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 22, 50, 0.9), rgba(3, 9, 20, 0.7));
+  transition: opacity 0.8s ease;
+  opacity: 1;
+  z-index: 0;
+}
+
 .mui-login__visual img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: saturate(1.1) contrast(1.05);
+  opacity: 0;
+  transform: scale(1.035) translateY(6px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.1s cubic-bezier(0.2, 0.8, 0.4, 1),
+    filter 1.1s ease;
+  will-change: opacity, transform, filter;
 }
 
 .mui-login__visual::after {
@@ -222,6 +271,27 @@ useHead({
   inset: 0;
   background: linear-gradient(135deg, rgba(2, 6, 23, 0.4), rgba(15, 23, 42, 0.35));
   pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.mui-login__visual.is-loaded::before {
+  opacity: 0;
+}
+
+.mui-login__visual.is-loaded::after {
+  opacity: 1;
+}
+
+.mui-login__visual.is-loaded img {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.mui-login__visual.is-fallback::before {
+  opacity: 1;
+  background: linear-gradient(145deg, rgba(14, 30, 64, 0.9), rgba(8, 17, 40, 0.85));
 }
 
 .mui-login__visual figcaption {
@@ -253,6 +323,12 @@ useHead({
   border-left: 1px solid var(--login-color-border-light);
   color: var(--login-color-text-primary);
   text-align: left;
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale(0.985);
+  filter: blur(14px);
+  animation: login-panel-reveal 0.9s cubic-bezier(0.17, 0.84, 0.44, 1) 0.08s forwards,
+    login-panel-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) 0.08s forwards;
+  will-change: transform, opacity, filter;
 }
 
 .mui-login__copy {
@@ -325,6 +401,36 @@ useHead({
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes login-panel-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.975);
+    filter: blur(20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -6px, 0) scale(1.005);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes login-panel-glow {
+  0% {
+    box-shadow: 0 18px 40px rgba(13, 42, 96, 0);
+  }
+  70% {
+    box-shadow: 0 24px 45px rgba(13, 42, 96, 0.25);
+  }
+  100% {
+    box-shadow: var(--login-shadow-elevated);
   }
 }
 
@@ -431,6 +537,17 @@ useHead({
   gap: 8px;
 }
 
+.mui-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--login-transition-base);
+}
+
+.mui-button--filled .mui-button__icon {
+  color: #030711;
+}
+
 .mui-button::after {
   content: '';
   position: absolute;
@@ -484,6 +601,7 @@ useHead({
 
   .mui-login__panel {
     padding: 24px 32px;
+    animation-duration: 0.75s, 1.9s;
   }
 
   .mui-login__copy {
@@ -555,6 +673,7 @@ useHead({
     border-left: 0;
     border-radius: 0;
     overflow-y: auto;
+    animation-duration: 0.8s, 2s;
   }
 
   .mui-login__copy {
@@ -620,6 +739,27 @@ useHead({
   .mui-button {
     padding: 12px 20px;
     font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mui-login__panel {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .mui-login__visual::before,
+  .mui-login__visual::after,
+  .mui-login__visual img {
+    transition: none;
+  }
+
+  .mui-login__visual img {
+    opacity: 1;
+    transform: none;
+    filter: saturate(1.1) contrast(1.05);
   }
 }
 </style>
