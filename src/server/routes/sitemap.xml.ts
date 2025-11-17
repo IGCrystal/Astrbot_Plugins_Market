@@ -1,8 +1,10 @@
 import { defineEventHandler, getRequestURL, setHeader, type H3Event } from 'h3'
+import path from 'node:path'
 
 const staticRoutes = [
   { path: '/', changefreq: 'daily', priority: '1.0' },
-  { path: '/submit', changefreq: 'weekly', priority: '0.8' }
+  { path: '/submit', changefreq: 'weekly', priority: '0.8' },
+  { path: '/login', changefreq: 'daily', priority: '1' },
 ]
 
 const resolveSiteUrl = (event: H3Event) => {
