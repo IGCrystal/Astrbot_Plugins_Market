@@ -156,7 +156,7 @@ async function handleLogout() {
 }
 
 useHead({
-  title: '登录 | AstrBot Plugins'
+  title: '登录 | AstrBot 插件市场 [社区]'
 })
 </script>
 
