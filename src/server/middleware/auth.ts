@@ -1,4 +1,4 @@
-import { createError, defineEventHandler, sendRedirect } from 'h3'
+import { createError, defineEventHandler, sendRedirect, getRequestURL } from 'h3'
 import { readAuthSession } from '../utils/auth'
 
 const PUBLIC_PATHS = new Set(['/login', '/robots.txt', '/sitemap.xml'])
@@ -20,8 +20,9 @@ function isPublicPath(pathname: string) {
 }
 
 export default defineEventHandler((event) => {
-  const rawPath = event.path ?? '/'
-  const path = normalizePath(rawPath)
+  const requestUrl = getRequestURL(event)
+  const path = normalizePath(requestUrl.pathname)
+  const nextTarget = requestUrl.pathname + requestUrl.search
 
   if (isPublicPath(path)) {
     return
@@ -34,7 +35,7 @@ export default defineEventHandler((event) => {
       throw createError({ statusCode: 401, statusMessage: 'Authentication required.' })
     }
 
-    const search = new URLSearchParams({ next: rawPath }).toString()
+    const search = new URLSearchParams({ next: nextTarget || '/' }).toString()
     return sendRedirect(event, `/login?${search}`, 302)
   }
 
