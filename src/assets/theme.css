@@ -101,38 +101,6 @@
   --scrollbar-thumb: rgba(203, 213, 225, 0.3);
   --scrollbar-thumb-hover: rgba(148, 163, 184, 0.5);
   --scrollbar-width: 6px;
-
-  /* 登录页面变量 - Login Page Variables */
-  --login-font-family: 'Lexend', 'Noto Sans SC', 'Roboto', 'Helvetica Neue', system-ui, -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --login-color-primary: #42a5f5;
-  --login-color-primary-light: #90caf9;
-  --login-color-primary-alpha: rgba(66, 165, 245, 0.35);
-  --login-color-text-primary: rgba(255, 255, 255, 0.94);
-  --login-color-text-secondary: rgba(255, 255, 255, 0.76);
-  --login-color-text-tertiary: rgba(255, 255, 255, 0.85);
-  --login-color-error-bg: rgba(229, 115, 115, 0.16);
-  --login-color-error-border: rgba(229, 115, 115, 0.35);
-  --login-color-error-text: #ffb4ab;
-  --login-color-bg-dark: #0d111c;
-  --login-color-bg-darker: #020617;
-  --login-color-bg-panel: rgba(7, 12, 22, 0.85);
-  --login-color-bg-container: rgba(11, 18, 30, 0.8);
-  --login-color-bg-overlay: rgba(15, 23, 42, 0.7);
-  --login-color-border-subtle: rgba(255, 255, 255, 0.08);
-  --login-color-border-light: rgba(255, 255, 255, 0.04);
-  --login-radius-sm: 14px;
-  --login-radius-md: 24px;
-  --login-radius-lg: 32px;
-  --login-radius-full: 999px;
-  --login-shadow-elevated: 0 35px 90px rgba(1, 6, 20, 0.65);
-  --login-shadow-button: 0 10px 25px var(--login-color-primary-alpha);
-  --login-shadow-button-hover: 0 12px 26px rgba(66, 165, 245, 0.4);
-  --login-transition-base: 0.2s ease;
-  --login-blur-glass: blur(18px);
-  --login-blur-strong: blur(24px);
-  --login-blur-subtle: blur(8px);
-  --login-badge-bg: rgba(59, 130, 246, 0.85);
 }
 
 /* 滚动条样式 */
@@ -241,8 +209,12 @@
   --scrollbar-track: transparent;
   --scrollbar-thumb: rgba(255, 255, 255, 0.2);
   --scrollbar-thumb-hover: rgba(90, 155, 212, 0.5);
+}
 
-  /* 登录页面变量 - 暗色模式 */
+/* 登录页面变量 - 固定深色模式 */
+:root {
+  --login-font-family: 'Lexend', 'Noto Sans SC', 'Roboto', 'Helvetica Neue', system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --login-color-primary: #5a9bd4;
   --login-color-primary-light: #7bb3e0;
   --login-color-primary-alpha: rgba(90, 155, 212, 0.35);
@@ -259,8 +231,16 @@
   --login-color-bg-overlay: rgba(20, 30, 45, 0.75);
   --login-color-border-subtle: rgba(255, 255, 255, 0.1);
   --login-color-border-light: rgba(255, 255, 255, 0.06);
+  --login-radius-sm: 14px;
+  --login-radius-md: 24px;
+  --login-radius-lg: 32px;
+  --login-radius-full: 999px;
   --login-shadow-elevated: 0 40px 100px rgba(0, 2, 15, 0.75);
   --login-shadow-button: 0 10px 25px rgba(90, 155, 212, 0.3);
   --login-shadow-button-hover: 0 12px 26px rgba(90, 155, 212, 0.4);
+  --login-transition-base: 0.2s ease;
+  --login-blur-glass: blur(18px);
+  --login-blur-strong: blur(24px);
+  --login-blur-subtle: blur(8px);
   --login-badge-bg: rgba(90, 155, 212, 0.9);
 }
