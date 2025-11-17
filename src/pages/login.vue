@@ -48,7 +48,7 @@
             访问受限
           </h1>
           <p class="mui-login__description">
-            本站点仅为 <a href="https://github.com/IGCrystal" target="_blank" rel="noopener noreferrer" class="author-link">IGCrystal</a> 开发的第三方插件市场，与 AstrBot 官方无关。仅个人练手的目的，现已暂停公开展示。此站点仅向特定 GitHub 账户开放。请完成 GitHub 认证以继续访问。
+            本站点仅为 <a href="https://github.com/IGCrystal" target="_blank" rel="noopener noreferrer" class="author-link">IGCrystal</a> 开发的第三方插件市场，与 AstrBot 官方无关，但是你可以前往<a href="https://plugins.astrbot.app" target="_blank" rel="noopener noreferrer" class="author-link">官方网站</a>。本网站的开发仅个人练手的目的，现已暂停公开展示。此站点仅向特定 GitHub 账户开放。请完成 GitHub 认证以继续访问。
           </p>
           <p class="mui-login__hint">
             本站点使用 GitHub OAuth 进行身份验证。但不会存储或访问你的 GitHub 凭据。
