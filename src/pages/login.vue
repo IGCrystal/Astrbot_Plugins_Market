@@ -8,14 +8,28 @@
       >
         <img
           ref="heroImageRef"
-          src="https://api.wenturc.com/"
-          alt="AstrBot related visual from Wenturc API"
+          :src="heroImageUrl"
+          :alt="heroImageAlt"
           decoding="async"
           loading="eager"
           @load="onHeroImageLoad"
           @error="onHeroImageError"
         >
-        <figcaption>图像来源 api.wenturc.com</figcaption>
+        <figcaption>
+          图像来源
+          <a
+            v-if="heroImageAttribution.link"
+            :href="heroImageAttribution.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="author-link"
+          >
+            {{ heroImageAttribution.label }}
+          </a>
+          <template v-else>
+            {{ heroImageAttribution.label }}
+          </template>
+        </figcaption>
       </figure>
 
       <section class="mui-login__panel" aria-labelledby="loginTitle">
@@ -118,9 +132,18 @@ type AuthUserResponse = {
   }
 }
 
+type WallpaperResponse = {
+  primaryUrl: string | null
+  proxyUrl: string | null
+  title?: string | null
+  copyright?: string | null
+  copyrightLink?: string | null
+}
+
 const { data: userData, refresh } = await useFetch<AuthUserResponse>('/api/auth/user', {
   credentials: 'include'
 })
+const heroWallpaper = ref<WallpaperResponse | null>(null)
 const authState = useState('auth-state', () => ({
   checked: false,
   authenticated: false
@@ -129,6 +152,15 @@ const authState = useState('auth-state', () => ({
 const heroImageRef = ref<HTMLImageElement | null>(null)
 const heroImageLoaded = ref(false)
 const heroImageFailed = ref(false)
+const heroImageFallback = 'https://www.bing.com/th?id=OHR.AutumnMerganser_ZH-CN1320438449_1920x1080.jpg'
+const heroImageUrl = computed(
+  () => heroWallpaper.value?.proxyUrl ?? heroWallpaper.value?.primaryUrl ?? heroImageFallback
+)
+const heroImageAlt = computed(() => heroWallpaper.value?.title ?? 'Bing 壁纸图像')
+const heroImageAttribution = computed(() => ({
+  label: heroWallpaper.value?.copyright ?? 'Bing 每日壁纸',
+  link: heroWallpaper.value?.copyrightLink ?? null
+}))
 
 watchEffect(() => {
   if (userData.value) {
@@ -172,7 +204,19 @@ function onHeroImageError() {
   heroImageLoaded.value = false
 }
 
-onMounted(() => {
+async function loadHeroImage() {
+  try {
+    const data = await $fetch<WallpaperResponse>('/api/bing-wallpaper', {
+      query: { _: Date.now().toString() }
+    })
+    heroWallpaper.value = data
+  } catch (error) {
+    console.error('Failed to load Bing wallpaper', error)
+  }
+}
+
+onMounted(async () => {
+  await loadHeroImage()
   const img = heroImageRef.value
   if (img && img.complete && img.naturalWidth > 0) {
     onHeroImageLoad()
@@ -395,8 +439,8 @@ useHead({
 
 @keyframes title-char-reveal {
   0% {
-    opacity: 0;
     transform: translateY(10px);
+    opacity: 0;
   }
   100% {
     opacity: 1;

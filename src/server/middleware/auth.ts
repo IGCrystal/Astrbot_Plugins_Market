@@ -2,7 +2,16 @@ import { createError, defineEventHandler, sendRedirect, getRequestURL } from 'h3
 import { readAuthSession } from '../utils/auth'
 
 const PUBLIC_PATHS = new Set(['/login', '/robots.txt', '/sitemap.xml'])
-const PUBLIC_PREFIXES = ['/_nuxt/', '/__nuxt_error', '/public/', '/favicon', '/api/auth/', '/_ipx/', '/.well-known/']
+const PUBLIC_PREFIXES = [
+  '/_nuxt/',
+  '/__nuxt_error',
+  '/public/',
+  '/favicon',
+  '/api/auth/',
+  '/api/bing-wallpaper',
+  '/_ipx/',
+  '/.well-known/'
+]
 
 function normalizePath(pathname: string) {
   if (!pathname || pathname === '/') {
