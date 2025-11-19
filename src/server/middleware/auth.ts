@@ -1,7 +1,7 @@
 import { createError, defineEventHandler, sendRedirect, getRequestURL } from 'h3'
 import { readAuthSession } from '../utils/auth'
 
-const PUBLIC_PATHS = new Set(['/login', '/robots.txt', '/sitemap.xml'])
+const PUBLIC_PATHS = new Set(['/login', '/robots.txt', '/sitemap.xml', '/submit'])
 const PUBLIC_PREFIXES = [
   '/_nuxt/',
   '/__nuxt_error',
