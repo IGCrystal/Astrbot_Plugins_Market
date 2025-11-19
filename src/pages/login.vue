@@ -69,7 +69,7 @@
               欢迎回来！
             </h1>
             <p class="mui-login__description">
-              本站点仅由 <a href="https://github.com/IGCrystal" target="_blank" rel="noopener noreferrer" class="author-link">IGCrystal</a> 开发的第三方插件市场，与 AstrBot 官方无关，但是你可以前往<a href="https://plugins.astrbot.app" target="_blank" rel="noopener noreferrer" class="author-link">官方网站</a>。本网站的开发仅个人练习的目的，目前它是公开的。
+              本站点仅由 <a href="https://github.com/IGCrystal" target="_blank" rel="noopener noreferrer" class="author-link">IGCrystal</a> 开发的第三方插件市场，与 AstrBot 官方无关，但是你可以前往 <a href="https://plugins.astrbot.app" target="_blank" rel="noopener noreferrer" class="author-link">官方网站</a> 。本网站的开发仅个人练习的目的，目前它是公开的。
             </p>
             <p class="mui-login__hint">
               为了更好的使用体验，请完成 GitHub 认证以继续访问。登录即代表您同意
