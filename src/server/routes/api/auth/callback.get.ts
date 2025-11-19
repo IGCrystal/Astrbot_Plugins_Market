@@ -13,7 +13,8 @@ interface GitHubUserResponse {
 }
 
 export default defineEventHandler(async (event) => {
-  const { githubClientId, githubClientSecret, githubCallbackUrl, allowedUsers } = getAuthConfig()
+  const { githubClientId, githubClientSecret, githubCallbackUrl, allowedUsers, deniedUsers, accessMode } =
+    getAuthConfig()
   const query = getQuery(event)
   const code = typeof query.code === 'string' ? query.code : null
   const state = typeof query.state === 'string' ? query.state : null
@@ -49,8 +50,12 @@ export default defineEventHandler(async (event) => {
     })
 
     const normalizedLogin = user.login?.toLowerCase()
+    const isUnauthorized =
+      !normalizedLogin ||
+      (accessMode === 'allowlist' && !allowedUsers.includes(normalizedLogin)) ||
+      (accessMode === 'denylist' && deniedUsers.includes(normalizedLogin))
 
-    if (!normalizedLogin || !allowedUsers.includes(normalizedLogin)) {
+    if (isUnauthorized) {
       clearAuthSession(event)
       return sendRedirect(event, '/login?error=unauthorized', 302)
     }

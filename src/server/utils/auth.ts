@@ -14,6 +14,12 @@ const RETURN_COOKIE = 'astrbot_oauth_return'
 const DEFAULT_SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 const DEFAULT_STATE_MAX_AGE = 60 * 10 // 10 minutes
 
+const parseUserList = (input: string): string[] =>
+  input
+    .split(',')
+    .map((user) => user.trim().toLowerCase())
+    .filter(Boolean)
+
 export type AuthSession = {
   login: string
   name?: string | null
@@ -21,11 +27,15 @@ export type AuthSession = {
   exp: number
 }
 
+export type AuthAccessMode = 'open' | 'allowlist' | 'denylist'
+
 export type AuthConfig = {
   githubClientId: string
   githubClientSecret: string
   githubCallbackUrl: string
   allowedUsers: string[]
+  deniedUsers: string[]
+  accessMode: AuthAccessMode
   cookieSecret: string
   sessionMaxAge: number
 }
@@ -36,6 +46,7 @@ export function getAuthConfig(): AuthConfig {
   const githubClientSecret = String(runtimeAuth.githubClientSecret ?? '')
   const githubCallbackUrl = String(runtimeAuth.githubCallbackUrl ?? '')
   const allowedUsers = String(runtimeAuth.allowedUsers ?? '')
+  const deniedUsers = String(runtimeAuth.deniedUsers ?? '')
   const cookieSecret = String(runtimeAuth.cookieSecret ?? '')
   const sessionMaxAge = runtimeAuth.sessionMaxAge ?? DEFAULT_SESSION_MAX_AGE
 
@@ -52,21 +63,18 @@ export function getAuthConfig(): AuthConfig {
   }
 
   const parsedSessionAge = typeof sessionMaxAge === 'number' ? sessionMaxAge : Number(sessionMaxAge)
-
-  const whitelist = (allowedUsers as string)
-    .split(',')
-    .map((user) => user.trim().toLowerCase())
-    .filter(Boolean)
-
-  if (whitelist.length === 0) {
-    throw new Error('GITHUB_ALLOWED_USERS must include at least one GitHub username.')
-  }
+  const whitelist = parseUserList(allowedUsers)
+  const blocklist = parseUserList(deniedUsers)
+  const accessMode: AuthAccessMode =
+    whitelist.length > 0 ? 'allowlist' : blocklist.length > 0 ? 'denylist' : 'open'
 
   return {
     githubClientId,
     githubClientSecret,
     githubCallbackUrl,
     allowedUsers: whitelist,
+    deniedUsers: blocklist,
+    accessMode,
     cookieSecret,
     sessionMaxAge: Number.isFinite(parsedSessionAge) ? parsedSessionAge : DEFAULT_SESSION_MAX_AGE
   }

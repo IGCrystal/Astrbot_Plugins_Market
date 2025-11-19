@@ -17,13 +17,22 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
   css: ['@/assets/theme.css'],
   runtimeConfig: {
-    auth: {
+    auth: ({
       githubClientId: runtimeEnv.GITHUB_CLIENT_ID ?? '',
       githubClientSecret: runtimeEnv.GITHUB_CLIENT_SECRET ?? '',
       githubCallbackUrl: runtimeEnv.GITHUB_CALLBACK_URL ?? '',
       allowedUsers: runtimeEnv.GITHUB_ALLOWED_USERS ?? '',
+      deniedUsers: runtimeEnv.GITHUB_DENIED_USERS ?? '',
       cookieSecret: runtimeEnv.AUTH_COOKIE_SECRET ?? '',
       sessionMaxAge: Number(runtimeEnv.AUTH_SESSION_MAX_AGE ?? 60 * 60 * 24 * 7)
+    }) as {
+      githubClientId: string
+      githubClientSecret: string
+      githubCallbackUrl: string
+      allowedUsers: string
+      deniedUsers: string
+      cookieSecret: string
+      sessionMaxAge: number
     },
     analytics: {
       mongoUri: runtimeEnv.MONGODB_URI ?? '',
