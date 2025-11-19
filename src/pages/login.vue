@@ -1,6 +1,9 @@
 <template>
   <main class="mui-login">
-    <div class="mui-login__container">
+    <div class="mui-login__container" :class="{ 'is-loading': isRedirecting }">
+        <div v-if="isRedirecting" class="mui-login__progress" aria-hidden="true">
+          <div class="mui-login__progress-bar"></div>
+        </div>
         <figure
           class="mui-login__visual"
           :class="{ 'is-loaded': heroImageLoaded, 'is-fallback': isFallbackImage }"
@@ -95,10 +98,21 @@
               @click="startLogin"
             >
               <span class="mui-button__label">
-                <n-icon size="20" class="mui-button__icon" aria-hidden="true">
+                <n-icon
+                  v-if="!isRedirecting"
+                  size="20"
+                  class="mui-button__icon"
+                  aria-hidden="true"
+                >
                   <logo-github />
                 </n-icon>
-                <span>{{ isRedirecting ? '跳转中…' : '使用 GitHub 登录' }}</span>
+                <n-spin
+                  v-else
+                  :size="18"
+                  stroke="currentColor"
+                  class="mui-button__spinner"
+                />
+                <span>{{ isRedirecting ? '跳转中' : '使用 GitHub 登录' }}</span>
               </span>
             </button>
 
@@ -150,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { NIcon } from 'naive-ui'
+import { NIcon, NSpin } from 'naive-ui'
 import { HappyOutline, LogoGithub } from '@vicons/ionicons5'
 import logoUrl from '@/assets/logo.webp'
 
@@ -389,6 +403,7 @@ useHead({
 }
 
 .mui-login__container {
+  position: relative;
   display: flex;
   width: min(1040px, 100%);
   height: clamp(460px, 55vh, 520px);
@@ -398,6 +413,48 @@ useHead({
   border: 1px solid var(--login-color-border-subtle);
   box-shadow: var(--login-shadow-elevated);
   backdrop-filter: var(--login-blur-glass);
+}
+
+.mui-login__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(90, 155, 212, 0.15);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.mui-login__progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--login-color-primary);
+  transform-origin: 0% 50%;
+  animation: login-progress-indeterminate 0.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes login-progress-indeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.2);
+  }
+  50% {
+    transform: translateX(0%) scaleX(0.5);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.2);
+  }
+}
+
+.mui-login__container.is-loading .mui-login__visual,
+.mui-login__container.is-loading .mui-login__panel {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(0.4);
+  transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 /* ========================================
@@ -714,6 +771,15 @@ useHead({
   transition: transform var(--login-transition-base);
 }
 
+.mui-button__spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: inherit;
+}
+
 .mui-button--filled .mui-button__icon {
   color: #030711;
 }
@@ -812,6 +878,7 @@ useHead({
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  font-family: var(--login-font-family);
   color: rgba(255, 255, 255, 0.96);
 }
 
