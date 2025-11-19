@@ -25,6 +25,10 @@ export default defineNuxtConfig({
       cookieSecret: runtimeEnv.AUTH_COOKIE_SECRET ?? '',
       sessionMaxAge: Number(runtimeEnv.AUTH_SESSION_MAX_AGE ?? 60 * 60 * 24 * 7)
     },
+    analytics: {
+      mongoUri: runtimeEnv.MONGODB_URI ?? '',
+      dbName: runtimeEnv.MONGODB_DB ?? 'astrbot_plugins'
+    },
     public: {
       siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? ''
     }

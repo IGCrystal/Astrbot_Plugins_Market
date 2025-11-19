@@ -1,6 +1,8 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useMessage } from 'naive-ui'
 import type { PluginRecord } from '@/types/plugin'
+import type { AnalyticsEventType } from '@/types/analytics'
+import { trackEvent, buildPluginSnapshot } from '@/utils/analytics'
 
 export type PluginCardProps = {
   plugin: PluginRecord
@@ -24,6 +26,17 @@ export function usePluginCard(props: PluginCardProps) {
     const rawName = props.plugin?.name || ''
     return rawName.replace(/^astrbot_plugin_/i, '')
   })
+  const snapshot = computed(() => buildPluginSnapshot(props.plugin))
+
+  const emitPluginEvent = (eventType: AnalyticsEventType, metadata?: Record<string, unknown>) => {
+    trackEvent({
+      eventType,
+      pluginId: props.plugin.id,
+      pluginName: displayName.value,
+      pluginSnapshot: snapshot.value,
+      metadata
+    })
+  }
 
   const handleLogoError = (event?: Event) => {
     const target = event?.target as HTMLElement | undefined
@@ -113,6 +126,7 @@ export function usePluginCard(props: PluginCardProps) {
     try {
       await navigator.clipboard.writeText(props.plugin.repo)
       isCopied.value = true
+      emitPluginEvent('copy_repo', { repo: props.plugin.repo })
       setTimeout(() => {
         isCopied.value = false
       }, 2000)
@@ -125,11 +139,17 @@ export function usePluginCard(props: PluginCardProps) {
     event?.stopPropagation()
     if (url) {
       window.open(url, '_blank')
+      if (url === props.plugin.repo) {
+        emitPluginEvent('visit_repo', { repo: url })
+      } else {
+        emitPluginEvent('visit_author', { url })
+      }
     }
   }
 
   const showDetails = () => {
     showPluginDetails.value = true
+    emitPluginEvent('view_details')
   }
 
   return {

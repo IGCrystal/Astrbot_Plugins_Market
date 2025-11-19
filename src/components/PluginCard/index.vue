@@ -192,6 +192,7 @@
             </n-tooltip>
           </div>
         </div>
+        <slot name="links-extra" />
       </div>
     </n-space>
   </n-card>

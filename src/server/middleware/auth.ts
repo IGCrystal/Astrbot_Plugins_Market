@@ -8,6 +8,7 @@ const PUBLIC_PREFIXES = [
   '/public/',
   '/favicon',
   '/api/auth/',
+  '/api/analytics/',
   '/api/bing-wallpaper',
   '/_ipx/',
   '/.well-known/'
@@ -41,7 +42,7 @@ export default defineEventHandler((event) => {
 
   if (!session) {
     if (path.startsWith('/api/')) {
-      throw createError({ statusCode: 401, statusMessage: 'Authentication required.' })
+      throw createError({ statusCode: 401, message: 'Authentication required.' })
     }
 
     const search = new URLSearchParams({ next: nextTarget || '/' }).toString()

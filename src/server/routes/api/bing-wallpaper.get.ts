@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     throw createError({
       statusCode: 502,
-      statusMessage: '无法获取 Bing 壁纸数据',
+      message: '无法获取 Bing 壁纸数据',
       data: error
     })
   }
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
   if (!images.length) {
     throw createError({
       statusCode: 404,
-      statusMessage: '未找到可用的壁纸'
+      message: '未找到可用的壁纸'
     })
   }
 
@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
   if (!image) {
     throw createError({
       statusCode: 404,
-      statusMessage: '壁纸数据缺失'
+      message: '壁纸数据缺失'
     })
   }
 

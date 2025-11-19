@@ -2,6 +2,7 @@ import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 import type { PluginRecord } from '@/types/plugin'
+import { trackEvent } from '@/utils/analytics'
 
 export type SortOption = 'default' | 'stars' | 'updated' | 'random'
 type TagOption = { label: string; value: string }
@@ -63,6 +64,7 @@ export const usePluginStore = defineStore('plugins', () => {
   const isLoading = ref(true)
   const sortBy = ref<SortOption>('default')
   const randomSeed = ref(0)
+  let searchTrackTimer: ReturnType<typeof setTimeout> | null = null
 
   if (isClient) {
     if (savedTheme) {
@@ -192,8 +194,21 @@ export const usePluginStore = defineStore('plugins', () => {
     isDarkMode.value = value
   }
 
+  const scheduleSearchTracking = (query: string) => {
+    if (searchTrackTimer) {
+      clearTimeout(searchTrackTimer)
+    }
+    searchTrackTimer = setTimeout(() => {
+      const trimmed = query.trim()
+      if (trimmed.length > 1) {
+        trackEvent({ eventType: 'search', searchQuery: trimmed })
+      }
+    }, 700)
+  }
+
   const setSearchQuery = (query: string) => {
     searchQuery.value = query
+    scheduleSearchTracking(query)
   }
 
   const setSelectedTag = (tag: string | null) => {

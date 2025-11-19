@@ -9,6 +9,9 @@
       :tag-options="tagOptions"
       :total-pages="totalPages"
     />
+
+  <trending-highlights />
+
     <div class="top-pagination-wrapper">
       <pagination-skeleton v-if="isLoading" :total-pages="totalPages" />
       <app-pagination
@@ -83,18 +86,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useHead } from 'nuxt/app'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
 import { usePluginStore } from '@/stores/plugins'
+import { trackEvent } from '@/utils/analytics'
 import PaginationSkeleton from '@/components/ui/PaginationSkeleton.vue'
 import PluginCardSkeleton from '@/components/ui/PluginCardSkeleton.vue'
 import AppHeader from '@/components/AppHeader/index.vue'
 import AppFooter from '@/components/AppFooter/index.vue'
 import AppPagination from '@/components/AppPagination/index.vue'
 import PluginCard from '@/components/PluginCard/index.vue'
+import TrendingHighlights from '@/components/TrendingHighlights/index.vue'
 
 const store = usePluginStore()
 const { 
@@ -249,6 +254,11 @@ const skeletonTagWidths = ['72px', '56px', '64px']
 const skeletonIconCount = 2
 
 const { refreshRandomOrder } = store
+
+onMounted(() => {
+  const path = typeof window !== 'undefined' ? window.location.pathname : '/'
+  trackEvent({ eventType: 'page_view', metadata: { path } })
+})
 </script>
 
 <style scoped>
@@ -256,6 +266,14 @@ const { refreshRandomOrder } = store
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.trend-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 12px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .grid-toolbar {
