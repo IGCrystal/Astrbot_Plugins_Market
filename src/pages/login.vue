@@ -3,7 +3,7 @@
     <div class="mui-login__container">
         <figure
           class="mui-login__visual"
-          :class="{ 'is-loaded': heroImageLoaded, 'is-fallback': heroImageFailed }"
+          :class="{ 'is-loaded': heroImageLoaded, 'is-fallback': isFallbackImage }"
           aria-hidden="true"
         >
           <img
@@ -195,16 +195,24 @@ const authState = useState('auth-state', () => ({
 
 const heroImageRef = ref<HTMLImageElement | null>(null)
 const heroImageLoaded = ref(false)
-const heroImageFailed = ref(false)
-const heroImageFallback = 'https://www.bing.com/th?id=OHR.AutumnMerganser_ZH-CN1320438449_1920x1080.jpg'
-const heroImageUrl = computed(
-  () => heroWallpaper.value?.proxyUrl ?? heroWallpaper.value?.primaryUrl ?? heroImageFallback
-)
+type HeroImageMode = 'proxy' | 'primary' | 'fallback'
+const heroImageMode = ref<HeroImageMode>('fallback')
+const heroImageFallback = 'https://www.bing.com/th?id=OHR.ShenandoahTrail_ZH-CN8626326726_1920x1080.jpg'
+const heroImageUrl = computed(() => {
+  if (heroImageMode.value === 'proxy') {
+    return heroWallpaper.value?.proxyUrl ?? heroWallpaper.value?.primaryUrl ?? heroImageFallback
+  }
+  if (heroImageMode.value === 'primary') {
+    return heroWallpaper.value?.primaryUrl ?? heroImageFallback
+  }
+  return heroImageFallback
+})
 const heroImageAlt = computed(() => heroWallpaper.value?.title ?? 'Bing 壁纸图像')
 const heroImageAttribution = computed(() => ({
   label: heroWallpaper.value?.copyright ?? 'Bing 每日壁纸',
   link: heroWallpaper.value?.copyrightLink ?? null
 }))
+const isFallbackImage = computed(() => heroImageMode.value === 'fallback')
 
 watchEffect(() => {
   if (userData.value) {
@@ -277,12 +285,18 @@ function startLogin() {
 
 function onHeroImageLoad() {
   heroImageLoaded.value = true
-  heroImageFailed.value = false
 }
 
 function onHeroImageError() {
-  heroImageFailed.value = true
   heroImageLoaded.value = false
+  if (heroImageMode.value === 'proxy' && heroWallpaper.value?.primaryUrl) {
+    heroImageMode.value = 'primary'
+    return
+  }
+  if (heroImageMode.value !== 'fallback') {
+    heroImageMode.value = 'fallback'
+    return
+  }
 }
 
 const openTerms = () => {
@@ -311,8 +325,14 @@ async function loadHeroImage() {
       query: { _: Date.now().toString() }
     })
     heroWallpaper.value = data
+    heroImageMode.value = data.proxyUrl
+      ? 'proxy'
+      : data.primaryUrl
+        ? 'primary'
+        : 'fallback'
   } catch (error) {
     console.error('Failed to load Bing wallpaper', error)
+    heroImageMode.value = 'fallback'
   }
 }
 
