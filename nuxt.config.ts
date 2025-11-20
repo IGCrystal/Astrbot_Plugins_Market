@@ -15,6 +15,14 @@ export default defineNuxtConfig({
   srcDir: 'src',
   serverDir: 'src/server',
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
+  app: {
+    head: {
+      meta: [
+        { name: 'robots', content: 'noindex, nofollow' },
+        { name: 'googlebot', content: 'noindex, nofollow' }
+      ]
+    }
+  },
   css: ['@/assets/theme.css'],
   runtimeConfig: {
     auth: ({
@@ -69,6 +77,13 @@ export default defineNuxtConfig({
     preset: nitroPreset,
     prerender: {
       routes: ['/sitemap.xml', '/robots.txt']
+    }
+  },
+  routeRules: {
+    '/**': {
+      headers: {
+        'x-robots-tag': 'noindex, nofollow, nosnippet, noarchive'
+      }
     }
   }
 })

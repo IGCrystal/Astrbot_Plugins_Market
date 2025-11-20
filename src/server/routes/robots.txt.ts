@@ -23,16 +23,17 @@ export default defineEventHandler((event) => {
   setHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   const siteUrl = resolveSiteUrl(event)
 
-  const sitemapLines = [
-    `Sitemap: ${siteUrl}/sitemap.xml`,
-    ...ensureArray(externalSitemaps).map((url) => `Sitemap: ${url}`)
+  const disallowedSitemaps = [
+    `${siteUrl}/sitemap.xml`,
+    ...ensureArray(externalSitemaps)
   ]
 
   const robotsContent = [
     'User-agent: *',
-    'Allow: /',
+    'Disallow: /',
+    'Noindex: /',
     '',
-    ...sitemapLines
+    ...disallowedSitemaps.map((url) => `# Sitemap suppressed: ${url}`)
   ].join('\n')
 
   return robotsContent
