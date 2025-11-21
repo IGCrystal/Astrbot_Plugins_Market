@@ -203,6 +203,10 @@ const submitPlugin = () => {
   const issueUrl = `${baseUrl}?${params.toString()}`
   window.open(issueUrl, '_blank')
 }
+  
+useHead({
+  title: '提交插件 | AstrBot 插件市场 [社区]'
+})
 </script>
 
 <style scoped>
