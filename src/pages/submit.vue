@@ -205,7 +205,10 @@ const submitPlugin = () => {
 }
   
 useHead({
-  title: '提交插件 | AstrBot 插件市场 [社区]'
+  title: '提交插件 | AstrBot 插件市场 [社区]',
+  meta: [
+    { name: 'description', content: 'AstrBot 插件提交页面，欢迎开发者提交插件！' }
+  ],
 })
 </script>
 
