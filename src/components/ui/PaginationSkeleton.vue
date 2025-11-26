@@ -38,8 +38,7 @@ const props = defineProps({
   }
 })
 
-const isClient = typeof window !== 'undefined'
-const screenWidth = ref(isClient ? window.innerWidth : 1440)
+const screenWidth = ref(0)
 
 const pageSlot = computed(() => {
   if (screenWidth.value <= 480) {
@@ -71,17 +70,18 @@ const navWidth = computed(() => {
 })
 
 const handleResize = () => {
-  if (!isClient) return
+  if (typeof window === 'undefined') return
   screenWidth.value = window.innerWidth
 }
 
 onMounted(() => {
-  if (!isClient) return
+  if (typeof window === 'undefined') return
+  handleResize()
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
-  if (!isClient) return
+  if (typeof window === 'undefined') return
   window.removeEventListener('resize', handleResize)
 })
 </script>
