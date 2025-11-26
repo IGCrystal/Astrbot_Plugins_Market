@@ -1,6 +1,12 @@
 <template>
-  <article class="skeleton-card" aria-hidden="true">
-    <div class="skeleton-card-inner">
+  <article class="skeleton-card-wrapper" aria-hidden="true">
+    <n-card
+      class="skeleton-card"
+      :bordered="false"
+      :style="{ borderRadius: '16px' }"
+      :content-style="{ padding: '8px 16px' }"
+    >
+      <div class="skeleton-card-inner">
       <div class="skeleton-card-header">
         <n-skeleton class="skeleton-logo" :height="100" :width="100" animated />
         <div class="skeleton-card-main">
@@ -41,12 +47,13 @@
           />
         </div>
       </div>
-    </div>
+      </div>
+    </n-card>
   </article>
 </template>
 
 <script setup lang="ts">
-import { NSkeleton } from 'naive-ui'
+import { NCard, NSkeleton } from 'naive-ui'
 
 const props = withDefaults(defineProps<{
   tagWidths?: Array<string | number>
@@ -58,9 +65,13 @@ const props = withDefaults(defineProps<{
 </script>
 
 <style scoped>
+.skeleton-card-wrapper {
+  display: block;
+  width: 100%;
+}
+
 .skeleton-card {
   display: flex;
-  padding: 18px;
   border-radius: 16px;
   background: var(--bg-card);
   border: 3px solid var(--border-base);
@@ -71,7 +82,7 @@ const props = withDefaults(defineProps<{
   min-height: 240px;
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1320px) {
   .skeleton-card {
     max-width: 420px;
   }
