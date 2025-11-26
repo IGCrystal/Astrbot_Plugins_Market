@@ -66,8 +66,15 @@ const props = withDefaults(defineProps<{
   border: 3px solid var(--border-base);
   box-shadow: var(--shadow-sm);
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   min-height: 240px;
+}
+
+@media (min-width: 1025px) {
+  .skeleton-card {
+    max-width: 420px;
+  }
 }
 
 .skeleton-card-inner {
