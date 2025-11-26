@@ -60,6 +60,13 @@
   animation-delay: calc(0.4s + (var(--card-index, 0) * 0.08s));
 }
 
+@media (min-width: 1320px) {
+  .plugin-card {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
 .plugin-card:hover {
   transform: translateY(-4px);
   border-color: var(--border-hover);
