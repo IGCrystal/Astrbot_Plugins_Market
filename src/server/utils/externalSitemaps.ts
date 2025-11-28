@@ -1,5 +1,5 @@
 const externalSitemaps = [
-  'https://astrbot.tech/sitemap.xml',
+  'https://www.astrbot.tech/sitemap.xml',
 ]
 
 export default externalSitemaps
