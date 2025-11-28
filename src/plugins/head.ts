@@ -22,10 +22,11 @@ export default defineNuxtPlugin(() => {
       { name: 'author', content: 'IGCrystal' },
       { property: 'og:title', content: 'AstrBot 插件市场 [社区]' },
       { property: 'og:description', content: '发现、下载和分享 AstrBot 框架插件的开放平台' },
+      { property: 'og:image', content: '/AstrBot_AI.png' },
       { property: 'og:image', content: logoUrl },
       { property: 'og:type', content: 'website' },
       { name: 'theme-color', content: '#60a5fa' },
-      { name: 'application-name', content: 'AstrBot 插件市场 [社区]' }
+      { name: 'application-name', content: 'AstrBot 插件市场 [社区]' },
     ],
     link: [
       { rel: 'icon', type: 'image/webp', href: logoUrl },
