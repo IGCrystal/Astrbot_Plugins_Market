@@ -242,7 +242,17 @@ const structuredHeadConfig = computed(() => {
   }
 })
 
-useHead(() => structuredHeadConfig.value)
+useHead(() => ({
+  title: 'AstrBot 插件市场 [社区] | 查找热门 AstrBot 插件与精选智能化工具',
+  meta: [
+    {
+      key: 'description',
+      name: 'description',
+      content: 'AstrBot 插件市场提供完整的社区插件索引，支持按标签、评分与更新时间筛选，展示详尽的功能介绍、作者信息和安装链接，帮助社区用户快速找到适配 AstrBot 框架的插件扩展。'
+    },
+  ],
+  ...structuredHeadConfig.value
+}))
 
 const skeletonCount = 12
 const skeletonTagWidths = ['72px', '56px', '64px']
