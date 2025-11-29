@@ -20,20 +20,6 @@ declare module '#app' {
   export function useCookie<T = string | null>(name: string, opts?: CookieOptions): Ref<T | null>
 }
 
-type ClarityConsentComposable = ReturnType<typeof import('../src/composables/useClarityConsent')['useClarityConsent']>
-
-declare module '#app' {
-  interface NuxtApp {
-    $clarityConsent: ClarityConsentComposable
-  }
-}
-
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $clarityConsent: ClarityConsentComposable
-  }
-}
-
 declare module '#imports' {
   export * from '../.nuxt/imports'
 }
