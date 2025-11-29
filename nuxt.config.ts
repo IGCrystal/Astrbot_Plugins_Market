@@ -14,7 +14,8 @@ export default defineNuxtConfig({
   css: ['@/assets/theme.css'],
   runtimeConfig: {
     public: {
-      siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? ''
+      siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? '',
+      clarityProjectId: runtimeEnv.NUXT_PUBLIC_CLARITY_PROJECT_ID ?? ''
     }
   },
   imports: {
