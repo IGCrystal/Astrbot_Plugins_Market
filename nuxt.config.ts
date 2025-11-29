@@ -1,10 +1,6 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
-const runtimeEnv = (globalThis as {
-  process?: { env?: Record<string, string | undefined> }
-}).process?.env ?? {}
-
-const nitroPreset = runtimeEnv.NITRO_PRESET ?? (runtimeEnv.VERCEL ? 'vercel' : 'node-server')
+const nitroPreset = process.env.NITRO_PRESET ?? (process.env.VERCEL ? 'vercel' : 'node-server')
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-11-15',
@@ -14,8 +10,8 @@ export default defineNuxtConfig({
   css: ['@/assets/theme.css'],
   runtimeConfig: {
     public: {
-      siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? '',
-      clarityProjectId: runtimeEnv.NUXT_PUBLIC_CLARITY_PROJECT_ID ?? ''
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? '',
+      clarityProjectId: process.env.NUXT_PUBLIC_CLARITY_PROJECT_ID ?? ''
     }
   },
   imports: {
