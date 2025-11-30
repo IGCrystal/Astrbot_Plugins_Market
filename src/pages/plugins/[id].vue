@@ -297,31 +297,45 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-const structuredData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: plugin.value?.name,
-  description: heroSnippet.value || plugin.value?.desc,
-  applicationCategory: 'Chatbot Plugin',
-  operatingSystem: 'AstrBot Framework',
-  url: canonicalUrl.value,
-  image: plugin.value?.logo,
-  softwareVersion: normalizedVersion.value || undefined,
-  author: plugin.value?.author
-    ? {
-        '@type': 'Person',
-        name: plugin.value.author
-      }
-    : undefined,
-  keywords: plugin.value?.tags?.join(', ') || undefined,
-  interactionStatistic: starsValue.value > 0
-    ? {
-        '@type': 'InteractionCounter',
-        interactionType: 'https://schema.org/LikeAction',
-        userInteractionCount: starsValue.value
-      }
-    : undefined
-}))
+const structuredData = computed(() => {
+  const toAbsoluteUrl = (url?: string) => {
+    if (!url || typeof url !== 'string') return undefined
+    const trimmed = url.trim()
+    if (/^https?:\/\//i.test(trimmed)) return trimmed
+    if (trimmed.startsWith('//')) return `https:${trimmed}`
+    const baseUrl = siteOrigin.value.replace(/\/+$/, '')
+    const normalizedPath = trimmed.startsWith('/')
+      ? trimmed
+      : `/${trimmed}`
+    return `${baseUrl}${normalizedPath}`
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: plugin.value?.name,
+    description: heroSnippet.value || plugin.value?.desc,
+    applicationCategory: 'Chatbot Plugin',
+    operatingSystem: 'AstrBot Framework',
+    url: canonicalUrl.value,
+    image: toAbsoluteUrl(plugin.value?.logo),
+    softwareVersion: normalizedVersion.value || undefined,
+    author: plugin.value?.author
+      ? {
+          '@type': 'Person',
+          name: plugin.value.author
+        }
+      : undefined,
+    keywords: plugin.value?.tags?.join(', ') || undefined,
+    interactionStatistic: starsValue.value > 0
+      ? {
+          '@type': 'InteractionCounter',
+          interactionType: 'https://schema.org/LikeAction',
+          userInteractionCount: starsValue.value
+        }
+      : undefined
+  }
+})
 
 useHead(() => ({
   script: [
