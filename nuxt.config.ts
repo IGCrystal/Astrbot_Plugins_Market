@@ -7,7 +7,8 @@ const runtimeEnv = (globalThis as {
 const nitroPreset = runtimeEnv.NITRO_PRESET ?? (runtimeEnv.VERCEL ? 'vercel' : 'node-server')
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-11-15',
+  compatibilityDate: '2025-12-01',
+  
   srcDir: 'src',
   serverDir: 'src/server',
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
@@ -44,8 +45,12 @@ export default defineNuxtConfig({
       }
     }
   },
+  
   nitro: {
     preset: nitroPreset,
+    future: {
+      nativeSWR: true
+    },
     prerender: {
       routes: ['/robots.txt'] 
     }
