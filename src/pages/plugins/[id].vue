@@ -241,9 +241,9 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  title: `${pluginDataResolved.value.name} | AstrBot 插件详情`,
+  title: `${pluginDataResolved.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
   description: pluginDataResolved.value.desc || '查看 AstrBot 插件的详细介绍与使用说明。',
-  ogTitle: `${pluginDataResolved.value.name} | AstrBot 插件详情`,
+  ogTitle: `${pluginDataResolved.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
   ogDescription: pluginDataResolved.value.desc || '查看 AstrBot 插件的详细介绍与使用说明。',
   ogUrl: canonicalUrl.value,
   ogImage: pluginDataResolved.value.logo || undefined,
