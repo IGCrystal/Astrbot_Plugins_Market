@@ -220,10 +220,6 @@ const toggleTheme = () => {
 }
 
 const handleGoBack = () => {
-  if (import.meta.client && window.history.length > 1) {
-    window.history.back()
-    return
-  }
   router.push('/')
 }
 
