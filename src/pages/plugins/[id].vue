@@ -25,7 +25,7 @@
       />
 
       <plugin-detail-readme
-        :readme-html="readmeHtml"
+        :readme-html="sanitizedReadmeHtml"
         :is-readme-loading="isReadmeLoading"
         :readme-error="readmeError"
         :is-readme-unavailable="isReadmeUnavailable"
@@ -96,8 +96,87 @@ if (!plugin.value) {
   })
 }
 
-const shouldFetchReadme = computed(() => Boolean(plugin.value?.repo))
-const pluginDataResolved = computed<PluginRecord>(() => plugin.value as PluginRecord)
+function basicSanitizeHtml(html: string): string {
+  if (!html) return ''
+
+  html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+  html = html.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+
+  html = html.replace(/\s(on\w+)\s*=\s*"[^"]*"/gi, '')
+  html = html.replace(/\s(on\w+)\s*=\s*'[^']*'/gi, '')
+  html = html.replace(/\s(on\w+)\s*=\s*[^\s>]+/gi, '')
+
+  html = html.replace(/(href|src)\s*=\s*"javascript:[^"]*"/gi, '$1="#"')
+  html = html.replace(/(href|src)\s*=\s*'javascript:[^']*'/gi, `$1='#'`)
+
+  html = html.replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, '')
+
+  html = html.replace(/\s(srcdoc)\s*=\s*"[^"]*"/gi, '')
+  html = html.replace(/\s(srcdoc)\s*=\s*'[^']*'/gi, '')
+
+  return html
+}
+
+function stripTags(input = ''): string {
+  return input.replace(/<\/?[^>]+(>|$)/g, '').replace(/\s+/g, ' ').trim()
+}
+
+function extractHeroSnippetFromHtml(html = '', maxLen = 150): string {
+  if (!html) return ''
+
+  const pMatch = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i)
+  if (pMatch && pMatch[1]) {
+    const text = stripTags(pMatch[1])
+    return text.length <= maxLen ? text : `${text.slice(0, maxLen).trim()}…`
+  }
+
+  const plain = stripTags(html)
+  return plain.length <= maxLen ? plain : `${plain.slice(0, maxLen).trim()}…`
+}
+
+const {
+  data: readmeData,
+  pending: readmePending,
+  error: readmeError,
+  refresh: refreshReadme
+} = await useAsyncData(`plugin-readme-${pluginId.value}`, async () => {
+  if (!Boolean(plugin.value?.repo)) {
+    return { html: '' }
+  }
+
+  const res = await $fetch<{ html: string }>(`/api/plugins/${pluginId.value}/readme`).catch((e) => {
+    return { html: '' }
+  })
+  const raw = res?.html ?? ''
+  const sanitized = basicSanitizeHtml(raw)
+
+  return { html: sanitized }
+}, {
+  default: () => ({ html: '' })
+})
+
+const sanitizedReadmeHtml = computed(() => readmeData.value?.html ?? '')
+const hasReadmeContent = computed(() => (sanitizedReadmeHtml.value || '').trim().length > 0)
+const isServer = import.meta.env.SSR
+const isReadmeLoading = computed(() => {
+  if (!Boolean(plugin.value?.repo)) return false
+  if (readmeError.value) return false
+  if (hasReadmeContent.value) return false
+  return readmePending.value || isServer
+})
+const isReadmeUnavailable = computed(() => {
+  if (!Boolean(plugin.value?.repo)) return true
+  if (readmeError.value) return false
+  if (isReadmeLoading.value) return false
+  return !hasReadmeContent.value
+})
+const heroSnippet = computed(() => {
+  const html = sanitizedReadmeHtml.value
+  const snippetFromReadme = extractHeroSnippetFromHtml(html, 160)
+  if (snippetFromReadme && snippetFromReadme.length > 0) return snippetFromReadme
+  const desc = plugin.value?.desc ?? ''
+  return desc.length > 0 ? (desc.length <= 160 ? desc : `${desc.slice(0, 160).trim()}…`) : '查看 AstrBot 插件的详细介绍与使用说明。'
+})
 const detailDisplayName = computed(() => {
   const displayName = plugin.value?.display_name?.trim()
   if (displayName) return displayName
@@ -109,37 +188,6 @@ const detailDisplayName = computed(() => {
 
 const detailTitleAttr = computed(() => detailDisplayName.value || undefined)
 
-const {
-  data: readmeData,
-  pending: readmePending,
-  error: readmeError,
-  refresh: refreshReadme
-} = await useAsyncData(`plugin-readme-${pluginId.value}`, async () => {
-  if (!shouldFetchReadme.value) {
-    return { html: '' }
-  }
-  return $fetch<{ html: string }>(`/api/plugins/${pluginId.value}/readme`)
-}, {
-  server: false,
-  lazy: true,
-  default: () => ({ html: '' })
-})
-
-const readmeHtml = computed(() => readmeData.value?.html ?? '')
-const hasReadmeContent = computed(() => readmeHtml.value.trim().length > 0)
-const isServer = import.meta.env.SSR
-const isReadmeLoading = computed(() => {
-  if (!shouldFetchReadme.value) return false
-  if (readmeError.value) return false
-  if (hasReadmeContent.value) return false
-  return readmePending.value || isServer
-})
-const isReadmeUnavailable = computed(() => {
-  if (!shouldFetchReadme.value) return true
-  if (readmeError.value) return false
-  if (isReadmeLoading.value) return false
-  return !hasReadmeContent.value
-})
 const showFallbackLogo = ref(false)
 
 const starsValue = computed(() => {
@@ -220,7 +268,6 @@ const formattedUpdatedAt = computed(() => {
 })
 
 const commentTheme = computed(() => (isDarkMode.value ? 'dark' : 'light'))
-
 const runtimeConfig = useRuntimeConfig()
 const requestURL = useRequestURL()
 const siteOrigin = computed(() => {
@@ -241,12 +288,12 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  title: `${pluginDataResolved.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
-  description: pluginDataResolved.value.desc || '查看 AstrBot 插件的详细介绍与使用说明。',
-  ogTitle: `${pluginDataResolved.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
-  ogDescription: pluginDataResolved.value.desc || '查看 AstrBot 插件的详细介绍与使用说明。',
+  title: `${pluginData.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
+  description: heroSnippet.value,
+  ogTitle: `${pluginData.value.name} - 插件详情 | AstrBot 插件市场 [社区]`,
+  ogDescription: heroSnippet.value,
   ogUrl: canonicalUrl.value,
-  ogImage: pluginDataResolved.value.logo || undefined,
+  ogImage: pluginData.value.logo || undefined,
   twitterCard: 'summary_large_image'
 })
 
@@ -254,7 +301,7 @@ const structuredData = computed(() => ({
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: plugin.value?.name,
-  description: plugin.value?.desc,
+  description: heroSnippet.value || plugin.value?.desc,
   applicationCategory: 'Chatbot Plugin',
   operatingSystem: 'AstrBot Framework',
   url: canonicalUrl.value,
