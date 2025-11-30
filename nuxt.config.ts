@@ -12,6 +12,10 @@ export default defineNuxtConfig({
   serverDir: 'src/server',
   modules: ['@pinia/nuxt', 'nuxtjs-naive-ui'],
   css: ['@/assets/theme.css'],
+  routeRules: {
+    '/sitemap.xml': { swr: 3600 }
+  },
+
   runtimeConfig: {
     public: {
       siteUrl: runtimeEnv.NUXT_PUBLIC_SITE_URL ?? ''
@@ -43,7 +47,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: nitroPreset,
     prerender: {
-      routes: ['/sitemap.xml', '/robots.txt']
+      routes: ['/robots.txt'] 
     }
   }
 })
