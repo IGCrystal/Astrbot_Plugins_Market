@@ -9,7 +9,7 @@
             </n-icon>
           </template>
         </n-button>
-        <h1>提交插件</h1>
+        <h1>{{ title }}</h1>
       </div>
       <div class="header-right">
         <n-button quaternary circle @click="$emit('toggle-theme')">
@@ -29,11 +29,12 @@
 import { NLayoutHeader, NButton, NIcon } from 'naive-ui'
 import { ArrowBack, Moon, Sunny } from '@vicons/ionicons5'
 
-defineProps({
-  isDarkMode: {
-    type: Boolean,
-    default: false
-  }
+withDefaults(defineProps<{
+  isDarkMode: boolean
+  title?: string
+}>(), {
+  isDarkMode: false,
+  title: '提交插件'
 })
 
 defineEmits(['go-back', 'toggle-theme'])

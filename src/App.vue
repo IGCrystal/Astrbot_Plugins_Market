@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHead } from 'nuxt/app'
@@ -45,7 +45,7 @@ import { useNaiveHydration } from '@/composables/useNaiveHydration'
 
 const route = useRoute()
 const store = usePluginStore()
-const { isDarkMode, plugins } = storeToRefs(store)
+const { isDarkMode } = storeToRefs(store)
 const { isNaiveHydrated } = useNaiveHydration()
 
 const containerStyle = computed<CSSProperties | undefined>(() => (
@@ -75,12 +75,6 @@ useHead(() => ({
     'theme-init': ['innerHTML']
   }
 }))
-
-onMounted(() => {
-  if (!plugins.value) {
-    store.loadPlugins()
-  }
-})
 </script>
 
 <style>
