@@ -233,8 +233,8 @@ const structuredData = computed<StructuredData | null>(() => {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'AstrBot 插件列表',
-    description: 'AstrBot 插件市场提供的社区插件列表',
+    name: 'AstrBot 插件市场 [社区] | 插件列表',
+    description: 'AstrBot 插件市场 [社区] 提供的社区插件列表',
     itemListElement
   }
 })

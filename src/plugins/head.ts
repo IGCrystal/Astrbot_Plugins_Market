@@ -14,7 +14,7 @@ export default defineNuxtPlugin(() => {
       {
         key: 'description',
         name: 'description',
-        content: 'AstrBot 插件市场是一个开放的插件分享平台，在这里您可以发现、下载和分享各种 AstrBot 框架插件，获取详尽的功能介绍、标签分类、版本更新与使用建议，帮助用户快速构建更智能的使用体验。'
+        content: 'AstrBot 插件市场 [社区] 是一个开放的插件分享平台，在这里您可以发现、下载和分享各种 AstrBot 框架插件，获取详尽的功能介绍、标签分类、版本更新与使用建议，帮助用户快速构建更智能的使用体验。'
       },
       {
         name: 'keywords',
@@ -25,7 +25,7 @@ export default defineNuxtPlugin(() => {
       {
         key: 'og:description',
         property: 'og:description',
-        content: '在 AstrBot 插件市场发现、下载和分享优质 AstrBot 框架插件，了解插件评分、版本迭代与最佳实践，连接活跃的开发者社区。'
+        content: '在 AstrBot 插件市场 [社区] 发现、下载和分享优质 AstrBot 框架插件，了解插件评分、版本迭代与最佳实践，连接活跃的开发者社区。'
       },
       { property: 'og:image', content: '/AstrBot_AI.png' },
       { property: 'og:image', content: logoUrl },
