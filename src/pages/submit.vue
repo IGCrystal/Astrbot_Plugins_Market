@@ -210,7 +210,7 @@ useHead({
     {
       key: 'description',
       name: 'description',
-      content: '通过 AstrBot 插件市场的提交中心上传你的 AstrBot 插件，按步骤填写插件信息、预览配置并一键生成提交内容，帮助更多社区成员获取高质量的使用体验。'
+      content: '通过 AstrBot 插件市场 [社区] 的提交中心上传你的 AstrBot 插件，按步骤填写插件信息、预览配置并一键生成提交内容，帮助更多社区成员获取高质量的使用体验。'
     }
   ],
 })

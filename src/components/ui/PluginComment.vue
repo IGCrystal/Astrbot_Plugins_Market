@@ -56,6 +56,12 @@ watch(() => props.theme, () => {
   loadGiscus()
 })
 
+watch(() => props.pluginName, () => {
+  nextTick(() => {
+    loadGiscus()
+  })
+})
+
 const updateGiscusTheme = (theme: 'light' | 'dark') => {
   const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
   const contentWindow = iframe?.contentWindow

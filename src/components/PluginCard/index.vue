@@ -4,11 +4,10 @@
     itemscope
     itemtype="https://schema.org/SoftwareApplication"
     :aria-label="`插件: ${displayName}`"
-    :aria-expanded="showPluginDetails"
     tabindex="0"
     ref="cardRef"
-    @keydown.enter.prevent="showDetails"
-    @keydown.space.prevent="showDetails"
+    @keydown.enter.prevent="goToDetails"
+    @keydown.space.prevent="goToDetails"
   >
     <meta itemprop="name" :content="displayName">
     <meta v-if="descriptionContent" itemprop="description" :content="descriptionContent">
@@ -37,7 +36,7 @@
       :bordered="false"
       :style="{ borderRadius: '16px', '--card-index': String(index) }"
       :content-style="{ padding: '8px 16px' }"
-      @click="showDetails"
+      @click="goToDetails"
     >
     <n-space vertical class="card-content" role="group" aria-label="插件卡片内容布局">
       <div class="card-layout" role="group" aria-labelledby="plugin-header-content">
@@ -197,14 +196,11 @@
   </n-card>
   </article>
 
-  <plugin-details
-    v-model:show="showPluginDetails"
-    :plugin="plugin"
-  />
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   NCard,
   NSpace,
@@ -233,8 +229,6 @@ const props = withDefaults(defineProps<{
   seed: 0
 })
 
-const PluginDetails = defineAsyncComponent(() => import('../ui/PluginDetails.vue'))
-
 const primaryUrl = computed(() => props.plugin?.repo || props.plugin?.homepage || props.plugin?.social_link || '')
 const descriptionContent = computed(() => {
   const description = props.plugin?.desc
@@ -247,7 +241,6 @@ const starsValue = computed(() => {
 })
 
 const {
-  showPluginDetails,
   displayName,
   showFallbackLogo,
   handleLogoError,
@@ -258,9 +251,23 @@ const {
   isTextOverflow,
   copyRepoUrl,
   openUrl,
-  showDetails,
   isCopied
 } = usePluginCard(props)
+
+const router = useRouter()
+const pluginSlug = computed(() => props.plugin.id || props.plugin.name)
+
+const goToDetails = (event?: Event) => {
+  event?.stopPropagation()
+  event?.preventDefault()
+  if (!pluginSlug.value) {
+    return
+  }
+  router.push({
+    name: 'plugins-id',
+    params: { id: pluginSlug.value }
+  })
+}
 
 const normalizedVersion = computed(() => {
   const version = props.plugin.version?.replace(/^v/i, '').trim()

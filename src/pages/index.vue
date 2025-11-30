@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useHead } from 'nuxt/app'
+import { useHead, useAsyncData } from 'nuxt/app'
 import { storeToRefs } from 'pinia'
 import { NLayout, NIcon, NButton } from 'naive-ui'
 import { SearchOutline, SyncOutline } from '@vicons/ionicons5'
@@ -95,9 +95,11 @@ import AppHeader from '@/components/AppHeader/index.vue'
 import AppFooter from '@/components/AppFooter/index.vue'
 import AppPagination from '@/components/AppPagination/index.vue'
 import PluginCard from '@/components/PluginCard/index.vue'
+import type { PluginRecord } from '@/types/plugin'
 
 const store = usePluginStore()
 const { 
+  plugins,
   isDarkMode,
   searchQuery,
   selectedTag,
@@ -110,6 +112,20 @@ const {
   filteredPlugins,
   randomSeed
 } = storeToRefs(store)
+
+const { data: pluginsData, error: pluginsError } = await useAsyncData('plugins-list', () =>
+  $fetch<PluginRecord[]>('/api/plugins')
+)
+
+if (pluginsData.value) {
+  store.setPlugins(pluginsData.value)
+} else if (!plugins.value || plugins.value.length === 0) {
+  store.setPlugins([])
+}
+
+if (pluginsError.value) {
+  console.error('加载插件列表失败:', pluginsError.value)
+}
 
 const cleanObject = (value: unknown): unknown => {
   if (Array.isArray(value)) {
@@ -217,8 +233,8 @@ const structuredData = computed<StructuredData | null>(() => {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'AstrBot 插件列表',
-    description: 'AstrBot 插件市场提供的社区插件列表',
+    name: 'AstrBot 插件市场 [社区] | 插件列表',
+    description: 'AstrBot 插件市场 [社区] 提供的社区插件列表',
     itemListElement
   }
 })
@@ -248,7 +264,7 @@ useHead(() => ({
     {
       key: 'description',
       name: 'description',
-      content: 'AstrBot 插件市场提供完整的社区插件索引，支持按标签、评分与更新时间筛选，展示详尽的功能介绍、作者信息和安装链接，帮助社区用户快速找到适配 AstrBot 框架的插件扩展。'
+      content: 'AstrBot 插件市场 [社区] 提供完整的社区插件索引，支持按标签、评分与更新时间筛选，展示详尽的功能介绍、作者信息和安装链接，帮助社区用户快速找到适配 AstrBot 框架的插件扩展。'
     },
   ],
   ...structuredHeadConfig.value

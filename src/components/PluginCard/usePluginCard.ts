@@ -9,7 +9,6 @@ export type PluginCardProps = {
 }
 
 export function usePluginCard(props: PluginCardProps) {
-  const showPluginDetails = ref(false)
   const showFallbackLogo = ref(false)
   const isTextOverflow = ref(false)
   const nameContainer = ref<HTMLElement | null>(null)
@@ -128,12 +127,7 @@ export function usePluginCard(props: PluginCardProps) {
     }
   }
 
-  const showDetails = () => {
-    showPluginDetails.value = true
-  }
-
   return {
-    showPluginDetails,
     displayName,
     showFallbackLogo,
     handleLogoError,
@@ -144,7 +138,6 @@ export function usePluginCard(props: PluginCardProps) {
     isTextOverflow,
     copyRepoUrl,
     openUrl,
-    showDetails,
     isCopied
   }
 }

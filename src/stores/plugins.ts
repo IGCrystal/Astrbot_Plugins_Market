@@ -2,35 +2,12 @@ import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useCookie } from 'nuxt/app'
 import type { PluginRecord } from '@/types/plugin'
+import { normalizeTags } from '@/utils/plugins/transform'
 
 export type SortOption = 'default' | 'stars' | 'updated' | 'random'
 type TagOption = { label: string; value: string }
 
 const isClient = typeof window !== 'undefined'
-
-type PluginApiPayload = Partial<PluginRecord> & {
-  tags?: string[] | string
-}
-
-type PluginApiResponse = Record<string, PluginApiPayload>
-
-const normalizeTags = (value?: string[] | string): string[] => {
-  if (!value) return []
-  if (Array.isArray(value)) return value.filter(Boolean)
-  return [value]
-}
-
-const toPluginRecord = (entry: [string, PluginApiPayload]): PluginRecord => {
-  const [machineName, details] = entry
-  const displayName = details.display_name || details.name || machineName
-  return {
-    ...details,
-    id: machineName,
-    name: displayName,
-    display_name: displayName,
-    tags: normalizeTags(details.tags)
-  }
-}
 
 function stableHash(input: string, seedNumber: number): number {
   let h = (Math.floor(seedNumber * 1e9) ^ 5381) >>> 0
@@ -177,9 +154,12 @@ export const usePluginStore = defineStore('plugins', () => {
   const loadPlugins = async () => {
     isLoading.value = true
     try {
-      const response = await fetch('https://api.soulter.top/astrbot/plugins', { cache: 'no-store' })
-      const data = (await response.json()) as PluginApiResponse
-      plugins.value = Object.entries(data).map(toPluginRecord)
+      const response = await fetch('/api/plugins', { cache: 'no-store' })
+      if (!response.ok) {
+        throw new Error(`Failed to load plugins: ${response.status}`)
+      }
+      const data = (await response.json()) as PluginRecord[]
+      setPlugins(data)
     } catch (error) {
       console.error('Error loading plugins:', error)
       plugins.value = []
@@ -187,6 +167,38 @@ export const usePluginStore = defineStore('plugins', () => {
       isLoading.value = false
     }
   }
+
+  const setPlugins = (data: PluginRecord[]) => {
+    plugins.value = data.map((plugin) => ({
+      ...plugin,
+      tags: normalizeTags(plugin.tags)
+    }))
+    isLoading.value = false
+  }
+
+  const upsertPlugin = (record: PluginRecord) => {
+    const normalized = {
+      ...record,
+      tags: normalizeTags(record.tags)
+    }
+    if (!plugins.value) {
+      plugins.value = [normalized]
+      return
+    }
+    const index = plugins.value.findIndex((item) => item.id === normalized.id)
+    if (index === -1) {
+      plugins.value.push(normalized)
+    } else {
+      plugins.value.splice(index, 1, normalized)
+    }
+  }
+
+  const pluginMap = computed(() => {
+    if (!plugins.value) return new Map<string, PluginRecord>()
+    return new Map(plugins.value.map((plugin) => [plugin.id, plugin]))
+  })
+
+  const getPluginById = (id: string) => pluginMap.value.get(id) ?? null
 
   const setDarkMode = (value: boolean) => {
     isDarkMode.value = value
@@ -234,6 +246,9 @@ export const usePluginStore = defineStore('plugins', () => {
     totalPages,
     paginatedPlugins,
     loadPlugins,
+    setPlugins,
+    upsertPlugin,
+    getPluginById,
     setDarkMode,
     setSearchQuery,
     setSelectedTag,
