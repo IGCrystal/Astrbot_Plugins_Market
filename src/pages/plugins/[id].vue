@@ -290,7 +290,6 @@ useSeoMeta({
   ogDescription: heroSnippet.value,
   ogUrl: canonicalUrl.value,
   ogImage: pluginData.value.logo || undefined,
-  twitterCard: 'summary_large_image'
 })
 
 const structuredData = computed(() => {
