@@ -173,6 +173,17 @@ const processedReadmeHtml = computed(() => {
   background: rgba(148, 163, 184, 0.12);
   border-radius: 0 8px 8px 0;
   color: var(--text-color-2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.markdown-content :deep(blockquote > p) {
+  margin: 0;
+}
+
+.markdown-content :deep(blockquote > p + p) {
+  margin-top: 0.6em;
 }
 
 .markdown-content :deep(ul),
@@ -187,6 +198,24 @@ const processedReadmeHtml = computed(() => {
 
 .markdown-content :deep(li::marker) {
   color: var(--primary-color);
+}
+
+.markdown-content :deep(li input[type='checkbox']) {
+  margin-right: 0.6em;
+  transform: translateY(1px);
+}
+
+.markdown-content :deep(li.task-list-item) {
+  list-style: none;
+  margin-left: -1.6em;
+  padding-left: 2em;
+  position: relative;
+}
+
+.markdown-content :deep(li.task-list-item > input[type='checkbox']) {
+  position: absolute;
+  left: 0;
+  top: 0.2em;
 }
 
 .markdown-content :deep(ul ul),
@@ -226,9 +255,32 @@ const processedReadmeHtml = computed(() => {
   background: rgba(148, 163, 184, 0.08);
 }
 
+.markdown-content :deep(table) {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.markdown-content :deep(table table) {
+  display: table;
+}
+
 .markdown-content :deep(img) {
   max-width: 100%;
+  height: auto;
   border-radius: 8px;
+  display: block;
+  margin: 1.4em auto;
+}
+
+.markdown-content :deep(img[align='left']) {
+  margin-left: 0;
+  margin-right: 1.2em;
+}
+
+.markdown-content :deep(img[align='right']) {
+  margin-right: 0;
+  margin-left: 1.2em;
 }
 
 .markdown-content :deep(pre) {
@@ -263,6 +315,121 @@ const processedReadmeHtml = computed(() => {
 
 .markdown-content :deep(em) {
   font-style: italic;
+}
+
+.markdown-content :deep(mark) {
+  background: rgba(250, 204, 21, 0.4);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+.markdown-content :deep(del) {
+  color: var(--text-color-3);
+  text-decoration: line-through;
+}
+
+.markdown-content :deep(figure) {
+  margin: 1.5em 0;
+  text-align: center;
+}
+
+.markdown-content :deep(figcaption) {
+  margin-top: 0.6em;
+  font-size: 13px;
+  color: var(--text-color-3);
+}
+
+.markdown-content :deep(iframe) {
+  width: 100%;
+  min-height: 280px;
+  border: none;
+  border-radius: 12px;
+  background: #000;
+}
+
+.markdown-content :deep(.embed-responsive) {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.markdown-content :deep(.embed-responsive iframe) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.markdown-content :deep(dl) {
+  margin: 1.4em 0;
+}
+
+.markdown-content :deep(dt) {
+  font-weight: 600;
+  color: var(--text-color-1);
+  margin-top: 1em;
+}
+
+.markdown-content :deep(dd) {
+  margin: 0.4em 0 0.8em 1.2em;
+}
+
+.markdown-content :deep(sup[data-footnote-ref]) {
+  font-size: 0.75em;
+  vertical-align: super;
+  margin-left: 0.15em;
+}
+
+.markdown-content :deep(section.footnotes) {
+  margin-top: 2.4em;
+  font-size: 0.9em;
+  color: var(--text-color-3);
+  border-top: 1px solid var(--border-base);
+  padding-top: 1.2em;
+}
+
+.markdown-content :deep(section.footnotes li) {
+  margin-bottom: 0.8em;
+}
+
+.markdown-content :deep(section.footnotes a[data-footnote-backref]) {
+  margin-left: 0.4em;
+}
+
+.markdown-content :deep(.callout) {
+  border-radius: 12px;
+  padding: 16px;
+  margin: 1.4em 0;
+  border-left: 4px solid var(--primary-color);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.markdown-content :deep(.callout strong:first-child) {
+  display: block;
+  margin-bottom: 0.4em;
+}
+
+.markdown-content :deep(.callout-note) {
+  border-left-color: var(--primary-color);
+}
+
+.markdown-content :deep(.callout-warning) {
+  border-left-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.markdown-content :deep(.callout-danger) {
+  border-left-color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.markdown-content :deep(.callout-tip) {
+  border-left-color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
 }
 
 @media (max-width: 768px) {
