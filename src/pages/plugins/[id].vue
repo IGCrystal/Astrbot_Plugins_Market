@@ -1,5 +1,5 @@
 <template>
-  <n-layout class="plugin-detail-layout">
+  <div class="plugin-detail-page">
     <submit-header
       :is-dark-mode="isDarkMode"
       title="插件详情"
@@ -7,41 +7,43 @@
       @toggle-theme="toggleTheme"
     />
 
-    <section class="detail-container">
+    <n-layout class="plugin-detail-layout">
+      <section class="detail-container">
 
-      <plugin-detail-header
-        :plugin="plugin"
-        :plugin-id="pluginId"
-        :detail-display-name="detailDisplayName"
-        :detail-title-attr="detailTitleAttr"
-        :normalized-version="normalizedVersion"
-        :formatted-updated-at="formattedUpdatedAt"
-        :stars-value="starsValue"
-        :is-repo-copied="isRepoCopied"
-        :show-fallback-logo="showFallbackLogo"
-        :on-open-url="openUrl"
-        :on-copy-repo-url="copyRepoUrl"
-        :on-handle-logo-error="handleLogoError"
-      />
+        <plugin-detail-header
+          :plugin="plugin"
+          :plugin-id="pluginId"
+          :detail-display-name="detailDisplayName"
+          :detail-title-attr="detailTitleAttr"
+          :normalized-version="normalizedVersion"
+          :formatted-updated-at="formattedUpdatedAt"
+          :stars-value="starsValue"
+          :is-repo-copied="isRepoCopied"
+          :show-fallback-logo="showFallbackLogo"
+          :on-open-url="openUrl"
+          :on-copy-repo-url="copyRepoUrl"
+          :on-handle-logo-error="handleLogoError"
+        />
 
-      <plugin-detail-readme
-        :readme-html="sanitizedReadmeHtml"
-        :is-readme-loading="isReadmeLoading"
-        :readme-error="readmeError"
-        :is-readme-unavailable="isReadmeUnavailable"
-        @refresh="handleRefreshReadme"
-      />
+        <plugin-detail-readme
+          :readme-html="sanitizedReadmeHtml"
+          :is-readme-loading="isReadmeLoading"
+          :readme-error="readmeError"
+          :is-readme-unavailable="isReadmeUnavailable"
+          @refresh="handleRefreshReadme"
+        />
 
-      <plugin-comment
-        v-if="plugin?.repo"
-        :repo="plugin.repo"
-        :plugin-name="plugin?.name || '未知插件'"
-        :theme="commentTheme"
-      />
-    </section>
+        <plugin-comment
+          v-if="plugin?.repo"
+          :repo="plugin.repo"
+          :plugin-name="plugin?.name || '未知插件'"
+          :theme="commentTheme"
+        />
+      </section>
 
-    <app-footer />
-  </n-layout>
+      <app-footer />
+    </n-layout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -379,10 +381,21 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.plugin-detail-layout {
+.plugin-detail-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--body-color);
+}
+
+.plugin-detail-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.page-header .header-content) {
+  max-width: 960px;
 }
 
 .detail-container {
