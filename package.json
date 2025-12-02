@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_OPTIONS=--no-deprecation nuxt dev",
     "build": "cross-env NODE_OPTIONS=--no-deprecation nuxt build",
     "preview": "cross-env NODE_OPTIONS=--no-deprecation nuxt preview",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "@giscus/vue": "^3.1.1",
