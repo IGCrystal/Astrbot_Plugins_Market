@@ -27,6 +27,7 @@
 
         <plugin-detail-readme
           :readme-html="sanitizedReadmeHtml"
+          :asset-base-url="readmeAssetBaseUrl"
           :is-readme-loading="isReadmeLoading"
           :readme-error="readmeError"
           :is-readme-unavailable="isReadmeUnavailable"
@@ -143,21 +144,26 @@ const {
   refresh: refreshReadme
 } = await useAsyncData(`plugin-readme-${pluginId.value}`, async () => {
   if (!Boolean(plugin.value?.repo)) {
-    return { html: '' }
+    return { html: '', assetBaseUrl: null }
   }
 
-  const res = await $fetch<{ html: string }>(`/api/plugins/${pluginId.value}/readme`).catch((e) => {
-    return { html: '' }
+  const res = await $fetch<{ html: string; assetBaseUrl?: string | null }>(`/api/plugins/${pluginId.value}/readme`).catch(() => {
+    return { html: '', assetBaseUrl: null }
   })
+
   const raw = res?.html ?? ''
   const sanitized = basicSanitizeHtml(raw)
 
-  return { html: sanitized }
+  return {
+    html: sanitized,
+    assetBaseUrl: res?.assetBaseUrl ?? null
+  }
 }, {
-  default: () => ({ html: '' })
+  default: () => ({ html: '', assetBaseUrl: null })
 })
 
 const sanitizedReadmeHtml = computed(() => readmeData.value?.html ?? '')
+const readmeAssetBaseUrl = computed(() => readmeData.value?.assetBaseUrl ?? null)
 const hasReadmeContent = computed(() => (sanitizedReadmeHtml.value || '').trim().length > 0)
 const isServer = import.meta.env.SSR
 const isReadmeLoading = computed(() => {

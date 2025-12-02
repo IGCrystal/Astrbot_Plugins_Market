@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer'
 import { defineEventHandler, createError, setHeader } from 'h3'
 import { marked } from 'marked'
 import { getPluginById } from '@/server/utils/pluginsCache'
@@ -7,6 +8,7 @@ const CACHE_TTL_MS = 1000 * 60 * 60 * 6 // 6 hours
 interface ReadmeCacheEntry {
   timestamp: number
   html: string
+  assetBaseUrl: string | null
 }
 
 const readmeCache = new Map<string, ReadmeCacheEntry>()
@@ -27,34 +29,74 @@ const fetchWithTimeout = async (input: string, options: RequestInit = {}, timeou
 const candidates = ['README.md', 'Readme.md', 'readme.md', 'README.MD', 'README']
 const branches = ['main', 'master']
 
-const resolveReadme = async (owner: string, repo: string): Promise<string> => {
+interface ResolvedReadme {
+  content: string
+  assetBaseUrl: string | null
+}
+
+const resolveReadme = async (owner: string, repo: string): Promise<ResolvedReadme> => {
   const apiResp = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/readme`,
     {
       method: 'GET',
       headers: {
-        Accept: 'application/vnd.github.v3.raw'
+        Accept: 'application/vnd.github+json'
       }
     }
   )
 
   if (apiResp.ok) {
-    return apiResp.text()
+    const data = await apiResp.json() as {
+      content?: string
+      encoding?: string
+      download_url?: string
+    }
+
+    let content = ''
+    if (data?.encoding === 'base64' && typeof data.content === 'string') {
+      content = Buffer.from(data.content, 'base64').toString('utf-8')
+    } else if (typeof data?.content === 'string') {
+      content = data.content
+    }
+
+    if (!content && data?.download_url) {
+      const rawResp = await fetchWithTimeout(data.download_url, {
+        method: 'GET',
+        headers: {
+          Accept: 'text/plain'
+        }
+      })
+      if (rawResp.ok) {
+        content = await rawResp.text()
+      }
+    }
+
+    if (content) {
+      const baseFromDownload = typeof data?.download_url === 'string'
+        ? data.download_url.slice(0, data.download_url.lastIndexOf('/') + 1)
+        : null
+      return {
+        content,
+        assetBaseUrl: baseFromDownload
+      }
+    }
   }
 
   for (const branch of branches) {
     for (const filename of candidates) {
-      const resp = await fetchWithTimeout(
-        `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'text/plain'
-          }
+      const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`
+      const resp = await fetchWithTimeout(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'text/plain'
         }
-      )
+      })
       if (resp.ok) {
-        return resp.text()
+        const content = await resp.text()
+        return {
+          content,
+          assetBaseUrl: url.slice(0, url.lastIndexOf('/') + 1)
+        }
       }
     }
   }
@@ -87,7 +129,7 @@ export default defineEventHandler(async (event) => {
 
   if (cached && now - cached.timestamp < CACHE_TTL_MS) {
     setHeader(event, 'Cache-Control', 's-maxage=1800, stale-while-revalidate=3600')
-    return { html: cached.html }
+    return { html: cached.html, assetBaseUrl: cached.assetBaseUrl }
   }
 
   const segments = plugin.repo.split('/').filter(Boolean)
@@ -99,7 +141,7 @@ export default defineEventHandler(async (event) => {
   }
   const [owner, repo] = segments.slice(-2) as [string, string]
 
-  const readmeRaw = await resolveReadme(owner, repo)
+  const { content: readmeRaw, assetBaseUrl } = await resolveReadme(owner, repo)
   if (!readmeRaw) {
     throw createError({
       statusCode: 404,
@@ -112,9 +154,10 @@ export default defineEventHandler(async (event) => {
 
   readmeCache.set(id, {
     timestamp: now,
-    html
+    html,
+    assetBaseUrl
   })
 
   setHeader(event, 'Cache-Control', 's-maxage=1800, stale-while-revalidate=3600')
-  return { html }
+  return { html, assetBaseUrl }
 })
