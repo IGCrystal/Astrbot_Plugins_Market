@@ -269,18 +269,22 @@ const processedReadmeHtml = computed(() => {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+  vertical-align: middle;
+}
+
+.markdown-content :deep(p > img:only-child) {
   display: block;
-  margin: 1.4em auto;
+  margin: 1.2em auto;
 }
 
 .markdown-content :deep(img[align='left']) {
-  margin-left: 0;
-  margin-right: 1.2em;
+  float: left;
+  margin: 0.6em 1.2em 0.6em 0;
 }
 
 .markdown-content :deep(img[align='right']) {
-  margin-right: 0;
-  margin-left: 1.2em;
+  float: right;
+  margin: 0.6em 0 0.6em 1.2em;
 }
 
 .markdown-content :deep(pre) {
