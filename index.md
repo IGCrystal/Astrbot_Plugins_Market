@@ -1,5 +1,3 @@
-> A site dedicated to browsing and exploring AstrBot plugins.
-
 ## double
 
 ```
@@ -7,3 +5,4 @@ SXlNZ1FVRkJMVTVsYTI4S0N1YWJ2dWU3aithWXJ5QkJjM1J5UW05MElPYVBrdVM3dHVXNGd1V2N1aURu
 ```
 
 [< back](https://neo-life.wenturc.com)
+
