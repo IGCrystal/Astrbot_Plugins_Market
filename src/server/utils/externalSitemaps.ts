@@ -1,5 +1,5 @@
 const externalSitemaps = [
-  'https://www.astrbot.tech/sitemap.xml',
+  'https://cbblover.neo-life.wenturc.com/sitemap.xml',
 ]
 
 export default externalSitemaps
