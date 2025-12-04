@@ -303,7 +303,7 @@ const { refreshRandomOrder } = store
 
 .plugins-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   width: 100%;
   max-width: 1400px;
   min-height: calc(
@@ -321,6 +321,10 @@ const { refreshRandomOrder } = store
   align-content: start;  
   align-items: start;   
   box-sizing: border-box;
+}
+
+.plugins-grid > * {
+  max-width: 480px;
 }
 
 .plugins-grid.is-loading {

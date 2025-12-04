@@ -116,13 +116,35 @@ const props = withDefaults(defineProps<{
 }
 
 .skeleton-tags {
-  display: flex;
-  flex-wrap: wrap;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  min-height: 26px;
+  max-height: 26px;
+  flex-wrap: nowrap;
   gap: 8px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+.skeleton-tags::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 32px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--bg-card));
+  pointer-events: none;
 }
 
 .skeleton-tag {
   border-radius: 999px !important;
+  flex: 0 0 auto;
+  margin: 0 !important;
 }
 
 .skeleton-meta {
