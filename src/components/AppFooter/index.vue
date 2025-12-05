@@ -14,7 +14,7 @@
       <div class="footer-links">
         <div class="links-group">
           <h4>相关链接</h4>
-          <a href="https://astrbot.tech/" target="_blank" class="footer-link">
+          <a href="https://cbblover.neo-life.wenturc.com/" target="_blank" class="footer-link">
             <n-icon><star-outline /></n-icon>
             项目主站
           </a>
