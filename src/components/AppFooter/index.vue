@@ -14,28 +14,36 @@
       <div class="footer-links">
         <div class="links-group">
           <h4>相关链接</h4>
-          <a href="https://cbblover.neo-life.wenturc.com/" target="_blank" class="footer-link">
-            <n-icon><star-outline /></n-icon>
-            项目主站
+          <a href="https://astrbot.app/" target="_blank" class="footer-link">
+            <n-icon><globe-outline /></n-icon>
+            官方项目主站
+          </a>
+          <a href="https://plugins.astrbot.app/" target="_blank" class="footer-link">
+            <n-icon><apps-outline /></n-icon>
+            官方插件市场
           </a>
           <a href="https://github.com/AstrBotDevs/AstrBot" target="_blank" class="footer-link">
             <n-icon><logo-github /></n-icon>
-            项目仓库
+            官方项目仓库
           </a>
-          <a href="https://docs.astrbot.app/" target="_blank" class="footer-link">
-            <n-icon><document-outline /></n-icon>
-            项目文档
+          <a href="https://cbblover.neo-life.wenturc.com/" target="_blank" class="footer-link">
+            <n-icon><star-outline /></n-icon>
+            侧边展示主站
           </a>
         </div>
         <div class="links-group">
           <h4>开发相关</h4>
           <a href="https://docs.astrbot.app/dev/star/plugin.html" target="_blank" class="footer-link">
             <n-icon><document-text /></n-icon>
-            开发文档
+            插件开发文档
           </a>
           <a href="https://github.com/AstrBotDevs/AstrBot/issues/new?template=PLUGIN_PUBLISH.yml" target="_blank" class="footer-link">
             <n-icon><git-branch /></n-icon>
-            提交插件
+            快速提交插件
+          </a>
+          <a href="https://docs.astrbot.app/" target="_blank" class="footer-link">
+            <n-icon><document-outline /></n-icon>
+            官方项目文档
           </a>
         </div>
       </div>
@@ -89,7 +97,9 @@ import {
   DocumentText,
   Heart,
   StarOutline,
-  DocumentOutline
+  DocumentOutline,
+  GlobeOutline,
+  AppsOutline
 } from '@vicons/ionicons5'
 import { useFooterHeight } from './useFooterHeight'
 
