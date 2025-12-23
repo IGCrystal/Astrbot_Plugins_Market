@@ -12,7 +12,8 @@ During the development of the official AstrBot plugin market, the application wa
 
 [https://aaaneko.neo-life.wenturc.com/](https://aaaneko.neo-life.wenturc.com/)
 
-[< back](https://neo-life.wenturc.com)
+[< back](https://plugins.astrbot.qzz.io)
+
 
 
 
