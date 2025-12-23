@@ -10,9 +10,9 @@ During the development of the official AstrBot plugin market, the application wa
 ---
 ## Preview
 
-[https://aaaneko.neo-life.wenturc.com/](https://aaaneko.neo-life.wenturc.com/)
+[https://plugins.astrbot.qzz.io](https://plugins.astrbot.qzz.io)
 
-[< back](https://plugins.astrbot.qzz.io)
+[< back](https://neo-life.github.io)
 
 
 
