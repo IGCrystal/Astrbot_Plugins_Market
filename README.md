@@ -1,10 +1,10 @@
 <p align="left">
-  <a href="https://plugins.astrbot.tech">
-    <img src="https://github.wenturc.com/Neo-Life/.github/refs/heads/main/img/IMG_20251114_021641.png" alt="Meow" width="70%">
+  <a href="https://plugins.astrbot.qzz.io">
+    <img src="https://raw.githubusercontent.com/Neo-Life/.github/refs/heads/main/img/IMG_20251114_021641.png" alt="Meow" width="70%">
   </a>
 </p>
 
-# [垃圾製造リサイクル工場はもう倒闭したってさ — 未来のサステナはどうすんの喵？](https://plugins.astrbot.tech/)
+# [垃圾製造リサイクル工場はもう倒闭したってさ — 未来のサステナはどうすんの喵？](https://plugins.astrbot.qzz.io/)
 
 A simple AstrBot plugin marketplace page for showcasing plugins for the AstrBot framework.
 
