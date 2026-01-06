@@ -84,7 +84,7 @@ const { data: pluginData } = await useAsyncData(`plugin-${pluginId.value}`, () =
 if (!pluginData.value) {
   throw createError({
     statusCode: 404,
-    statusMessage: '未找到对应插件'
+    message: '未找到对应插件'
   })
 }
 
@@ -95,7 +95,7 @@ const plugin = computed(() => pluginStore.getPluginById(pluginId.value))
 if (!plugin.value) {
   throw createError({
     statusCode: 404,
-    statusMessage: '插件数据不可用'
+    message: '插件数据不可用'
   })
 }
 

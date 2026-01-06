@@ -18,7 +18,7 @@ const fetchRemotePlugins = async (): Promise<PluginRecord[]> => {
   if (!remoteData || typeof remoteData !== 'object') {
     throw createError({
       statusCode: 502,
-      statusMessage: '插件数据源返回异常'
+      message: '插件数据源返回异常'
     })
   }
   return Object.entries(remoteData).map(toPluginRecord)

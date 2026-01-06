@@ -103,7 +103,7 @@ const resolveReadme = async (owner: string, repo: string): Promise<ResolvedReadm
 
   throw createError({
     statusCode: 404,
-    statusMessage: '未找到 README 内容'
+    message: '未找到 README 内容'
   })
 }
 
@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     throw createError({
       statusCode: 400,
-      statusMessage: '插件 ID 缺失'
+      message: '插件 ID 缺失'
     })
   }
 
@@ -120,7 +120,7 @@ export default defineEventHandler(async (event) => {
   if (!plugin?.repo) {
     throw createError({
       statusCode: 404,
-      statusMessage: '插件未提供仓库地址'
+      message: '插件未提供仓库地址'
     })
   }
 
@@ -136,7 +136,7 @@ export default defineEventHandler(async (event) => {
   if (segments.length < 2) {
     throw createError({
       statusCode: 400,
-      statusMessage: '仓库地址格式不正确'
+      message: '仓库地址格式不正确'
     })
   }
   const [owner, repo] = segments.slice(-2) as [string, string]
@@ -145,7 +145,7 @@ export default defineEventHandler(async (event) => {
   if (!readmeRaw) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'README 内容为空'
+      message: 'README 内容为空'
     })
   }
 

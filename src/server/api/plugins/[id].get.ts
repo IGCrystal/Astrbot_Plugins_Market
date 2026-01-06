@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   if (!id) {
     throw createError({
       statusCode: 400,
-      statusMessage: '插件 ID 缺失'
+      message: '插件 ID 缺失'
     })
   }
 
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   if (!plugin) {
     throw createError({
       statusCode: 404,
-      statusMessage: '未找到对应插件'
+      message: '未找到对应插件'
     })
   }
 
